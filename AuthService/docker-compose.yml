@@ -1,0 +1,28 @@
+services:
+  dev-db:
+    container_name: postgres
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: auth_service
+      POSTGRES_PASSWORD: auth_service#123@
+      POSTGRES_DB: auth_db
+
+
+  adminer:
+    container_name: adminer
+    image: adminer:4.8.0-standalone
+    restart: always
+    ports:
+    - "9080:8080"
+#  smtp4dev:
+#    container_name: smtp
+#    image: rnwood/smtp4dev:v3
+#    restart: always
+#    ports:
+#    # Change the number before : to the port the web interface should be accessible on
+#    - "9081:80"
+#    # Change the number before : to the port the SMTP server should be accessible on
+#    - "9025:25"

@@ -13,9 +13,9 @@ public interface UserService {
     void activateAccount(ActivationAccountRequest activationRequest) throws InvalidTokenException, UserNotFoundException;
 
     // Recherche d'utilisateur
-    Users findByUsername(String username);
-    UserDtoResponse findByEmail(String email);
-    UserDtoResponse findById(Long userId);
+    Users findByUsername(String username) throws UserNotFoundException;
+    UserDtoResponse findByEmail(String email) throws UserNotFoundException;
+    UserDtoResponse findById(String userId) throws UserNotFoundException;
 
     // Mot de passe oublié
     void forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
@@ -27,7 +27,7 @@ public interface UserService {
     void changePassword(ChangePasswordRequest changePasswordRequest);
 
     // Connexion - Retourne les tokens !
-    AuthResponse login(LoginRequest loginRequest);
+    AuthResponse login(LoginRequest loginRequest) throws UserNotFoundException;
 
     // Déconnexion - Invalide le token
     void logout(LogoutRequest logoutRequest);
@@ -37,4 +37,6 @@ public interface UserService {
 
     // Validation de token (pour Gateway)
     TokenValidationResponse validateToken(String token);
+
+    void resendActivationEmail(String email) throws UserNotFoundException;
 }

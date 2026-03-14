@@ -14,6 +14,8 @@ import org.darius.authservice.security.JwtService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -88,18 +90,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Users findByUsername(String username) {
-        return null;
+    public Users findByUsername(String username) throws UserNotFoundException {
+        return this.userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override
-    public UserDtoResponse findByEmail(String email) {
-        return null;
+    public UserDtoResponse findByEmail(String email) throws UserNotFoundException {
+        Users users = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userMapper.ToUserDtoResponse(users);
     }
 
     @Override
-    public UserDtoResponse findById(Long userId) {
-        return null;
+    public UserDtoResponse findById(String userId) throws UserNotFoundException {
+        Users users = this.userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userMapper.ToUserDtoResponse(users);
+    }
+
+    @Override
+    public AuthResponse login(LoginRequest loginRequest) throws UserNotFoundException {
+        // first : find user by email
+        Users users = this.userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        // check if user account is active
+        if (!users.isEnabled()) {
+            throw new RuntimeException("Account not activated. Please check your email.");
+        }
+        // check if password match
+        if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), users.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        // generate user token
+        Map<String, String> token = jwtService.generate(users.getEmail());
+
+        // define last user login
+        users.setLastLogin(new Date());
+        // update user in database
+        userRepository.save(users);
+
+        return AuthResponse.builder()
+                .accessToken(token.get("Access Token"))
+                .refreshToken(token.get("Refresh Token"))
+                .build();
     }
 
     @Override
@@ -118,11 +152,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthResponse login(LoginRequest loginRequest) {
-        return null;
-    }
-
-    @Override
     public void logout(LogoutRequest logoutRequest) {
 
     }
@@ -135,6 +164,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenValidationResponse validateToken(String token) {
         return null;
+    }
+
+    @Override
+    public void resendActivationEmail(String email) throws UserNotFoundException {
+
     }
 
     private void validatePasswordMatch(String password, String confirm) throws PasswordMismatchException {

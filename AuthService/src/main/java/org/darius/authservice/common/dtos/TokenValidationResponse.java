@@ -1,7 +1,9 @@
 package org.darius.authservice.common.dtos;
 
-import java.util.Map;
+import lombok.Builder;
 
+import java.util.Map;
+@Builder
 public class TokenValidationResponse {
     private boolean valid;
     private Long userId;

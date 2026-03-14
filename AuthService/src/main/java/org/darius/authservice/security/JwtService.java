@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.darius.authservice.entities.Jwt;
 import org.darius.authservice.entities.RefreshToken;
 import org.darius.authservice.entities.Users;
+import org.darius.authservice.exceptions.UserNotFoundException;
 import org.darius.authservice.repositories.JwtRepository;
 import org.darius.authservice.services.UserService;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,7 +51,7 @@ public class JwtService {
         ).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public Map<String, String> generate(String username){
+    public Map<String, String> generate(String username) throws UserNotFoundException {
         Users user = this.userService.findByUsername(username);
         this.disabledToken(user);
 
@@ -142,7 +143,7 @@ public class JwtService {
         this.jwtRepository.save(jwt);
     }
 
-    public Map<String, String> refreshToken(Map<String, String> refreshToken) {
+    public Map<String, String> refreshToken(Map<String, String> refreshToken) throws UserNotFoundException {
         Jwt jwt = this.jwtRepository.findUserByRefreshToken(refreshToken.get(REFRESH_TOKEN))
                 .orElseThrow(() -> new RuntimeException("Invalid Token"));
         if (jwt.getRefreshToken().isExpire() || jwt.getRefreshToken().getExpiredAt().isBefore(Instant.now())) {

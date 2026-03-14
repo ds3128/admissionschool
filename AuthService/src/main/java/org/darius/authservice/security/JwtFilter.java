@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.darius.authservice.entities.Jwt;
-import org.darius.authservice.repositories.JwtRepository;
+import org.darius.authservice.exceptions.UserNotFoundException;
 import org.darius.authservice.services.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,35 +32,38 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        String token;
-        Jwt tokenRepository = null;
-        String username = null;
-        boolean isTokenExpired = true;
-
         try {
             final String authorizationHeader = request.getHeader("Authorization");
-            if ( authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
-                token = authorizationHeader.substring(7);
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String token = authorizationHeader.substring(7);
 
-                tokenRepository = this.jwtService.tokenByValue(token);
+                Jwt tokenFromDb   = this.jwtService.tokenByValue(token);
+                boolean isExpired = this.jwtService.isTokenExpired(token);
+                String username   = this.jwtService.extractUsername(token);
 
-                isTokenExpired = this.jwtService.isTokenExpired(token);
+                if (!isExpired
+                        && tokenFromDb.getUser().getEmail().equals(username)
+                        && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                username = this.jwtService.extractUsername(token);
-            }
+                    UserDetails userDetails = userService.findByUsername(username);
 
-            if (!isTokenExpired
-                    && tokenRepository.getUser().getEmail().equals(username)
-                    && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userService.findByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    token,
+                                    userDetails.getAuthorities()
+                            );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
 
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, e);
+
+        } catch (Exception | UserNotFoundException e) {
+            assert e instanceof Exception;
+            handlerExceptionResolver.resolveException(request, response, null, (Exception) e);
         }
     }
 }

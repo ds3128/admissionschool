@@ -11,6 +11,8 @@ import org.darius.authservice.exceptions.UserNotFoundException;
 import org.darius.authservice.mapper.UserMapper;
 import org.darius.authservice.repositories.UserRepository;
 import org.darius.authservice.security.JwtService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void activateAccount(ActivationAccountRequest activationRequest) throws InvalidTokenException, UserNotFoundException {
-        if (!jwtService.isVerificationTokenValid(activationRequest.getToken())) {
+        if (jwtService.isVerificationTokenValid(activationRequest.getToken())) {
             throw new InvalidTokenException("Token expired");
         }
 
@@ -96,39 +98,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDtoResponse findByEmail(String email) throws UserNotFoundException {
-        Users users = this.userRepository.findByEmail(email)
+        Users user = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        return userMapper.ToUserDtoResponse(users);
+        return userMapper.ToUserDtoResponse(user);
     }
 
     @Override
     public UserDtoResponse findById(String userId) throws UserNotFoundException {
-        Users users = this.userRepository.findById(userId)
+        Users user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        return userMapper.ToUserDtoResponse(users);
+        return userMapper.ToUserDtoResponse(user);
     }
 
     @Override
     public AuthResponse login(LoginRequest loginRequest) throws UserNotFoundException {
         // first : find user by email
-        Users users = this.userRepository.findByEmail(loginRequest.getEmail())
+        Users user = this.userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         // check if user account is active
-        if (!users.isEnabled()) {
+        if (!user.isEnabled()) {
             throw new RuntimeException("Account not activated. Please check your email.");
         }
         // check if password match
-        if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), users.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
         // generate user token
-        Map<String, String> token = jwtService.generate(users.getEmail());
+        Map<String, String> token = jwtService.generate(user.getEmail());
 
         // define last user login
-        users.setLastLogin(new Date());
+        user.setLastLogin(new Date());
         // update user in database
-        userRepository.save(users);
+        userRepository.save(user);
 
         return AuthResponse.builder()
                 .accessToken(token.get("Access Token"))
@@ -137,28 +139,77 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
+    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws UserNotFoundException {
 
+        Users user = this.userRepository.findByEmail(forgotPasswordRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not activated.");
+        }
+
+        String resetToken = jwtService.generateVerificationToken(user.getEmail());
+
+        emailService.sendResetPasswordEmail(user.getEmail(), resetToken);
     }
 
     @Override
-    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+    public void resetPassword(ResetPasswordRequest resetPasswordRequest) throws InvalidTokenException, UserNotFoundException, PasswordMismatchException {
+        if (jwtService.isVerificationTokenValid(resetPasswordRequest.getToken())) {
+            throw new InvalidTokenException("Token invalid or expired");
+        }
 
+        String email = jwtService.extractEmailFromVerificationToken(resetPasswordRequest.getToken());
+
+        Users user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        validatePasswordMatch(resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmPassword());
+
+        user.setPassword(bCryptPasswordEncoder.encode(resetPasswordRequest.getNewPassword()));
+
+        this.userRepository.save(user);
     }
 
     @Override
-    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+    public void changePassword(ChangePasswordRequest changePasswordRequest) throws PasswordMismatchException {
+        Authentication authentication = Objects.requireNonNull(
+                SecurityContextHolder.getContext().getAuthentication()
+        );
 
+        Users user = (Users) authentication.getPrincipal();
+        String token = (String) authentication.getCredentials();
+
+        assert user != null;
+        if (!bCryptPasswordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
+            throw new PasswordMismatchException("Current password is incorrect.");
+        }
+
+        validatePasswordMatch(
+                changePasswordRequest.getNewPassword(),
+                changePasswordRequest.getConfirmPassword()
+        );
+
+        user.setPassword(bCryptPasswordEncoder.encode(changePasswordRequest.getNewPassword()));
+        this.userRepository.save(user);
+
+        jwtService.disconnect(token);
     }
 
     @Override
-    public void logout(LogoutRequest logoutRequest) {
-
+    public void logout(String token) {
+        this.jwtService.disconnect(token);
     }
 
     @Override
-    public AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
-        return null;
+    public AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) throws UserNotFoundException {
+        Map<String, String> tokens = this.jwtService.refreshToken(
+                Map.of("Refresh Token", refreshTokenRequest.getRefreshToken()));
+
+        return AuthResponse.builder()
+                .accessToken(tokens.get("Access Token"))
+                .refreshToken(tokens.get("Refresh Token"))
+                .build();
     }
 
     @Override
@@ -168,7 +219,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void resendActivationEmail(String email) throws UserNotFoundException {
+        Users user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        if (user.isEnabled()) {
+            throw new RuntimeException("Account is already activated.");
+        }
+
+        this.sendActivationEmail(user);
     }
 
     private void validatePasswordMatch(String password, String confirm) throws PasswordMismatchException {

@@ -30,4 +30,21 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendResetPasswordEmail(String toEmail, String token) {
+        String resetLink = baseUrl + "/api/auth/reset-password?token=" + token;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Reset your password");
+        message.setText(
+                "Bonjour,\n\n" +
+                        "Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :\n\n" +
+                        resetLink + "\n\n" +
+                        "Ce lien est valide pendant 24h.\n\n" +
+                        "Si vous n'avez pas fait cette demande, ignorez ce mail.\n\n" +
+                        "L'équipe"
+        );
+        mailSender.send(message);
+    }
 }

@@ -24,6 +24,13 @@ spring:
           auth: true
           starttls:
             enable: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 app:
   base-url: http://localhost:8081
+
+jwt:
+  secret: g6QXiyaSf2GYDpfAQydAa1TB8p00rXD2OWTiNQfieiVcOGfO2P7zLXwm37FYekBKDQtyICARczOlzXmKZO9roQ

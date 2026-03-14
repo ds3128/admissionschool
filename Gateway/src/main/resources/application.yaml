@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: Gateway
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret: g6QXiyaSf2GYDpfAQydAa1TB8p00rXD2OWTiNQfieiVcOGfO2P7zLXwm37FYekBKDQtyICARczOlzXmKZO9roQ
+
+server:
+  port: 8888

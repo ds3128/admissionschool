@@ -14,6 +14,8 @@ import org.darius.authservice.entities.Users;
 import org.darius.authservice.exceptions.UserNotFoundException;
 import org.darius.authservice.repositories.JwtRepository;
 import org.darius.authservice.services.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,7 +34,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-    private static final String ENCRYPTION_KEY = "g6QXiyaSf2GYDpfAQydAa1TB8p00rXD2OWTiNQfieiVcOGfO2P7zLXwm37FYekBKDQtyICARczOlzXmKZO9roQ";
+
+    private final RedisTemplate<Object, Object> redisTemplate;
+    @Value("${jwt.secret}")
+    private String ENCRYPTION_KEY;
     private static final long VERIFICATION_TOKEN_EXPIRATION = 24 * 60 * 60 * 1000L; // 24h
     private final String INVALID_TOKEN = "Invalid token";
     private final String ACCESS_TOKEN = "Access Token";
@@ -78,7 +84,7 @@ public class JwtService {
 
     private Map<String, String> generateJwt(Users user) {
         return Map.of(
-                ACCESS_TOKEN, createJwtToken(user.getEmail(), Map.of("name", user.getUsername()), ACCESS_TOKEN_EXPIRATION),
+                ACCESS_TOKEN, createJwtToken(user.getEmail(), Map.of("role", user.getRole().getRoleType().name()), ACCESS_TOKEN_EXPIRATION),
                 REFRESH_TOKEN, createJwtToken(user.getEmail(), Map.of(
                         "typ", "refresh",
                         "jti", UUID.randomUUID().toString()
@@ -129,7 +135,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    public void disconnect() {
+    public void disconnect(String token) {
         Users user = (Users) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         assert user != null;
         Jwt jwt = this.jwtRepository.findUserValidToken(
@@ -139,8 +145,21 @@ public class JwtService {
         ).orElseThrow(() -> new RuntimeException(INVALID_TOKEN));
         jwt.setExpire(true);
         jwt.setDeactivate(true);
-
         this.jwtRepository.save(jwt);
+
+        // Blacklist token in redis
+        Claims claims = getAllClaims(token);
+        String jti = claims.getId();
+        long ttl = claims.getExpiration().getTime() - System.currentTimeMillis();
+
+        if (ttl > 0){
+            redisTemplate.opsForValue().set(
+                    "blacklist:" +jti,
+                    "true",
+                    ttl,
+                    TimeUnit.MILLISECONDS
+            );
+        }
     }
 
     public Map<String, String> refreshToken(Map<String, String> refreshToken) throws UserNotFoundException {
@@ -177,9 +196,9 @@ public class JwtService {
     // Vérifie que le token de vérification est valide et non expiré
     public boolean isVerificationTokenValid(String token) {
         try {
-            return !getClaim(token, Claims::getExpiration).before(new Date());
+            return getClaim(token, Claims::getExpiration).before(new Date());
         } catch (JwtException e) {
-            return false;
+            return true;
         }
     }
 

@@ -7,7 +7,7 @@
 
 ## 🏗️ System Architecture
 
-![Microservices Architecture](./course_management-TargetAchitecture.png)
+![Microservices Architecture](./course_management.gif)
 
 # 📌 Project Objectives
 

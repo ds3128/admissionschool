@@ -5,6 +5,27 @@ spring:
     redis:
       host: localhost
       port: 6379
+#      password: redis_pass#123@
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: auth-service
+              uri: http://localhost:8081
+              predicates:
+                - Path=/auth/**
+              filters:
+                - AddResponseHeader=Access-Control-Allow-Origin, *
+
+            - id: auth-service-doc
+              uri: http://localhost:8081
+              predicates:
+                - Path=/auth/v3/api-docs/**,/auth/v3/api-docs
+              filters:
+                - StripPrefix=1
+                - AddResponseHeader=Access-Control-Allow-Origin, *
+
 
 jwt:
   secret: g6QXiyaSf2GYDpfAQydAa1TB8p00rXD2OWTiNQfieiVcOGfO2P7zLXwm37FYekBKDQtyICARczOlzXmKZO9roQ

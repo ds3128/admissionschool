@@ -1,0 +1,56 @@
+services:
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+#    command: redis-server --requirepass redis_pass#123@
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dev-db:
+    container_name: auth-db-postgres
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: auth_service
+      POSTGRES_PASSWORD: auth_service#123@
+      POSTGRES_DB: authdb
+
+  adminer:
+    container_name: adminer-auth
+    image: adminer:5.4.2-standalone
+    restart: always
+    ports:
+      - "9080:8080"
+
+#  auth-service:
+#    build: ./AuthService
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_REDIS_HOST=redis
+#      - SPRING_REDIS_PORT=6379
+#      - SPRING_REDIS_PASSWORD=ton_mot_de_passe
+#
+#  gateway:
+#    build: ./Gateway
+#    depends_on:
+#      redis:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_REDIS_HOST=redis
+#      - SPRING_REDIS_PORT=6379
+#      - SPRING_REDIS_PASSWORD=ton_mot_de_passe
+
+volumes:
+  redis_data:

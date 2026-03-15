@@ -3,9 +3,13 @@ package org.darius.authservice.common.dtos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ChangePasswordRequest {
 
     @NotBlank

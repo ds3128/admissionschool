@@ -13,6 +13,7 @@ public class Jwt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(nullable = false, length = 2048)
     private String value;
     private boolean deactivate;
     private boolean expire;

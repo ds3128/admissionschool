@@ -16,7 +16,6 @@ public enum RoleType {
     CANDIDATE(
             Set.of(
                     ADMISSION_CREATE,
-                    AVIS_CREATE,
                     AVIS_READ,
                     USER_READ,
                     USER_UPDATE
@@ -142,8 +141,6 @@ public enum RoleType {
                     DASHBOARD_VIEW
             )
     ),
-
-    // Super Administrateur (tous les droits)
     SUPER_ADMIN(
             Set.of()
     );
@@ -153,7 +150,6 @@ public enum RoleType {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<PermissionType> allPermissions = new HashSet<>();
 
-        // SUPER_ADMIN hérite de TOUT
         if (this == SUPER_ADMIN) {
             for (RoleType role : values()) {
                 if (role != SUPER_ADMIN) {
@@ -168,7 +164,6 @@ public enum RoleType {
                 .map(perm -> new SimpleGrantedAuthority(perm.name()))
                 .collect(Collectors.toList());
 
-        // Toujours ajouter le ROLE_XX
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
 
         return authorities;

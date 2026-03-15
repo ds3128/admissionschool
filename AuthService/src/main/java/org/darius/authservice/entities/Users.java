@@ -36,7 +36,7 @@ public class Users implements UserDetails {
     @Column(nullable = false)
     private boolean status = false;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 

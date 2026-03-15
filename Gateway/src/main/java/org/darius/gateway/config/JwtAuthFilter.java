@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtValidationService jwtValidationService;
@@ -24,7 +26,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/auth/");
+
+        List<String> excludedPaths = List.of(
+                "/auth/login",
+                "/auth/register",
+                "/auth/verify",
+                "/auth/forgot-password",
+                "/auth/reset-password",
+                "/auth/refresh-token",
+                "/auth/resend-activation",
+                "/swagger-ui.html",
+                "/swagger-ui/index.html"
+        );
+
+        List<String> excludedPrefixes = List.of(
+                "/swagger-ui",
+                "/v3/api-docs",
+                "/auth/v3/api-docs"
+        );
+
+        return excludedPaths.contains(path)
+                || excludedPrefixes.stream().anyMatch(path::startsWith);
     }
 
     @Override

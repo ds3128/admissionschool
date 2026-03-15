@@ -13,7 +13,7 @@ import org.darius.authservice.entities.RefreshToken;
 import org.darius.authservice.entities.Users;
 import org.darius.authservice.exceptions.UserNotFoundException;
 import org.darius.authservice.repositories.JwtRepository;
-import org.darius.authservice.services.UserService;
+import org.darius.authservice.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,7 +47,7 @@ public class JwtService {
 
     private final JwtRepository  jwtRepository;
 
-    private final UserService  userService;
+    private final UserRepository userRepository;
 
     public Jwt tokenByValue(String tokenValue) {
         return this.jwtRepository.findJwtByValueAndDeactivateAndExpire(
@@ -58,7 +58,8 @@ public class JwtService {
     }
 
     public Map<String, String> generate(String username) throws UserNotFoundException {
-        Users user = this.userService.findByUsername(username);
+        Users user = this.userRepository.findByEmail(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
         this.disabledToken(user);
 
         Map<String,String> tokens = generateJwt(user);
@@ -200,6 +201,36 @@ public class JwtService {
         } catch (JwtException e) {
             return true;
         }
+    }
+
+    public void revokeAllSessions(String email) {
+        // disable all users token in database
+        List<Jwt> tokens = this.jwtRepository.findUserByEmail(email)
+                .peek(jwt -> {
+                    jwt.setDeactivate(true);
+                    jwt.setExpire(true);
+                })
+                .collect(Collectors.toList());
+
+        this.jwtRepository.saveAll(tokens);
+
+        // Blacklist all still available JTI in Redis
+        tokens.forEach(jwt -> {
+            try {
+                Claims claims = getAllClaims(jwt.getValue());
+                long ttl = claims.getExpiration().getTime() - System.currentTimeMillis();
+                if (ttl > 0){
+                    redisTemplate.opsForValue().set(
+                            "blacklist:" + claims.getId(),
+                            "true",
+                            ttl,
+                            TimeUnit.MILLISECONDS
+                    );
+                }
+            } catch (JwtException ignored) {
+
+            }
+        });
     }
 
     private Date getExpirationDateFromToken(String token) {

@@ -5,6 +5,10 @@
     
     This project focuses not only on coding but also on software architecture design, DevOps practices, and distributed systems principles.
 
+## 🏗️ System Architecture
+
+![Microservices Architecture](./course_management-TargetAchitecture.png)
+
 # 📌 Project Objectives
 
     The main objectives of this project are:

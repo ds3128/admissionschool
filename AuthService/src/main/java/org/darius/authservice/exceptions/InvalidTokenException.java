@@ -1,6 +1,6 @@
 package org.darius.authservice.exceptions;
 
-public class InvalidTokenException extends Throwable {
+public class InvalidTokenException extends RuntimeException {
     public InvalidTokenException(String message) {
         super(message);
     }

@@ -61,9 +61,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } catch (Exception | UserNotFoundException e) {
-            assert e instanceof Exception;
-            handlerExceptionResolver.resolveException(request, response, null, (Exception) e);
+        } catch (Exception e) {
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }
 }

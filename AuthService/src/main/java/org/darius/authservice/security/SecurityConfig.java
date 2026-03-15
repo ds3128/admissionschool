@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtFilter jwtFilter;
     private final UserDetailsService userDetailsService;
@@ -31,36 +32,57 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
+    // Routes publiques - sans authentification
+    private static final String[] PUBLIC_POST = {
+            "/auth/register",
+            "/auth/login",
+            "/auth/refresh-token",
+            "/auth/forgot-password",
+            "/auth/reset-password"
+    };
+
+    private static final String[] PUBLIC_GET = {
+            "/auth/verify",
+            "/auth/validate",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-ui/index.html",
+            "/v3/api-docs/**",
+            "/v3/api-docs"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return
-                httpSecurity
-                        .csrf(AbstractHttpConfigurer::disable)
-                        .authorizeHttpRequests(authorize ->
-                                authorize
-                                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/activation").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/").hasAnyAuthority("ADMIN")
-                                        .anyRequest().authenticated()
-                        )
-                        .sessionManagement(httpSecuritySessionManagementConfigurer ->
-                                httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        )
-                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                        .build();
+        return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST).permitAll()
+                        .requestMatchers(HttpMethod.GET,  PUBLIC_GET).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/resend-activation").permitAll()
+
+//                        .requestMatchers(HttpMethod.GET, "/auth/user/**").hasAnyRole("ADMIN", "CANDIDATE")
+                        .requestMatchers(HttpMethod.GET, "/auth/user/**").hasAnyAuthority("USER_READ", "ADMIN_USER_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/auth/revoke-all-sessions").hasAuthority("ADMIN")
+
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration  authenticationConfiguration) throws Exception {
-        return  authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
-        return daoAuthenticationProvider;
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
+        return provider;
     }
 }

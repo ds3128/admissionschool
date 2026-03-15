@@ -1,13 +1,13 @@
 package org.darius.authservice.services;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.darius.authservice.common.dtos.*;
 import org.darius.authservice.common.enums.RoleType;
+import org.darius.authservice.config.RateLimitService;
 import org.darius.authservice.entities.Role;
 import org.darius.authservice.entities.Users;
-import org.darius.authservice.exceptions.InvalidTokenException;
-import org.darius.authservice.exceptions.PasswordMismatchException;
-import org.darius.authservice.exceptions.UserAlreadyExistException;
-import org.darius.authservice.exceptions.UserNotFoundException;
+import org.darius.authservice.exceptions.*;
 import org.darius.authservice.mapper.UserMapper;
 import org.darius.authservice.repositories.UserRepository;
 import org.darius.authservice.security.JwtService;
@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -29,13 +31,15 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final UserMapper userMapper;
     private final EmailService emailService;
+    private final RateLimitService  rateLimitService;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, UserMapper userMapper, EmailService emailService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, UserMapper userMapper, EmailService emailService, RateLimitService rateLimitService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtService = jwtService;
         this.userMapper = userMapper;
         this.emailService = emailService;
+        this.rateLimitService = rateLimitService;
     }
 
     @Override
@@ -73,12 +77,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void activateAccount(ActivationAccountRequest activationRequest) throws InvalidTokenException, UserNotFoundException {
-        if (jwtService.isVerificationTokenValid(activationRequest.getToken())) {
+    public void activateAccount(String token) throws InvalidTokenException, UserNotFoundException {
+        if (jwtService.isVerificationTokenValid(token)) {
             throw new InvalidTokenException("Token expired");
         }
 
-        String email = jwtService.extractEmailFromVerificationToken(activationRequest.getToken());
+        String email = jwtService.extractEmailFromVerificationToken(token);
 
         Users user = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -111,25 +115,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthResponse login(LoginRequest loginRequest) throws UserNotFoundException {
+    public AuthResponse login(LoginRequest loginRequest) throws UserNotFoundException, TooManyAttemptsException {
+
+        // check if email is blocked
+        if (rateLimitService.isBlocked(loginRequest.getEmail())) {
+            long remaining = rateLimitService.getRemainingBlockTime(loginRequest.getEmail());
+            throw new TooManyAttemptsException("Account temporarily locked. Try again in " + remaining + " minutes.");
+        }
         // first : find user by email
         Users user = this.userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         // check if user account is active
         if (!user.isEnabled()) {
-            throw new RuntimeException("Account not activated. Please check your email.");
+            throw new AccountNotActivatedException("Account not activated. Please check your email.");
         }
         // check if password match
         if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            rateLimitService.registrationFailedAttempt(loginRequest.getEmail());
+            int remaining = RateLimitService.MAX_ATTEMPTS - rateLimitService.getAttempts(loginRequest.getEmail());
+            throw new InvalidCredentialsException("Invalid credentials. " + remaining + " attempts remaining.");
         }
+
+        // Success -> reset attempts
+        rateLimitService.resetAttempts(loginRequest.getEmail());
 
         // generate user token
         Map<String, String> token = jwtService.generate(user.getEmail());
 
-        // define last user login
         user.setLastLogin(new Date());
-        // update user in database
         userRepository.save(user);
 
         return AuthResponse.builder()
@@ -167,6 +180,8 @@ public class UserServiceImpl implements UserService {
         validatePasswordMatch(resetPasswordRequest.getNewPassword(), resetPasswordRequest.getConfirmPassword());
 
         user.setPassword(bCryptPasswordEncoder.encode(resetPasswordRequest.getNewPassword()));
+
+        this.logout(resetPasswordRequest.getToken());
 
         this.userRepository.save(user);
     }
@@ -213,20 +228,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokenValidationResponse validateToken(String token) {
-        return null;
-    }
-
-    @Override
     public void resendActivationEmail(String email) throws UserNotFoundException {
         Users user = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (user.isEnabled()) {
-            throw new RuntimeException("Account is already activated.");
+            throw new UserAlreadyExistException("Account is already activated.");
         }
 
         this.sendActivationEmail(user);
+    }
+
+    @Override
+    public void revokeAllSessions(String email) throws UserNotFoundException {
+        this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        jwtService.revokeAllSessions(email);
     }
 
     private void validatePasswordMatch(String password, String confirm) throws PasswordMismatchException {

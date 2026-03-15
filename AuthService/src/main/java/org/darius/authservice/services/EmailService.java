@@ -15,7 +15,7 @@ public class EmailService {
     private String baseUrl;
 
     public void sendVerificationEmail(String email, String token) {
-        String verificationLink = baseUrl + "/api/auth/verify?token=" + token;
+        String verificationLink = baseUrl + "/auth/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -32,7 +32,7 @@ public class EmailService {
     }
 
     public void sendResetPasswordEmail(String toEmail, String token) {
-        String resetLink = baseUrl + "/api/auth/reset-password?token=" + token;
+        String resetLink = baseUrl + "/auth/reset-password?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);

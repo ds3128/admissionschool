@@ -66,7 +66,7 @@ Représente les informations personnelles et de contact de tout utilisateur du s
 
 **Règles métier :**
 - Un `UserProfile` est automatiquement créé lorsque l'Auth Service publie un événement `UserRegistered`.
-- `userId` est unique et immuable — il ne peut pas être réaffecté.
+- `userId` est unique et immuable - il ne peut pas être réaffecté.
 - `firstName` est obligatoire et `lastName` est optionnel.
 - La suppression d'un profil entraîne la suppression en cascade de `Student` ou `Teacher` associé.
 
@@ -187,7 +187,6 @@ Représente un niveau d'étude dans une filière (ex : L1, L2, L3, M1, M2).
 |---|---|
 | `MALE` | Masculin |
 | `FEMALE` | Féminin |
-| `OTHER` | Autre / Non précisé |
 
 ### `StudentStatus`
 | Valeur | Description |
@@ -219,7 +218,7 @@ Représente un niveau d'étude dans une filière (ex : L1, L2, L3, M1, M2).
 
 ## 4. Cas d'utilisation
 
-### UC-001 — Créer un profil utilisateur
+### UC-001 - Créer un profil utilisateur
 
 **Acteur :** Système (Auth Service via événement Kafka)  
 **Déclencheur :** Réception de l'événement `UserActivated` (après activation du compte)  

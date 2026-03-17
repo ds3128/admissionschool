@@ -1,4 +1,4 @@
-# Admission Service — Documentation Technique v3
+# Admission Service - Documentation Technique v3
 
 **Projet :** AdmissionSchool  
 **Service :** Admission Service  
@@ -20,7 +20,7 @@
 1. [Vue d'ensemble du service](#1-vue-densemble-du-service)
 2. [Cycle d'une campagne d'admission](#2-cycle-dune-campagne-dadmission)
 3. [Flux par niveau d'études](#3-flux-par-niveau-détudes)
-4. [Modèle de domaine — Description des entités](#4-modèle-de-domaine--description-des-entités)
+4. [Modèle de domaine - Description des entités](#4-modèle-de-domaine--description-des-entités)
 5. [Énumérations](#5-énumérations)
 6. [Cas d'utilisation](#6-cas-dutilisation)
 7. [Règles métier transversales](#7-règles-métier-transversales)
@@ -36,9 +36,9 @@ L'Admission Service gère l'intégralité du processus de candidature à l'unive
 ### Spécificités v3
 
 - Trois flux distincts adaptés au niveau d'études : **Licence** (commission seule), **Master** (commission + entretien possible), **Doctorat** (accord directeur de thèse + commission + entretien).
-- La commission pédagogique **vote à la majorité** — chaque membre vote individuellement, la décision est validée par le président.
-- La **liste d'attente est active** — chaque candidat a un rang, les places libérées sont proposées dans l'ordre.
-- La campagne d'admission s'ouvre sur une **période définie** (ex : janvier → avril) — aucune soumission n'est acceptée hors de cette fenêtre.
+- La commission pédagogique **vote à la majorité** - chaque membre vote individuellement, la décision est validée par le président.
+- La **liste d'attente est active** - chaque candidat a un rang, les places libérées sont proposées dans l'ordre.
+- La campagne d'admission s'ouvre sur une **période définie** (ex : janvier → avril) - aucune soumission n'est acceptée hors de cette fenêtre.
 - Chaque offre de formation possède sa propre **deadline** dans la fenêtre de la campagne.
 
 ### Responsabilités
@@ -241,7 +241,7 @@ Notification : envoi credentials
 
 ---
 
-## 4. Modèle de domaine — Description des entités
+## 4. Modèle de domaine - Description des entités
 
 ### 4.1 `AdmissionCampaign`
 
@@ -261,7 +261,7 @@ Représente une campagne d'admission pour une année académique donnée. Défin
 | `createdAt` | LocalDateTime | Date de création |
 
 **Règles métier :**
-- Unicité de l'`academicYear` — une seule campagne par année.
+- Unicité de l'`academicYear` - une seule campagne par année.
 - Transition automatique `UPCOMING` → `OPEN` à la date `startDate`.
 - Transition automatique `OPEN` → `CLOSED` à la date `endDate + 1 jour`.
 - Les dossiers soumis avant la clôture continuent leur traitement après `CLOSED`.
@@ -330,8 +330,8 @@ Représente un choix de formation individuel dans une candidature. Chaque choix 
 | `offerId` | Long | Référence vers `AdmissionOffer.id` |
 | `filiereId` | Long | Dénormalisé |
 | `filiereName` | String | Dénormalisé pour historique |
-| `level` | OfferLevel | LICENCE, MASTER, DOCTORAT — détermine le flux |
-| `choiceOrder` | int | Priorité — 1 (haute), 2, 3 |
+| `level` | OfferLevel | LICENCE, MASTER, DOCTORAT - détermine le flux |
+| `choiceOrder` | int | Priorité - 1 (haute), 2, 3 |
 | `status` | ChoiceStatus | Statut courant du choix |
 | `decidedAt` | LocalDateTime | Date de décision finale |
 | `decidedBy` | UUID | ID de l'admin ou président de commission |
@@ -481,7 +481,7 @@ Représente un entretien planifié pour un choix de formation (Master / Doctorat
 - Un entretien ne peut être planifié que si le statut du choix est `INTERVIEW_REQUIRED`.
 - La notification au candidat est envoyée dès la planification.
 - Annulation possible avec un délai minimum de 48h avant l'entretien.
-- Les notes post-entretien sont confidentielles — non visibles par le candidat.
+- Les notes post-entretien sont confidentielles - non visibles par le candidat.
 
 ---
 
@@ -628,10 +628,10 @@ Trace l'historique complet des changements de statut.
 | `INTERVIEW_SCHEDULED` | Entretien planifié |
 | `INTERVIEW_DONE` | Entretien réalisé, vote final en attente |
 | `WAITLISTED` | Sur liste d'attente avec rang |
-| `PROMOTED_FROM_WAITLIST` | Promu depuis liste d'attente — délai 48h |
+| `PROMOTED_FROM_WAITLIST` | Promu depuis liste d'attente - délai 48h |
 | `ACCEPTED` | Accepté |
 | `REJECTED` | Refusé |
-| `CONFIRMED` | Confirmé par le candidat — inscription déclenchée |
+| `CONFIRMED` | Confirmé par le candidat - inscription déclenchée |
 | `WITHDRAWN` | Retiré automatiquement |
 
 ### `OfferLevel`
@@ -722,7 +722,7 @@ Trace l'historique complet des changements de statut.
 
 ## 6. Cas d'utilisation
 
-### UC-ADM-001 — Créer une campagne d'admission
+### UC-ADM-001 - Créer une campagne d'admission
 
 **Acteur :** Super Admin (`SUPER_ADMIN`)  
 **Déclencheur :** Requête `POST /admissions/campaigns`  
@@ -737,7 +737,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-002 — Créer une offre de formation
+### UC-ADM-002 - Créer une offre de formation
 
 **Acteur :** Super Admin (`SUPER_ADMIN`)  
 **Déclencheur :** Requête `POST /admissions/offers`  
@@ -753,7 +753,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-003 — Créer une candidature (brouillon)
+### UC-ADM-003 - Créer une candidature (brouillon)
 
 **Acteur :** Candidat (`CANDIDATE`)  
 **Déclencheur :** Requête `POST /admissions/applications`  
@@ -769,7 +769,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-004 — Ajouter un choix de formation
+### UC-ADM-004 - Ajouter un choix de formation
 
 **Acteur :** Candidat  
 **Déclencheur :** Requête `POST /admissions/applications/{id}/choices`  
@@ -791,7 +791,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-005 — Payer les frais et soumettre
+### UC-ADM-005 - Payer les frais et soumettre
 
 **Acteur :** Candidat  
 **Déclencheur :** Requête `POST /admissions/applications/{id}/payment` puis `POST /admissions/applications/{id}/submit`
@@ -811,7 +811,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-006 — Validation administrative
+### UC-ADM-006 - Validation administrative
 
 **Acteur :** Scolarité centrale (`ADMIN_SCHOLAR`)  
 **Déclencheur :** Requête `PUT /admissions/admin/applications/{id}/admin-review`  
@@ -826,7 +826,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-007 — Vote de la commission sur un choix
+### UC-ADM-007 - Vote de la commission sur un choix
 
 **Acteur :** Membre de la commission (`TEACHER` avec rôle commission)  
 **Déclencheur :** Requête `POST /admissions/commissions/{commissionId}/votes`  
@@ -842,7 +842,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-008 — Validation de la décision par le président
+### UC-ADM-008 - Validation de la décision par le président
 
 **Acteur :** Président de commission  
 **Déclencheur :** Requête `POST /admissions/commissions/{commissionId}/choices/{choiceId}/validate`
@@ -857,7 +857,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-009 — Planifier un entretien
+### UC-ADM-009 - Planifier un entretien
 
 **Acteur :** Commission / Scolarité (`ADMIN_SCHOLAR`)  
 **Déclencheur :** Requête `POST /admissions/applications/{id}/choices/{choiceId}/interview`  
@@ -871,7 +871,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-010 — Enregistrer la décision post-entretien
+### UC-ADM-010 - Enregistrer la décision post-entretien
 
 **Acteur :** Président de commission  
 **Déclencheur :** Requête `PUT /admissions/interviews/{id}/complete`  
@@ -886,7 +886,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-011 — Demande d'accord au directeur de thèse (Doctorat)
+### UC-ADM-011 - Demande d'accord au directeur de thèse (Doctorat)
 
 **Acteur :** Système (automatique après validation admin)  
 **Déclencheur :** Choix de niveau `DOCTORAT` passe à `PENDING_COMMISSION`
@@ -905,7 +905,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-012 — Gestion de la liste d'attente
+### UC-ADM-012 - Gestion de la liste d'attente
 
 **Acteur :** Système (automatique)  
 **Déclencheur :** Place libérée dans une offre (confirmation retirée, expiration)
@@ -915,13 +915,13 @@ Trace l'historique complet des changements de statut.
 2. Le système identifie la `WaitlistEntry` avec le rang le plus bas (`rank = 1`).
 3. Le système passe son statut à `PROMOTED`.
 4. Le système calcule `expiresAt = now + 48h`.
-5. Le système notifie le candidat : "Une place s'est libérée — vous avez 48h pour confirmer."
+5. Le système notifie le candidat : "Une place s'est libérée - vous avez 48h pour confirmer."
 6. Si le candidat confirme → `WaitlistEntry.status = CONFIRMED`, inscription déclenchée.
 7. Si délai expiré ou refus → `WaitlistEntry.status = EXPIRED` ou `WITHDRAWN`, rang 2 promu.
 
 ---
 
-### UC-ADM-013 — Confirmer un choix de formation
+### UC-ADM-013 - Confirmer un choix de formation
 
 **Acteur :** Candidat  
 **Déclencheur :** Requête `POST /admissions/applications/{id}/confirm`  
@@ -938,7 +938,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-014 — Expiration du délai de confirmation
+### UC-ADM-014 - Expiration du délai de confirmation
 
 **Acteur :** Système (job schedulé quotidien)  
 **Déclencheur :** `ConfirmationRequest.expiresAt < now()` et `status = PENDING`
@@ -952,7 +952,7 @@ Trace l'historique complet des changements de statut.
 
 ---
 
-### UC-ADM-015 — Évaluation globale après décision sur tous les choix
+### UC-ADM-015 - Évaluation globale après décision sur tous les choix
 
 **Acteur :** Système (automatique)  
 **Déclencheur :** Tous les choix d'une application ont une décision finale

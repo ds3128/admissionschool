@@ -1,4 +1,4 @@
-# User Service — Documentation Technique
+# User Service - Documentation Technique
 
 **Projet :** AdmissionSchool  
 **Service :** User Service  
@@ -11,7 +11,7 @@
 ## Table des matières
 
 1. [Vue d'ensemble du service](#1-vue-densemble-du-service)
-2. [Modèle de domaine — Description des entités](#2-modèle-de-domaine--description-des-entités)
+2. [Modèle de domaine - Description des entités](#2-modèle-de-domaine--description-des-entités)
 3. [Énumérations](#3-énumérations)
 4. [Cas d'utilisation](#4-cas-dutilisation)
 5. [Dépendances cross-services](#5-dépendances-cross-services)
@@ -45,7 +45,7 @@ L'authentification et la gestion des tokens sont exclusivement gérées par l'**
 
 ---
 
-## 2. Modèle de domaine — Description des entités
+## 2. Modèle de domaine - Description des entités
 
 ### 2.1 `UserProfile`
 

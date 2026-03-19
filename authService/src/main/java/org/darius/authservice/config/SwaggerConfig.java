@@ -28,7 +28,7 @@ public class SwaggerConfig {
                                 .description("API Gateway"),
                         new Server()
                                 .url("http://localhost:8081")
-                                .description("Auth Service (direct)")
+                                .description("Auth Service")
                 ))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Auth"))
                 .components(new Components()

@@ -1,7 +1,6 @@
 package org.darius.authservice.common.dtos;
 
 import lombok.*;
-import org.darius.authservice.entities.Role;
 
 import java.time.LocalDateTime;
 

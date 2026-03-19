@@ -27,26 +27,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
 
-        List<String> excludedPaths = List.of(
-                "/auth/login",
-                "/auth/register",
-                "/auth/verify",
-                "/auth/forgot-password",
-                "/auth/reset-password",
-                "/auth/refresh-token",
-                "/auth/resend-activation",
-                "/swagger-ui.html",
-                "/swagger-ui/index.html"
-        );
+        log.info(">>> JwtFilter — path reçu : {}", path);
 
-        List<String> excludedPrefixes = List.of(
-                "/swagger-ui",
-                "/v3/api-docs",
-                "/auth/v3/api-docs"
-        );
-
-        return excludedPaths.contains(path)
-                || excludedPrefixes.stream().anyMatch(path::startsWith);
+        return path.startsWith("/auth/")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/webjars/")
+                || path.startsWith("/v3/api-docs")
+                || path.contains("/v3/api-docs");
     }
 
     @Override

@@ -21,7 +21,7 @@ public class ThesisDirectorController {
     private final ThesisDirectorService thesisDirectorService;
 
     @GetMapping
-    @Operation(summary = "Demandes d'accord en attente — TEACHER (HDR)")
+    @Operation(summary = "Demandes d'accord en attente - TEACHER (HDR)")
     public ResponseEntity<List<ThesisApprovalResponse>> getPending(
             @RequestHeader("X-User-Id") String directorId
     ) {
@@ -29,7 +29,7 @@ public class ThesisDirectorController {
     }
 
     @PutMapping("/{id}/respond")
-    @Operation(summary = "Répondre à une demande d'accord — TEACHER (HDR)")
+    @Operation(summary = "Répondre à une demande d'accord - TEACHER (HDR)")
     public ResponseEntity<ThesisApprovalResponse> respond(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") String directorId,

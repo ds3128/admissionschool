@@ -336,6 +336,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .application(app)
                 .amount(app.getCampaign().getFeeAmount())
                 .currency("EUR")
+                .paymentReference(applicationId)
                 .status(PaymentStatus.PENDING)
                 .build();
 

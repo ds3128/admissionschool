@@ -23,7 +23,7 @@ public class AdminApplicationController {
     private final AdminApplicationService adminService;
 
     @GetMapping("/applications")
-    @Operation(summary = "Lister toutes les candidatures — ADMIN_SCHOLAR")
+    @Operation(summary = "Lister toutes les candidatures - ADMIN_SCHOLAR")
     public ResponseEntity<PageResponse<ApplicationSummaryResponse>> getAll(
             @RequestParam(required = false) ApplicationStatus status,
             @RequestParam(required = false) Long campaignId,
@@ -34,13 +34,13 @@ public class AdminApplicationController {
     }
 
     @GetMapping("/applications/{id}")
-    @Operation(summary = "Dossier complet — ADMIN_SCHOLAR")
+    @Operation(summary = "Dossier complet - ADMIN_SCHOLAR")
     public ResponseEntity<ApplicationResponse> getById(@PathVariable String id) {
         return ResponseEntity.ok(adminService.getApplicationByIdAdmin(id));
     }
 
     @PutMapping("/applications/{id}/admin-review")
-    @Operation(summary = "Valider ou refuser administrativement — ADMIN_SCHOLAR")
+    @Operation(summary = "Valider ou refuser administrativement - ADMIN_SCHOLAR")
     public ResponseEntity<ApplicationResponse> adminReview(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String adminUserId,
@@ -50,7 +50,7 @@ public class AdminApplicationController {
     }
 
     @PostMapping("/applications/{id}/request-docs")
-    @Operation(summary = "Demander des documents supplémentaires — ADMIN_SCHOLAR")
+    @Operation(summary = "Demander des documents supplémentaires - ADMIN_SCHOLAR")
     public ResponseEntity<ApplicationResponse> requestDocs(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String adminUserId,
@@ -62,7 +62,7 @@ public class AdminApplicationController {
     }
 
     @PutMapping("/applications/{id}/forward-commission")
-    @Operation(summary = "Transmettre manuellement à la commission — ADMIN_SCHOLAR")
+    @Operation(summary = "Transmettre manuellement à la commission - ADMIN_SCHOLAR")
     public ResponseEntity<ApplicationResponse> forwardToCommission(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String adminUserId

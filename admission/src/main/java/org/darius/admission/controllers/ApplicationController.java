@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admissions/applications")
 @RequiredArgsConstructor
-@Tag(name = "Candidatures", description = "Flux candidat — création, soumission, confirmation")
+@Tag(name = "Candidatures", description = "Flux candidat - création, soumission, confirmation")
 public class ApplicationController {
 
     private final ApplicationService applicationService;
@@ -174,7 +174,7 @@ public class ApplicationController {
     // ── Confirmation ──────────────────────────────────────────────────────────
 
     @GetMapping("/{id}/confirmation")
-    @Operation(summary = "Statut de confirmation — choix acceptés + délai restant")
+    @Operation(summary = "Statut de confirmation - choix acceptés + délai restant")
     public ResponseEntity<ConfirmationResponse> getConfirmation(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String userId

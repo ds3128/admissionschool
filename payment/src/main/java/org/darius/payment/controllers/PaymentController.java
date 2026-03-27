@@ -20,7 +20,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/admission-fees")
-    @Operation(summary = "Initier le paiement des frais de dossier — CANDIDATE")
+    @Operation(summary = "Initier le paiement des frais de dossier - CANDIDATE")
     public ResponseEntity<PaymentResponse> initiateAdmissionFee(
             @RequestHeader("X-User-Id") String userId,
             @Valid @RequestBody InitiateAdmissionFeeRequest request
@@ -30,20 +30,20 @@ public class PaymentController {
     }
 
     @PostMapping("/webhook")
-    @Operation(summary = "Confirmation passerelle externe — public")
+    @Operation(summary = "Confirmation passerelle externe - public")
     public ResponseEntity<Void> webhook(@RequestBody WebhookRequest request) {
         paymentService.processWebhook(request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/simulate-confirm")
-    @Operation(summary = "Simuler confirmation — dev uniquement")
+    @Operation(summary = "Simuler confirmation - dev uniquement")
     public ResponseEntity<PaymentResponse> simulateConfirm(@PathVariable String id) {
         return ResponseEntity.ok(paymentService.simulateConfirm(id));
     }
 
     @PostMapping("/{id}/refund")
-    @Operation(summary = "Rembourser un paiement — ADMIN_FINANCE")
+    @Operation(summary = "Rembourser un paiement - ADMIN_FINANCE")
     public ResponseEntity<PaymentResponse> refund(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String adminId,
@@ -72,7 +72,7 @@ public class PaymentController {
     }
 
     @GetMapping("/history")
-    @Operation(summary = "Historique paiements — ADMIN_FINANCE")
+    @Operation(summary = "Historique paiements - ADMIN_FINANCE")
     public ResponseEntity<PageResponse<PaymentResponse>> getHistory(
             @RequestParam String userId,
             @RequestParam(defaultValue = "0")  int page,

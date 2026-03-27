@@ -76,7 +76,7 @@ public class AuthController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Connexion réussie"),
             @ApiResponse(responseCode = "401", description = "Identifiants invalides"),
-            @ApiResponse(responseCode = "429", description = "Trop de tentatives — compte temporairement bloqué")
+            @ApiResponse(responseCode = "429", description = "Trop de tentatives - compte temporairement bloqué")
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
@@ -114,7 +114,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Révoquer toutes les sessions",
-            description = "Déconnecte l'utilisateur de tous ses appareils — réservé ADMIN")
+            description = "Déconnecte l'utilisateur de tous ses appareils - réservé ADMIN")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Sessions révoquées"),
             @ApiResponse(responseCode = "404", description = "Utilisateur introuvable")
@@ -130,7 +130,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Changer son mot de passe",
-            description = "Requiert l'ancien mot de passe — révoque le token courant après changement")
+            description = "Requiert l'ancien mot de passe - révoque le token courant après changement")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Mot de passe modifié"),
             @ApiResponse(responseCode = "400", description = "Ancien mot de passe incorrect ou confirmation invalide")

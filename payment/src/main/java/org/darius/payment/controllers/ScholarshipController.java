@@ -36,7 +36,7 @@ public class ScholarshipController {
     }
 
     @GetMapping
-    @Operation(summary = "Lister les bourses — ADMIN_FINANCE")
+    @Operation(summary = "Lister les bourses - ADMIN_FINANCE")
     public ResponseEntity<List<ScholarshipResponse>> getAll(
             @RequestParam(required = false) String studentId,
             @RequestParam(required = false) String type,
@@ -46,7 +46,7 @@ public class ScholarshipController {
     }
 
     @PostMapping
-    @Operation(summary = "Attribuer une bourse — ADMIN_FINANCE")
+    @Operation(summary = "Attribuer une bourse - ADMIN_FINANCE")
     public ResponseEntity<ScholarshipResponse> create(
             @RequestHeader("X-User-Id") String adminId,
             @Valid @RequestBody CreateScholarshipRequest request
@@ -56,7 +56,7 @@ public class ScholarshipController {
     }
 
     @PutMapping("/{id}/activate")
-    @Operation(summary = "Activer une bourse — ADMIN_FINANCE")
+    @Operation(summary = "Activer une bourse - ADMIN_FINANCE")
     public ResponseEntity<ScholarshipResponse> activate(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") String adminId
@@ -65,7 +65,7 @@ public class ScholarshipController {
     }
 
     @PutMapping("/{id}/suspend")
-    @Operation(summary = "Suspendre une bourse — ADMIN_FINANCE")
+    @Operation(summary = "Suspendre une bourse - ADMIN_FINANCE")
     public ResponseEntity<ScholarshipResponse> suspend(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") String adminId,
@@ -75,7 +75,7 @@ public class ScholarshipController {
     }
 
     @PutMapping("/{id}/terminate")
-    @Operation(summary = "Terminer définitivement une bourse — ADMIN_FINANCE")
+    @Operation(summary = "Terminer définitivement une bourse - ADMIN_FINANCE")
     public ResponseEntity<ScholarshipResponse> terminate(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") String adminId

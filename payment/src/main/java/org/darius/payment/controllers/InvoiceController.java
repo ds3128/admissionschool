@@ -23,7 +23,7 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     @GetMapping("/me")
-    @Operation(summary = "Mes factures — STUDENT")
+    @Operation(summary = "Mes factures - STUDENT")
     public ResponseEntity<List<InvoiceResponse>> getMyInvoices(
             @RequestHeader("X-User-Id") String studentId
     ) {
@@ -40,7 +40,7 @@ public class InvoiceController {
     }
 
     @PostMapping("/{id}/pay")
-    @Operation(summary = "Payer une facture — STUDENT")
+    @Operation(summary = "Payer une facture - STUDENT")
     public ResponseEntity<PaymentResponse> pay(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String studentId,
@@ -50,7 +50,7 @@ public class InvoiceController {
     }
 
     @PostMapping("/generate")
-    @Operation(summary = "Générer les factures d'une cohorte — ADMIN_FINANCE")
+    @Operation(summary = "Générer les factures d'une cohorte - ADMIN_FINANCE")
     public ResponseEntity<Map<String, Integer>> generate(
             @Valid @RequestBody GenerateInvoicesRequest request
     ) {
@@ -59,7 +59,7 @@ public class InvoiceController {
     }
 
     @PostMapping("/{id}/schedule")
-    @Operation(summary = "Créer un échéancier — ADMIN_FINANCE")
+    @Operation(summary = "Créer un échéancier - ADMIN_FINANCE")
     public ResponseEntity<PaymentScheduleResponse> createSchedule(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String adminId,
@@ -79,7 +79,7 @@ public class InvoiceController {
     }
 
     @PutMapping("/{id}/cancel")
-    @Operation(summary = "Annuler une facture — ADMIN_FINANCE")
+    @Operation(summary = "Annuler une facture - ADMIN_FINANCE")
     public ResponseEntity<InvoiceResponse> cancel(
             @PathVariable String id,
             @RequestHeader("X-User-Id") String adminId

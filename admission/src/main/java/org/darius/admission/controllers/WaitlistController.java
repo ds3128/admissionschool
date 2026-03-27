@@ -19,7 +19,7 @@ public class WaitlistController {
     private final WaitlistService waitlistService;
 
     @GetMapping
-    @Operation(summary = "Liste d'attente d'une offre — ADMIN_SCHOLAR")
+    @Operation(summary = "Liste d'attente d'une offre - ADMIN_SCHOLAR")
     public ResponseEntity<List<WaitlistEntryResponse>> getWaitlist(
             @RequestParam Long offerId
     ) {

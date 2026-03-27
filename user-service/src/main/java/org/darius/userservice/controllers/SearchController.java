@@ -18,7 +18,7 @@ public class SearchController {
     private final UserSearchService userSearchService;
 
     @GetMapping
-    @Operation(summary = "Recherche globale — étudiants, enseignants, personnel")
+    @Operation(summary = "Recherche globale - étudiants, enseignants, personnel")
     public ResponseEntity<PageResponse<SearchResultResponse>> search(
             @RequestParam String q,
             @RequestParam(defaultValue = "0")  int page,

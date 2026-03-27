@@ -24,7 +24,7 @@ public class CommissionController {
     private final CommissionService commissionService;
 
     @GetMapping
-    @Operation(summary = "Lister les commissions — ADMIN_SCHOLAR")
+    @Operation(summary = "Lister les commissions - ADMIN_SCHOLAR")
     public ResponseEntity<List<CommissionResponse>> getAll() {
         return ResponseEntity.ok(commissionService.getAllCommissions());
     }
@@ -36,7 +36,7 @@ public class CommissionController {
     }
 
     @PostMapping("/{id}/members")
-    @Operation(summary = "Ajouter un membre — SUPER_ADMIN")
+    @Operation(summary = "Ajouter un membre - SUPER_ADMIN")
     public ResponseEntity<CommissionResponse> addMember(
             @PathVariable Long id,
             @Valid @RequestBody AddCommissionMemberRequest request
@@ -46,7 +46,7 @@ public class CommissionController {
     }
 
     @DeleteMapping("/{id}/members/{memberId}")
-    @Operation(summary = "Retirer un membre — SUPER_ADMIN")
+    @Operation(summary = "Retirer un membre - SUPER_ADMIN")
     public ResponseEntity<CommissionResponse> removeMember(
             @PathVariable Long id,
             @PathVariable Long memberId
@@ -55,7 +55,7 @@ public class CommissionController {
     }
 
     @GetMapping("/{id}/choices")
-    @Operation(summary = "Dossiers à examiner — TEACHER (membre)")
+    @Operation(summary = "Dossiers à examiner - TEACHER (membre)")
     public ResponseEntity<List<ChoiceResponse>> getPendingChoices(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") String teacherId
@@ -64,7 +64,7 @@ public class CommissionController {
     }
 
     @PostMapping("/{id}/votes")
-    @Operation(summary = "Voter sur un choix — TEACHER (membre)")
+    @Operation(summary = "Voter sur un choix - TEACHER (membre)")
     public ResponseEntity<VoteResponse> castVote(
             @PathVariable Long id,
             @RequestHeader("X-User-Id") String teacherId,
@@ -75,7 +75,7 @@ public class CommissionController {
     }
 
     @GetMapping("/{id}/choices/{choiceId}/vote-result")
-    @Operation(summary = "Résultat du vote pour un choix — TEACHER (président)")
+    @Operation(summary = "Résultat du vote pour un choix - TEACHER (président)")
     public ResponseEntity<VoteResultResponse> getVoteResult(
             @PathVariable Long id,
             @PathVariable Long choiceId
@@ -84,7 +84,7 @@ public class CommissionController {
     }
 
     @PostMapping("/{id}/choices/{choiceId}/validate")
-    @Operation(summary = "Valider la décision finale — TEACHER (président)")
+    @Operation(summary = "Valider la décision finale - TEACHER (président)")
     public ResponseEntity<ChoiceResponse> validateDecision(
             @PathVariable Long id,
             @PathVariable Long choiceId,

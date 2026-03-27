@@ -22,25 +22,25 @@ public class CampaignController {
     private final CampaignService campaignService;
 
     @GetMapping
-    @Operation(summary = "Lister les campagnes — public")
+    @Operation(summary = "Lister les campagnes - public")
     public ResponseEntity<List<CampaignResponse>> getAll() {
         return ResponseEntity.ok(campaignService.getAllCampaigns());
     }
 
     @GetMapping("/current")
-    @Operation(summary = "Campagne actuellement ouverte — public")
+    @Operation(summary = "Campagne actuellement ouverte - public")
     public ResponseEntity<CampaignResponse> getCurrent() {
         return ResponseEntity.ok(campaignService.getCurrentCampaign());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Détail d'une campagne — public")
+    @Operation(summary = "Détail d'une campagne - public")
     public ResponseEntity<CampaignResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(campaignService.getCampaignById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Créer une campagne — SUPER_ADMIN")
+    @Operation(summary = "Créer une campagne - SUPER_ADMIN")
     public ResponseEntity<CampaignResponse> create(
             @Valid @RequestBody CreateCampaignRequest request
     ) {
@@ -49,7 +49,7 @@ public class CampaignController {
     }
 
     @PutMapping("/{id}/status")
-    @Operation(summary = "Changer le statut d'une campagne — SUPER_ADMIN")
+    @Operation(summary = "Changer le statut d'une campagne - SUPER_ADMIN")
     public ResponseEntity<CampaignResponse> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateCampaignStatusRequest request
@@ -58,7 +58,7 @@ public class CampaignController {
     }
 
     @GetMapping("/{id}/stats")
-    @Operation(summary = "Statistiques d'une campagne — ADMIN_SCHOLAR")
+    @Operation(summary = "Statistiques d'une campagne - ADMIN_SCHOLAR")
     public ResponseEntity<CampaignStatsResponse> getStats(@PathVariable Long id) {
         return ResponseEntity.ok(campaignService.getCampaignStats(id));
     }

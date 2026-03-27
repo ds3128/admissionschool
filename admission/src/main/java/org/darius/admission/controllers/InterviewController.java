@@ -20,7 +20,7 @@ public class InterviewController {
     private final InterviewService interviewService;
 
     @PostMapping("/admissions/applications/{applicationId}/choices/{choiceId}/interview")
-    @Operation(summary = "Planifier un entretien — ADMIN_SCHOLAR")
+    @Operation(summary = "Planifier un entretien - ADMIN_SCHOLAR")
     public ResponseEntity<InterviewResponse> schedule(
             @PathVariable String applicationId,
             @PathVariable Long choiceId,
@@ -37,7 +37,7 @@ public class InterviewController {
     }
 
     @PutMapping("/admissions/interviews/{id}/complete")
-    @Operation(summary = "Clôturer un entretien — TEACHER (président)")
+    @Operation(summary = "Clôturer un entretien - TEACHER (président)")
     public ResponseEntity<InterviewResponse> complete(
             @PathVariable Long id,
             @RequestBody CompleteInterviewRequest request
@@ -46,7 +46,7 @@ public class InterviewController {
     }
 
     @PutMapping("/admissions/interviews/{id}/cancel")
-    @Operation(summary = "Annuler un entretien — ADMIN_SCHOLAR")
+    @Operation(summary = "Annuler un entretien - ADMIN_SCHOLAR")
     public ResponseEntity<InterviewResponse> cancel(
             @PathVariable Long id,
             @RequestParam(required = false) String reason

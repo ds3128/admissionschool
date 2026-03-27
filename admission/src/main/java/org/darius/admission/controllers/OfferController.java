@@ -23,7 +23,7 @@ public class OfferController {
     private final OfferService offerService;
 
     @GetMapping("/offers")
-    @Operation(summary = "Lister les offres — public")
+    @Operation(summary = "Lister les offres - public")
     public ResponseEntity<List<OfferSummaryResponse>> getOffers(
             @RequestParam Long campaignId,
             @RequestParam(required = false) OfferLevel level
@@ -32,13 +32,13 @@ public class OfferController {
     }
 
     @GetMapping("/offers/{id}")
-    @Operation(summary = "Détail d'une offre avec documents requis — public")
+    @Operation(summary = "Détail d'une offre avec documents requis - public")
     public ResponseEntity<OfferResponse> getOffer(@PathVariable Long id) {
         return ResponseEntity.ok(offerService.getOfferById(id));
     }
 
     @PostMapping("/offers")
-    @Operation(summary = "Créer une offre — SUPER_ADMIN")
+    @Operation(summary = "Créer une offre - SUPER_ADMIN")
     public ResponseEntity<OfferResponse> createOffer(
             @Valid @RequestBody CreateOfferRequest request
     ) {
@@ -47,7 +47,7 @@ public class OfferController {
     }
 
     @PutMapping("/offers/{id}")
-    @Operation(summary = "Modifier une offre — SUPER_ADMIN")
+    @Operation(summary = "Modifier une offre - SUPER_ADMIN")
     public ResponseEntity<OfferResponse> updateOffer(
             @PathVariable Long id,
             @Valid @RequestBody UpdateOfferRequest request
@@ -56,7 +56,7 @@ public class OfferController {
     }
 
     @GetMapping("/required-documents")
-    @Operation(summary = "Documents requis pour une offre — public")
+    @Operation(summary = "Documents requis pour une offre - public")
     public ResponseEntity<List<RequiredDocumentResponse>> getRequiredDocuments(
             @RequestParam Long offerId
     ) {
@@ -64,7 +64,7 @@ public class OfferController {
     }
 
     @PostMapping("/required-documents")
-    @Operation(summary = "Définir un document requis — SUPER_ADMIN")
+    @Operation(summary = "Définir un document requis - SUPER_ADMIN")
     public ResponseEntity<RequiredDocumentResponse> addRequiredDocument(
             @Valid @RequestBody AddRequiredDocumentRequest request
     ) {
@@ -73,7 +73,7 @@ public class OfferController {
     }
 
     @DeleteMapping("/required-documents/{id}")
-    @Operation(summary = "Supprimer un document requis — SUPER_ADMIN")
+    @Operation(summary = "Supprimer un document requis - SUPER_ADMIN")
     public ResponseEntity<Void> removeRequiredDocument(@PathVariable Long id) {
         offerService.removeRequiredDocument(id);
         return ResponseEntity.noContent().build();

@@ -87,6 +87,7 @@ public class JwtService {
         return Map.of(
                 ACCESS_TOKEN, createJwtToken(user.getEmail(), Map.of(
                         "role", user.getRole().getRoleType().name(),
+                        "userId",  user.getId(),
                         "type", "Access"
                 ), ACCESS_TOKEN_EXPIRATION),
                 REFRESH_TOKEN, createJwtToken(user.getEmail(), Map.of(

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head><meta charset="UTF-8"/><title>Paiement confirmé</title>
+    <style>
+        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
+        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
+        .header{background:linear-gradient(135deg,#065f46,#10b981);padding:35px 40px;text-align:center;}
+        .header h1{color:white;font-size:26px;margin:0;}
+        .header p{color:#a7f3d0;font-size:13px;margin-top:5px;}
+        .body{padding:40px;color:#374151;line-height:1.7;}
+        .success{background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:4px;margin:20px 0;}
+        .info-table{width:100%;border-collapse:collapse;margin:20px 0;}
+        .info-table td{padding:10px 14px;border-bottom:1px solid #e5e7eb;}
+        .info-table td:first-child{color:#6b7280;font-size:13px;width:40%;}
+        .info-table td:last-child{font-weight:600;color:#111827;}
+        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>✅ Paiement confirmé</h1>
+        <p>Reçu de votre transaction</p>
+    </div>
+    <div class="body">
+        <p>Bonjour,</p>
+        <div class="success"><strong>Votre paiement a été traité avec succès.</strong></div>
+        <table class="info-table">
+            <tr><td>Référence</td>
+                <td th:text="${paymentReference}">-</td></tr>
+            <tr><td>Montant</td>
+                <td th:text="${amount} + ' ' + ${currency}">-</td></tr>
+            <tr><td>Type</td>
+                <td th:text="${type}">-</td></tr>
+            <tr><td>Date</td>
+                <td th:text="${paidAt}">-</td></tr>
+        </table>
+        <p>Conservez cette référence pour vos démarches.</p>
+        <p>Cordialement,<br/><strong>Service Financier</strong></p>
+    </div>
+    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+</div>
+</body>
+</html>

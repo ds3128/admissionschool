@@ -1,0 +1,16 @@
+package org.darius.course.events.consumed;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+import java.math.BigDecimal;
+
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class StudentPaymentBlockedEvent {
+    private String studentId;
+    private String userId;
+    private String invoiceId;
+    private BigDecimal amount;
+    private int overdueDays;
+    private String academicYear;
+}

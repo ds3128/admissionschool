@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Résultats du semestre</title>
+    <style>
+        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
+        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
+        .header{background:linear-gradient(135deg,#1e3a5f,#3b82f6);padding:35px 40px;text-align:center;}
+        .header h1{color:white;font-size:26px;margin:0;}
+        .header p{color:#bfdbfe;font-size:13px;margin-top:5px;}
+        .body{padding:40px;color:#374151;line-height:1.7;}
+        .alert{background:#fef3c7;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:4px;margin:20px 0;}
+        .result-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:24px;margin:20px 0;text-align:center;}
+        .result-card .avg{font-size:48px;font-weight:800;color:#dc2626;line-height:1;}
+        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>📋 Résultats du semestre</h1>
+        <p th:text="${semesterLabel}">Semestre</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">Étudiant</strong>,</p>
+        <div class="alert">
+            <strong>⚠️ Semestre ajourné</strong> — Des épreuves de rattrapage sont prévues.
+        </div>
+        <div class="result-card">
+            <div class="avg" th:text="${average} + '/20'">8.50/20</div>
+            <div style="color:#6b7280;margin-top:8px;">
+                Crédits validés : <strong th:text="${credits}">12</strong>
+            </div>
+        </div>
+        <p>Vous pourrez vous inscrire aux épreuves de rattrapage. Les dates seront
+            communiquées ultérieurement.</p>
+        <p>Nous vous encourageons à contacter votre référent pédagogique
+            pour un suivi personnalisé.</p>
+        <p>Cordialement,<br/><strong>La Direction Académique</strong></p>
+    </div>
+    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f3f4f6; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: white;
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
+        .header { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            padding: 35px 40px; text-align: center; }
+        .header h1 { color: white; font-size: 26px; font-weight: 700;
+            letter-spacing: -0.5px; }
+        .header p  { color: #bfdbfe; font-size: 13px; margin-top: 5px; }
+        .body { padding: 40px; color: #374151; line-height: 1.7; }
+        .body p { margin-bottom: 16px; }
+        .highlight { background: #eff6ff; border-left: 4px solid #3b82f6;
+            padding: 16px 20px; border-radius: 4px;
+            margin: 20px 0; font-size: 15px; }
+        .cta { text-align: center; margin: 30px 0; }
+        .cta a { background: #1e40af; color: white; padding: 14px 32px;
+            border-radius: 6px; text-decoration: none;
+            font-weight: 600; font-size: 15px; }
+        .alert { background: #fef2f2; border-left: 4px solid #ef4444;
+            padding: 16px 20px; border-radius: 4px; margin: 20px 0; }
+        .success { background: #f0fdf4; border-left: 4px solid #22c55e;
+            padding: 16px 20px; border-radius: 4px; margin: 20px 0; }
+        .info-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .info-table td { padding: 10px 14px; border-bottom: 1px solid #e5e7eb; }
+        .info-table td:first-child { color: #6b7280; font-size: 13px; width: 40%; }
+        .info-table td:last-child { font-weight: 600; color: #111827; }
+        .footer { background: #f9fafb; padding: 25px 40px;
+            text-align: center; color: #9ca3af; font-size: 12px;
+            border-top: 1px solid #e5e7eb; }
+        .footer a { color: #6b7280; text-decoration: none; }
+        @media (max-width: 600px) {
+            .wrapper { margin: 0; border-radius: 0; }
+            .body, .header { padding: 25px 20px; }
+        }
+    </style>
+    <title></title>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Système de gestion universitaire</p>
+    </div>
+    <div class="body" th:fragment="content">
+        <!-- Contenu injecté par chaque template enfant -->
+    </div>
+    <div class="footer">
+        <p>© 2026 AdmissionSchool — Tous droits réservés</p>
+        <p style="margin-top:8px;">
+            <a href="#">Se désabonner</a> · <a href="#">Politique de confidentialité</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

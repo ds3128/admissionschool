@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Dossier reçu</title>
+    <style>
+        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
+        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
+        .header{background:linear-gradient(135deg,#1e40af,#3b82f6);padding:35px 40px;text-align:center;}
+        .header h1{color:white;font-size:26px;margin:0;}
+        .header p{color:#bfdbfe;font-size:13px;margin-top:5px;}
+        .body{padding:40px;color:#374151;line-height:1.7;}
+        .highlight{background:#eff6ff;border-left:4px solid #3b82f6;padding:16px 20px;border-radius:4px;margin:20px 0;}
+        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Système de gestion universitaire</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">Candidat</strong>,</p>
+        <p>Nous avons bien reçu votre dossier de candidature. Voici le récapitulatif :</p>
+        <div class="highlight">
+            <strong>Numéro de dossier :</strong> <span th:text="${applicationId}">-</span><br/>
+            <strong>Année académique :</strong> <span th:text="${academicYear}">-</span><br/>
+            <strong>Date de soumission :</strong> <span th:text="${submittedAt}">-</span>
+        </div>
+        <p>Votre dossier est maintenant en cours d'examen administratif. Vous serez
+            notifié de chaque étape du processus.</p>
+        <p>Cordialement,<br/><strong>L'équipe Admissions</strong></p>
+    </div>
+    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+</div>
+</body>
+</html>

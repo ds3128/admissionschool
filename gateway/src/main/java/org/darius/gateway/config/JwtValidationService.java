@@ -39,6 +39,10 @@ public class JwtValidationService {
         return parse(token).getSubject();
     }
 
+    public String extractUserId(String token) {
+        return (String) parse(token).get("userId");
+    }
+
     public String extractRole(String token) {
         return (String) parse(token).get("role");
     }

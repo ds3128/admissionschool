@@ -1,0 +1,18 @@
+package org.darius.admission.common.enums;
+
+public enum DocumentType {
+    DIPLOME_BAC,
+    RELEVE_NOTES_BAC,
+    DIPLOME_LICENCE,
+    RELEVE_NOTES_LICENCE,
+    DIPLOME_MASTER,
+    PROJET_RECHERCHE,
+    LETTRE_MOTIVATION,
+    CV,
+    PIECE_IDENTITE,
+    PHOTO_IDENTITE,
+    CERTIFICAT_MEDICAL,
+    LETTRE_RECOMMANDATION,
+    PUBLICATIONS,
+    AUTRE
+}

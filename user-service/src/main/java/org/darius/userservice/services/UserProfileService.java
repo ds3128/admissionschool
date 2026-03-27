@@ -51,4 +51,7 @@ public interface UserProfileService {
      * Formats acceptés : JPEG, PNG. Taille max : 2 Mo.
      */
     UserProfileResponse uploadAvatar(String userEmail, MultipartFile file);
+
+    void blockStudent(String userId, String reason);
+    void unblockStudent(String userId);
 }

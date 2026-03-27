@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: notification-service
+  config:
+    import: optional:configserver:http://localhost:8761
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      group-id: notification-service-group

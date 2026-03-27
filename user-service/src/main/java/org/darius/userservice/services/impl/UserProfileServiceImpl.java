@@ -17,6 +17,7 @@ import org.darius.userservice.repositories.UserProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -177,5 +178,29 @@ public class UserProfileServiceImpl implements UserProfileService {
         } catch (IllegalArgumentException e) {
             return Gender.MALE;
         }
+    }
+
+    @Override
+    @Transactional
+    public void blockStudent(String userId, String reason) {
+        profileRepository.findByUserId(userId).ifPresent(profile -> {
+            profile.setBlocked(true);
+            profile.setBlockReason(reason);
+            profile.setBlockedAt(LocalDateTime.now());
+            profileRepository.save(profile);
+            log.info("Étudiant bloqué : userId={}, raison={}", userId, reason);
+        });
+    }
+
+    @Override
+    @Transactional
+    public void unblockStudent(String userId) {
+        profileRepository.findByUserId(userId).ifPresent(profile -> {
+            profile.setBlocked(false);
+            profile.setBlockReason(null);
+            profile.setBlockedAt(null);
+            profileRepository.save(profile);
+            log.info("Étudiant débloqué : userId={}", userId);
+        });
     }
 }

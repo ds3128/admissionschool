@@ -7,7 +7,9 @@ import org.darius.authservice.common.enums.RoleType;
 import org.darius.authservice.config.RateLimitService;
 import org.darius.authservice.entities.Role;
 import org.darius.authservice.entities.Users;
+import org.darius.authservice.events.UserActivatedEvent;
 import org.darius.authservice.exceptions.*;
+import org.darius.authservice.kafka.KafkaEventProducer;
 import org.darius.authservice.mapper.UserMapper;
 import org.darius.authservice.repositories.UserRepository;
 import org.darius.authservice.security.JwtService;
@@ -32,14 +34,16 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final EmailService emailService;
     private final RateLimitService  rateLimitService;
+    private final KafkaEventProducer kafkaEventProducer;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, UserMapper userMapper, EmailService emailService, RateLimitService rateLimitService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, UserMapper userMapper, EmailService emailService, RateLimitService rateLimitService, KafkaEventProducer kafkaEventProducer) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtService = jwtService;
         this.userMapper = userMapper;
         this.emailService = emailService;
         this.rateLimitService = rateLimitService;
+        this.kafkaEventProducer = kafkaEventProducer;
     }
 
     @Override
@@ -47,6 +51,10 @@ public class UserServiceImpl implements UserService {
         Optional<Users> email = this.userRepository.findByEmail(createUserDtoRequest.getEmail());
         if (email.isPresent()) {
             throw new UserAlreadyExistException("Email already exists");
+        }
+
+        if (!createUserDtoRequest.getEmail().contains(".")){
+            throw new UserAlreadyExistException("Bad Email format");
         }
 
         this.validatePasswordMatch(
@@ -61,11 +69,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(this.bCryptPasswordEncoder.encode(createUserDtoRequest.getPassword()));
         user.setLastLogin(null);
 
-        userRole.setRoleType(RoleType.CANDIDATE);
+        userRole.setRoleType(RoleType.SUPER_ADMIN);
         user.setRole(userRole);
 
         Users savedUser = this.userRepository.save(user);
-
+        log.info("User saved with id {}", savedUser.getId());
         this.sendActivationEmail(savedUser);
 
         return userMapper.ToUserDtoResponse(savedUser);
@@ -87,12 +95,23 @@ public class UserServiceImpl implements UserService {
         Users user = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (user.isEnabled()){
+        if (user.isEnabled()) {
             throw new InvalidTokenException("This account is already enabled");
         }
 
         user.setStatus(true);
         userRepository.save(user);
+
+        // ← Publier UserActivated après activation
+        kafkaEventProducer.publishUserActivated(
+                UserActivatedEvent.builder()
+                        .userId(user.getId())
+                        .email(user.getEmail())
+                        .role(user.getRole().getRoleType().name())
+                        .build()
+        );
+
+        log.info("Compte activé et UserActivated publié : userId={}", user.getId());
     }
 
     @Override

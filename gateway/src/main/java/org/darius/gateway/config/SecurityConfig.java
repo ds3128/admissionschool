@@ -32,12 +32,17 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/swagger-ui/index.html",
                                 "/v3/api-docs/**",
-                                "/v3/api-docs",
-                                "/v3/api-docs/**"
+                                "/actuator/**"
                         ).permitAll()
-                        // Routes publiques auth
+                        // Swagger des services downstream
+                        .requestMatchers(
+                                "/auth-service/**",
+                                "/user-service/**",
+                                "/admission-service/**",
+                                "/course-service/**"
+                        ).permitAll()
+                        // Routes publiques Auth
                         .requestMatchers(
                                 "/auth/login",
                                 "/auth/register",
@@ -47,7 +52,10 @@ public class SecurityConfig {
                                 "/auth/refresh-token",
                                 "/auth/resend-activation"
                         ).permitAll()
-                        // Tout le reste passe par le JwtAuthFilter
+                        // Routes publiques User Service — lecture sans token
+                        .requestMatchers(HttpMethod.GET, "/users/filieres/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/departments/**").permitAll()
+                        // Tout le reste
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session ->

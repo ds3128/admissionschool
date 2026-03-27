@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Accès restreint</title>
+    <style>
+        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
+        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
+        .header{background:linear-gradient(135deg,#7f1d1d,#dc2626);padding:35px 40px;text-align:center;}
+        .header h1{color:white;font-size:26px;margin:0;}
+        .header p{color:#fecaca;font-size:13px;margin-top:5px;}
+        .body{padding:40px;color:#374151;line-height:1.7;}
+        .alert{background:#fef2f2;border-left:4px solid #dc2626;padding:16px 20px;border-radius:4px;margin:20px 0;}
+        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>🔒 Accès restreint</h1>
+        <p>Impayé critique détecté</p>
+    </div>
+    <div class="body">
+        <p>Bonjour,</p>
+        <div class="alert">
+            <strong>Votre accès aux services universitaires a été temporairement restreint</strong>
+            en raison d'un impayé critique.
+        </div>
+        <p><strong>Montant dû :</strong> <span th:text="${amount} + ' XAF'">-</span><br/>
+            <strong>Retard :</strong> <span th:text="${overdueDays}">-</span> jours</p>
+        <p>Pour rétablir votre accès :</p>
+        <ol style="margin-left:20px;line-height:2;">
+            <li>Réglez le montant dû via votre espace étudiant</li>
+            <li>Contactez le service financier pour un plan de paiement</li>
+            <li>Présentez-vous à la scolarité avec votre justificatif</li>
+        </ol>
+        <p>Cordialement,<br/><strong>Service Financier</strong></p>
+    </div>
+    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+</div>
+</body>
+</html>

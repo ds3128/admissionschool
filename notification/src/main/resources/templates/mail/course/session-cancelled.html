@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"/><title>Séance annulée</title>
+    <style>
+        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
+        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
+        .header{background:linear-gradient(135deg,#374151,#6b7280);padding:35px 40px;text-align:center;}
+        .header h1{color:white;font-size:26px;margin:0;}
+        .header p{color:#d1d5db;font-size:13px;margin-top:5px;}
+        .body{padding:40px;color:#374151;line-height:1.7;}
+        .highlight{background:#f3f4f6;border-left:4px solid #6b7280;padding:16px 20px;border-radius:4px;margin:20px 0;}
+        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>❌ Séance annulée</h1>
+        <p>Information importante concernant votre emploi du temps</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">Étudiant</strong>,</p>
+        <p>Nous vous informons que la séance suivante a été annulée :</p>
+        <div class="highlight">
+            <strong>Matière :</strong> <span th:text="${matiereName}">-</span><br/>
+            <strong>Date :</strong> <span th:text="${date}">-</span><br/>
+            <strong>Heure :</strong> <span th:text="${startTime}">-</span><br/>
+            <strong>Motif :</strong> <span th:text="${reason}">-</span>
+        </div>
+        <p>Cordialement,<br/><strong>L'équipe pédagogique</strong></p>
+    </div>
+    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+</div>
+</body>
+</html>

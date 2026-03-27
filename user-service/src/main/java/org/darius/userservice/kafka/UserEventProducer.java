@@ -1,5 +1,6 @@
 package org.darius.userservice.kafka;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.darius.userservice.entities.Student;
@@ -17,6 +18,7 @@ import java.time.Year;
 public class UserEventProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     // ── Student ───────────────────────────────────────────────────────────────
 
@@ -78,16 +80,18 @@ public class UserEventProducer {
     // ── Helper ────────────────────────────────────────────────────────────────
 
     private void send(String topic, String key, Object payload) {
-        kafkaTemplate.send(topic, key, payload)
-                .whenComplete((result, ex) -> {
-                    if (ex != null) {
-                        log.error("Échec envoi Kafka — topic={}, key={} : {}",
-                                topic, key, ex.getMessage());
-                    } else {
-                        log.debug("Événement publié — topic={}, key={}, offset={}",
-                                topic, key,
-                                result.getRecordMetadata().offset());
-                    }
-                });
+        try {
+            String json = objectMapper.writeValueAsString(payload);
+            kafkaTemplate.send(topic, key, json)
+                    .whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            log.error("Échec envoi Kafka — topic={}, key={} : {}", topic, key, ex.getMessage());
+                        } else {
+                            log.debug("Événement publié — topic={}, key={}", topic, key);
+                        }
+                    });
+        } catch (Exception ex) {
+            log.error("Erreur sérialisation Kafka — topic={} : {}", topic, ex.getMessage());
+        }
     }
 }

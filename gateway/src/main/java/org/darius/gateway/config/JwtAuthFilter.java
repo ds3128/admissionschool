@@ -25,15 +25,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
+        String path   = request.getRequestURI();
+        String method = request.getMethod();
 
         log.info(">>> JwtFilter — path reçu : {}", path);
+
+        // Routes publiques GET sans token
+        if ("GET".equals(method) && (
+                path.startsWith("/users/filieres")              ||
+                        path.startsWith("/users/departments")           ||
+                        path.startsWith("/admissions/campaigns")        ||
+                        path.startsWith("/admissions/offers")           ||
+                        path.startsWith("/admissions/required-documents")
+        )) {
+            return true;
+        }
+
+        if ("/payments/webhook".equals(path)) return true;
 
         return path.startsWith("/auth/")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/webjars/")
-                || path.startsWith("/v3/api-docs")
-                || path.contains("/v3/api-docs");
+                || path.contains("/v3/api-docs")
+                || path.startsWith("/actuator");
     }
 
     @Override
@@ -56,12 +70,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        String email = jwtValidationService.extractEmail(token);
+        String role  = jwtValidationService.extractRole(token);
+        String userId = jwtValidationService.extractUserId(token);
+        log.info(">>> Gateway injecte — X-User-Email: {}, X-User-Role: {}, X-User-Role: {}", email, role, userId);
+
         HttpServletRequestWrapper mutatedRequest = new HttpServletRequestWrapper(request) {
 
             @Override
             public String getHeader(String name) {
-                if ("X-User-Email".equals(name)) return jwtValidationService.extractEmail(token);
-                if ("X-User-Role".equals(name))  return jwtValidationService.extractRole(token);
+                if ("X-User-Email".equals(name)) return email;
+                if ("X-User-Role".equals(name))  return role;
+                if ("X-user-Id".equals(name)) return userId;
                 return super.getHeader(name);
             }
 
@@ -70,15 +90,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 List<String> names = Collections.list(super.getHeaderNames());
                 names.add("X-User-Email");
                 names.add("X-User-Role");
+                names.add("X-user-Id");
                 return Collections.enumeration(names);
             }
 
             @Override
             public Enumeration<String> getHeaders(String name) {
                 if ("X-User-Email".equals(name))
-                    return Collections.enumeration(List.of(jwtValidationService.extractEmail(token)));
+                    return Collections.enumeration(List.of(email));
                 if ("X-User-Role".equals(name))
-                    return Collections.enumeration(List.of(jwtValidationService.extractRole(token)));
+                    return Collections.enumeration(List.of(role));
+                if ("X-user-Id".equals(name))
+                    return Collections.enumeration(List.of(userId));
                 return super.getHeaders(name);
             }
         };

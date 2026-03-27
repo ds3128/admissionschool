@@ -109,4 +109,13 @@ public class UserProfile {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isBlocked = false;
+
+    @Column(length = 500)
+    private String blockReason;
+
+    private LocalDateTime blockedAt;
 }

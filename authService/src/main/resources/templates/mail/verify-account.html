@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Activez votre compte</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f3f4f6;
+            padding: 40px 20px;
+        }
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            color: #bfdbfe;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        .body {
+            padding: 44px 40px;
+            color: #374151;
+            line-height: 1.75;
+        }
+        .body p {
+            margin-bottom: 18px;
+            font-size: 15px;
+        }
+        .highlight-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid #3b82f6;
+            border-radius: 6px;
+            padding: 18px 22px;
+            margin: 28px 0;
+            font-size: 14px;
+            color: #1e40af;
+        }
+        .cta-wrapper {
+            text-align: center;
+            margin: 36px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white !important;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 10px rgba(59,130,246,0.35);
+        }
+        .link-fallback {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .link-fallback a {
+            color: #3b82f6;
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        .warning {
+            background: #fefce8;
+            border-left: 4px solid #eab308;
+            padding: 14px 18px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #713f12;
+            margin: 20px 0;
+        }
+        .footer {
+            background: #f9fafb;
+            padding: 28px 40px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        @media (max-width: 600px) {
+            .wrapper { border-radius: 0; }
+            .header, .body { padding: 28px 20px; }
+            .cta-button { padding: 14px 28px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Système de gestion universitaire</p>
+    </div>
+
+    <!-- Corps -->
+    <div class="body">
+
+        <p>Bonjour,</p>
+
+        <p>Merci pour votre inscription sur <strong>AdmissionSchool</strong>.
+            Votre compte a bien été créé. Il ne vous reste plus qu'une étape
+            pour l'activer et accéder à votre espace.</p>
+
+        <div class="highlight-box">
+            📧 Un compte est en attente d'activation pour l'adresse :
+            <strong th:text="${email}">votre@email.com</strong>
+        </div>
+
+        <p>Cliquez sur le bouton ci-dessous pour activer votre compte :</p>
+
+        <div class="cta-wrapper">
+            <a th:href="${verificationLink}" class="cta-button">
+                ✅ Activer mon compte
+            </a>
+        </div>
+
+        <div class="warning">
+            ⏱️ Ce lien est valide pendant <strong>24 heures</strong>.
+            Passé ce délai, vous devrez demander un nouveau lien d'activation.
+        </div>
+
+        <hr class="divider"/>
+
+        <p style="font-size:13px; color:#6b7280;">
+            Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :
+        </p>
+        <div class="link-fallback">
+            <a th:href="${verificationLink}" th:text="${verificationLink}">
+                https://admissionschool.com/auth/verify?token=...
+            </a>
+        </div>
+
+        <p style="font-size:13px; color:#9ca3af;">
+            Si vous n'avez pas créé de compte sur AdmissionSchool,
+            ignorez simplement cet email.
+        </p>
+
+        <p>Cordialement,<br/>
+            <strong>L'équipe AdmissionSchool</strong>
+        </p>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2026 AdmissionSchool — Tous droits réservés</p>
+        <p style="margin-top:6px;">
+            Cet email a été envoyé automatiquement, merci de ne pas y répondre.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

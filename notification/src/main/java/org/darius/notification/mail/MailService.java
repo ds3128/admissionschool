@@ -68,7 +68,7 @@ public class MailService {
         }
 
         try {
-            return templateEngine.process("mail/" + templateName, context);
+            return templateEngine.process(templateName, context);
         } catch (Exception ex) {
             log.warn("Template manquant '{}' — utilisation du fallback : {}",
                     templateName, ex.getMessage());

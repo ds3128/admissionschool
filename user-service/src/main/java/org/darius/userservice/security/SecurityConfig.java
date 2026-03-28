@@ -38,6 +38,7 @@ public class SecurityConfig {
                         // Filières et niveaux — lecture publique (Admission Service en a besoin)
                         .requestMatchers(HttpMethod.GET, "/users/filieres/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/departments/**").permitAll()
+                        .requestMatchers("/users/internal/**").permitAll()
 
                         // Structures académiques — admin uniquement
                         .requestMatchers(HttpMethod.POST, "/users/departments/**")

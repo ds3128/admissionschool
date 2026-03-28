@@ -108,6 +108,13 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional(readOnly = true)
+    public UserProfile findById(String userId){
+        return profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found !"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public UserProfileResponse getProfileByEmail(String email) {
         return userMapper.toUserProfileResponse(
                 profileRepository.findByPersonalEmail(email)

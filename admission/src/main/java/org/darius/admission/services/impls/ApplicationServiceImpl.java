@@ -335,7 +335,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         AdmissionPayment payment = AdmissionPayment.builder()
                 .application(app)
                 .amount(app.getCampaign().getFeeAmount())
-                .currency("EUR")
+                .currency("XAF")
                 .paymentReference(applicationId)
                 .status(PaymentStatus.PENDING)
                 .build();
@@ -572,6 +572,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private void checkOwnership(Application app, String userId) {
+        log.info("App userId : {} and userId : {}", app.getUserId(), userId);
         if (!app.getUserId().equals(userId)) {
             throw new ForbiddenException("Vous n'avez pas accès à cette candidature");
         }

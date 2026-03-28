@@ -33,7 +33,7 @@ public class UserResolverService {
 
         try {
             Map response = restClient.get()
-                    .uri(userServiceBaseUrl + "/users/" + userId)
+                    .uri(userServiceBaseUrl + "/users/internal/" + userId)
                     .retrieve()
                     .body(Map.class);
 

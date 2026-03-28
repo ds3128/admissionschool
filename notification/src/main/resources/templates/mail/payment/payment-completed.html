@@ -29,7 +29,7 @@
             <tr><td>Référence</td>
                 <td th:text="${paymentReference}">-</td></tr>
             <tr><td>Montant</td>
-                <td th:text="${amount} + ' ' + ${currency}">-</td></tr>
+                <td th:text="|${amount} ${currency}|">-</td></tr>
             <tr><td>Type</td>
                 <td th:text="${type}">-</td></tr>
             <tr><td>Date</td>

@@ -2,6 +2,7 @@ package org.darius.userservice.services;
 
 import org.darius.userservice.common.dtos.requests.UpdateProfileRequest;
 import org.darius.userservice.common.dtos.responses.UserProfileResponse;
+import org.darius.userservice.entities.UserProfile;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserProfileService {
@@ -35,6 +36,8 @@ public interface UserProfileService {
      * Retourne un profil par son userId.
      */
     UserProfileResponse getProfileByUserId(String userId);
+
+    UserProfile findById(String id);
 
     /**
      * Retourne un profil par email (usage inter-services).

@@ -7,8 +7,10 @@ import org.darius.payment.common.enums.ScholarshipType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ScholarshipRepository extends JpaRepository<Scholarship, Long> {
 
@@ -35,7 +37,7 @@ public interface ScholarshipRepository extends JpaRepository<Scholarship, Long> 
     long countActiveScholarships();
 
     @Query("SELECT SUM(s.amount) FROM Scholarship s WHERE s.status = 'ACTIVE'")
-    java.math.BigDecimal sumActiveScholarshipAmounts();
+    BigDecimal sumActiveScholarshipAmounts();
 
     // Bourses actives d'un étudiant filtrées par source — pour les disbursements
     List<Scholarship> findByStudentIdAndStatusAndSource(
@@ -43,4 +45,9 @@ public interface ScholarshipRepository extends JpaRepository<Scholarship, Long> 
             ScholarshipStatus status,
             ScholarshipSource source
     );
+
+    // Dans ScholarshipRepository
+    List<Scholarship> findByStudentIdInAndStatus(List<String> studentIds, ScholarshipStatus status);
+
+    Set<Scholarship> findByStatus(ScholarshipStatus status);
 }

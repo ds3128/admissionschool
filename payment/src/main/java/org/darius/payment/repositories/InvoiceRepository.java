@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, String> {
 
@@ -53,4 +54,13 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
     );
 
     Page<Invoice> findByStatusOrderByDueDateAsc(InvoiceStatus status, Pageable pageable);
+
+    @Query("SELECT i.studentId FROM Invoice i WHERE i.studentId IN :studentIds " +
+            "AND i.academicYear = :academicYear AND i.semester = :semester AND i.type = :type")
+    Set<String> findExistingInvoicesByStudentIdsAndPeriod(
+            @Param("studentIds") List<String> studentIds,
+            @Param("academicYear") String academicYear,
+            @Param("semester") String semester,
+            @Param("type") InvoiceType type
+    );
 }

@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -137,11 +139,11 @@ public class SemesterServiceImpl implements SemesterService {
         // Vérifier que tous les étudiants ont un StudentProgress
         // (délégué au repository via une query COUNT)
         List<StudentProgressResponse> allProgress =
-                progressService.getBySemester(semesterId);
+                progressService.getBySemester(semesterId).stream().toList();
 
         if (allProgress.isEmpty()) {
             throw new InvalidOperationException(
-                    "Aucune progression calculée — lancez d'abord compute-progress"
+                    "Aucune progression calculée - lancez d'abord compute-progress"
             );
         }
 
@@ -172,7 +174,7 @@ public class SemesterServiceImpl implements SemesterService {
 
         eventProducer.publishSemesterValidated(event);
 
-        log.info("Semestre {} VALIDÉ — {} étudiants, event publié",
+        log.info("Semestre {} VALIDÉ - {} étudiants, event publié",
                 semester.getLabel(), results.size());
 
         return mapper.toSemesterResponse(semester);

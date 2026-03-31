@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Consommateur Kafka de l'Auth Service.
@@ -31,6 +32,7 @@ public class AuthEventConsumer {
             groupId          = KafkaConfig.GROUP_AUTH_SERVICE,
             containerFactory = "kafkaListenerContainerFactory"
     )
+    @Transactional
     public void onApplicationAccepted(
             @Payload ApplicationAcceptedEvent event,
             Acknowledgment ack

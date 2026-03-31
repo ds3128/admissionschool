@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.darius.payment.services.InvoiceService;
 import org.darius.payment.services.ScholarshipService;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Year;
 
-@Component
+@Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class SchedulerConfig {

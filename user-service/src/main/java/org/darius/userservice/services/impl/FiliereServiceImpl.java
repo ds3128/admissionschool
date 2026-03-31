@@ -68,7 +68,10 @@ public class FiliereServiceImpl implements FiliereService {
                 .students(new ArrayList<>())
                 .build();
 
-        // Génération automatique des StudyLevel (N = durationYears)
+        // Persister la filière EN PREMIER pour qu'elle ait un ID
+        filiere = filiereRepository.save(filiere);
+
+        // Générer les niveaux APRÈS - filiere est maintenant gérée par JPA
         List<StudyLevel> levels = generateStudyLevels(filiere);
 
         for (StudyLevel level : levels) {
@@ -76,13 +79,12 @@ public class FiliereServiceImpl implements FiliereService {
         }
         filiere.setStudyLevels(levels);
 
-        filiere = this.filiereRepository.save(filiere);
-
         log.info("Filière créée : id={}, code={}, {} niveaux générés",
                 filiere.getId(), filiere.getCode(), levels.size());
 
         return userMapper.toFiliereResponse(filiere);
     }
+
 
     @Override
     @Transactional(readOnly = true)

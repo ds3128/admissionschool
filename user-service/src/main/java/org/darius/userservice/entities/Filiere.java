@@ -41,7 +41,7 @@ public class Filiere {
     @Column(nullable = false)
     private FiliereStatus status = FiliereStatus.ACTIVE;
 
-    @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "filiere", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @Builder.Default
     private List<StudyLevel> studyLevels = new ArrayList<>();
 

@@ -13,6 +13,7 @@ import org.darius.payment.mappers.PaymentMapper;
 import org.darius.payment.repositories.*;
 import org.darius.payment.services.InvoiceService;
 import org.darius.payment.services.PaymentReferenceService;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,74 +47,149 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public Map<String, Integer> generateInvoices(GenerateInvoicesRequest request) {
-        // Appel HTTP au User Service pour récupérer les étudiants actifs
-        List<Map> students;
-        try {
-            students = restClient.get()
-                    .uri("http://localhost:8082/users/students?status=ACTIVE&size=1000")
-                    .retrieve()
-                    .body(List.class);
-            if (students == null) students = List.of();
-        } catch (Exception ex) {
-            log.error("Impossible de récupérer les étudiants du User Service : {}", ex.getMessage());
-            throw new ServiceUnavailableException(
-                    "Le User Service est indisponible — impossible de générer les factures"
-            );
-        }
-
+        int page = 0;
         int generated = 0;
-        int skipped   = 0;
+        int skipped = 0;
 
-        for (Map student : students) {
-            String studentId = (String) student.get("id");
-            if (studentId == null) { skipped++; continue; }
+        // Récupérer les IDs des étudiants avec bourses actives en une seule requête
+        Set<String> studentsWithActiveScholarship = scholarshipRepository
+                .findByStatus(ScholarshipStatus.ACTIVE)
+                .stream()
+                .map(Scholarship::getStudentId)
+                .collect(Collectors.toSet());
 
-            // Vérifier doublon
-            if (invoiceRepository.existsByStudentIdAndAcademicYearAndSemesterAndType(
-                    studentId, request.getAcademicYear(), request.getSemester(), InvoiceType.SCOLARITE
-            )) {
-                skipped++;
-                continue;
+        while (true) {
+            PageResponse<StudentSummaryResponse> studentPage;
+            try {
+                // Appel à l'endpoint interne du user-service
+                studentPage = restClient.get()
+                        .uri("http://localhost:8082/users/students/internal?page=" + page + "&size=1000")
+                        .retrieve()
+                        .body(new ParameterizedTypeReference<PageResponse<StudentSummaryResponse>>() {});
+
+                if (studentPage == null || studentPage.getContent().isEmpty()) {
+                    break;
+                }
+
+            } catch (Exception ex) {
+                log.error("Impossible de récupérer les étudiants du User Service (page {}): {}",
+                        page, ex.getMessage());
+                throw new ServiceUnavailableException(
+                        "Le User Service est indisponible — impossible de générer les factures"
+                );
             }
 
-            // Calculer la déduction bourse
-            BigDecimal scholarshipDeduction = scholarshipRepository
-                    .findByStudentIdAndStatus(studentId, ScholarshipStatus.ACTIVE)
-                    .stream()
-                    .map(s -> s.getAmount().divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            // Extraire la liste des étudiants
+            List<StudentSummaryResponse> students = studentPage.getContent();
 
-            BigDecimal netAmount = request.getAmount().subtract(scholarshipDeduction);
-            if (netAmount.compareTo(BigDecimal.ZERO) < 0) netAmount = BigDecimal.ZERO;
+            // Préparation des IDs pour vérification batch
+            List<String> studentIds = students.stream()
+                    .map(StudentSummaryResponse::getId)
+                    .filter(Objects::nonNull)
+                    .toList();
 
-            Invoice invoice = Invoice.builder()
-                    .studentId(studentId)
-                    .academicYear(request.getAcademicYear())
-                    .semester(request.getSemester())
-                    .type(InvoiceType.SCOLARITE)
-                    .amount(request.getAmount())
-                    .scholarshipDeduction(scholarshipDeduction)
-                    .netAmount(netAmount)
-                    .remainingAmount(netAmount)
-                    .dueDate(request.getDueDate())
-                    .status(InvoiceStatus.PENDING)
-                    .build();
+            // Vérification batch des factures existantes
+            Set<String> existingInvoices = invoiceRepository
+                    .findExistingInvoicesByStudentIdsAndPeriod(
+                            studentIds,
+                            request.getAcademicYear(),
+                            request.getSemester(),
+                            InvoiceType.SCOLARITE
+                    );
 
-            invoice = invoiceRepository.save(invoice);
+            // Récupération batch des bourses
+            Map<String, BigDecimal> scholarshipDeductions = new HashMap<>();
 
-            eventProducer.publishInvoiceGenerated(
-                    InvoiceGeneratedEvent.builder()
-                            .invoiceId(invoice.getId())
-                            .studentId(studentId)
-                            .academicYear(request.getAcademicYear())
-                            .semester(request.getSemester())
-                            .netAmount(netAmount)
-                            .scholarshipDeduction(scholarshipDeduction)
-                            .dueDate(request.getDueDate())
-                            .build()
-            );
+            if (!studentsWithActiveScholarship.isEmpty()) {
+                // Récupérer les bourses actives pour ces étudiants en une seule requête
+                List<Scholarship> activeScholarships = scholarshipRepository
+                        .findByStudentIdInAndStatus(studentIds, ScholarshipStatus.ACTIVE);
 
-            generated++;
+                for (Scholarship scholarship : activeScholarships) {
+                    BigDecimal halfAmount = scholarship.getAmount()
+                            .divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP);
+                    scholarshipDeductions.merge(
+                            scholarship.getStudentId(),
+                            halfAmount,
+                            BigDecimal::add
+                    );
+                }
+            }
+
+            // Pour les étudiants sans bourse
+            for (String studentId : studentIds) {
+                scholarshipDeductions.putIfAbsent(studentId, BigDecimal.ZERO);
+            }
+
+            // Construction batch des factures
+            List<Invoice> invoicesToSave = new ArrayList<>();
+            List<InvoiceGeneratedEvent> eventsToPublish = new ArrayList<>();
+
+            for (StudentSummaryResponse student : students) {
+                String studentId = student.getId();
+                if (studentId == null) {
+                    skipped++;
+                    continue;
+                }
+
+                if (existingInvoices.contains(studentId)) {
+                    skipped++;
+                    continue;
+                }
+
+                BigDecimal scholarshipDeduction = scholarshipDeductions.getOrDefault(studentId, BigDecimal.ZERO);
+                BigDecimal netAmount = request.getAmount().subtract(scholarshipDeduction);
+                if (netAmount.compareTo(BigDecimal.ZERO) < 0) netAmount = BigDecimal.ZERO;
+
+                Invoice invoice = Invoice.builder()
+                        .studentId(studentId)
+                        .academicYear(request.getAcademicYear())
+                        .semester(request.getSemester())
+                        .type(InvoiceType.SCOLARITE)
+                        .amount(request.getAmount())
+                        .scholarshipDeduction(scholarshipDeduction)
+                        .netAmount(netAmount)
+                        .remainingAmount(netAmount)
+                        .dueDate(request.getDueDate())
+                        .status(InvoiceStatus.PENDING)
+                        .build();
+
+                invoicesToSave.add(invoice);
+
+                eventsToPublish.add(
+                        InvoiceGeneratedEvent.builder()
+                                .invoiceId(null)
+                                .studentId(studentId)
+                                .academicYear(request.getAcademicYear())
+                                .semester(request.getSemester())
+                                .netAmount(netAmount)
+                                .scholarshipDeduction(scholarshipDeduction)
+                                .dueDate(request.getDueDate())
+                                .build()
+                );
+            }
+
+            // Sauvegarde batch
+            if (!invoicesToSave.isEmpty()) {
+                List<Invoice> savedInvoices = invoiceRepository.saveAll(invoicesToSave);
+
+                // Publication des événements avec les IDs générés
+                for (int i = 0; i < savedInvoices.size(); i++) {
+                    Invoice saved = savedInvoices.get(i);
+                    InvoiceGeneratedEvent event = eventsToPublish.get(i);
+                    event.setInvoiceId(saved.getId());
+                    eventProducer.publishInvoiceGenerated(event);
+                }
+
+                generated += savedInvoices.size();
+            }
+
+            page++;
+
+            // Si c'est la dernière page, on a fini
+            if (studentPage.isLast() || students.size() < 1000) {
+                break;
+            }
         }
 
         log.info("Génération factures : {} générées, {} ignorées", generated, skipped);

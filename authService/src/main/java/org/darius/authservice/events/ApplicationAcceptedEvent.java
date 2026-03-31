@@ -15,24 +15,31 @@ import java.time.LocalDate;
 @Builder
 public class ApplicationAcceptedEvent {
 
+    // Identifiants
     private String applicationId;
-    private String userId;            // ID du compte Auth Service (rôle CANDIDATE)
-    private String studentNumber;     // Matricule généré par Admission Service
+    private String userId;
+    private String studentNumber;    // généré par l'Admission Service
     private Long   filiereId;
 
-    private String personalEmail;     // Email personnel du candidat
-    private String institutionalEmail;// Email institutionnel (généré par Admission / Auth)
-
-    private String firstName;
-    private String lastName;
+    // Données du CandidateProfile (pour User Service)
+    private String    personalEmail;
+    private String    institutionalEmail;  // sera généré par Auth Service
+    private String    firstName;
+    private String    lastName;
     private LocalDate birthDate;
-    private String birthPlace;
-    private String nationality;
-    private String gender;
-    private String phone;
-    private String address;
-    private String photoUrl;
+    private String    birthPlace;
+    private String    nationality;
+    private String    gender;
+    private String    phone;
+    private String    address;
+    private String    photoUrl;
+
+    // Données académiques
     private String currentInstitution;
     private String currentDiploma;
     private int    graduationYear;
+
+    // Méta
+    private boolean autoConfirmed;  // true si confirmation automatique
+    private String  academicYear;
 }

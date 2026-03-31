@@ -28,8 +28,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path   = request.getRequestURI();
         String method = request.getMethod();
 
-        log.info(">>> JwtFilter — path reçu : {}", path);
-
         // Routes publiques GET sans token
         if ("GET".equals(method) && (
                 path.startsWith("/users/filieres")              ||

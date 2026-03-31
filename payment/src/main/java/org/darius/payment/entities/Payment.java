@@ -56,11 +56,11 @@ public class Payment {
     private PaymentMethod method;
 
     // Référence interne : PAY-{year}-{seq}
-    @Column(nullable = false, unique = true, length = 30)
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT")
     private String reference;
 
     // Référence retournée par la passerelle externe
-    @Column(name = "external_reference", length = 200)
+    @Column(name = "external_reference", length = 200, nullable = true)
     private String externalReference;
 
     @Column(length = 300)

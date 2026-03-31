@@ -122,4 +122,22 @@ public class StudentController {
         return ResponseEntity.ok(studentService.bulkPromote(request));
     }
 
+    @GetMapping("/internal")
+    public ResponseEntity<PageResponse<StudentSummaryResponse>> getActiveStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1000") int size
+    ) {
+
+        // Récupérer tous les étudiants actifs (pas de filtre filiereId/levelId)
+        PageResponse<StudentSummaryResponse> students = studentService.getStudents(
+                null,
+                null,
+                StudentStatus.ACTIVE,
+                page,
+                size
+        );
+
+        return ResponseEntity.ok(students);
+    }
+
 }

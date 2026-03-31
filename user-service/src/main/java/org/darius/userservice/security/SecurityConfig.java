@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/filieres/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/departments/**").permitAll()
                         .requestMatchers("/users/internal/**").permitAll()
+                        .requestMatchers("/users/students/internal/**").permitAll()
 
                         // Structures académiques — admin uniquement
                         .requestMatchers(HttpMethod.POST, "/users/departments/**")

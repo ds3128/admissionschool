@@ -39,8 +39,7 @@ public class UserResolverService {
 
             if (response == null) return null;
 
-            String email = (String) response.getOrDefault("email",
-                    response.getOrDefault("personalEmail", null));
+            String email = (String) response.getOrDefault("email", response.getOrDefault("personalEmail", null));
             String firstName = (String) response.getOrDefault("firstName", "");
             String lastName  = (String) response.getOrDefault("lastName",  "");
 

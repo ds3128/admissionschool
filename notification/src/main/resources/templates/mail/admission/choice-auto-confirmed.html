@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Confirmation automatique de votre choix</title>
+    <style>
+        body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); padding: 36px 40px; text-align: center; }
+        .header h1 { margin: 0; color: #fff; font-size: 26px; font-weight: 700; }
+        .header p { margin: 8px 0 0; color: #c7d2fe; font-size: 14px; }
+        .body { padding: 40px; }
+        .body p { line-height: 1.7; font-size: 15px; margin: 0 0 16px; }
+        .info-box { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 6px; padding: 20px 24px; margin: 20px 0; }
+        .info-box p { margin: 0; font-size: 14px; color: #3730a3; }
+        .details-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .details-table td { padding: 10px 14px; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
+        .details-table td:first-child { color: #6b7280; width: 45%; }
+        .details-table td:last-child { font-weight: 600; }
+        .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Confirmation automatique</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">candidat</strong>,</p>
+        <p>N'ayant qu'un seul choix accepté, votre inscription a été <strong>automatiquement confirmée</strong> pour la formation suivante.</p>
+
+        <table class="details-table">
+            <tr>
+                <td>Formation</td>
+                <td th:text="${filiereName}">Licence Informatique</td>
+            </tr>
+            <tr>
+                <td>Référence dossier</td>
+                <td th:text="${applicationId}">APP-XXXX</td>
+            </tr>
+            <tr>
+                <td>Date de confirmation</td>
+                <td th:text="${confirmedAt}">01/06/2026</td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <p>Votre inscription est définitive. Vos identifiants universitaires vous seront communiqués prochainement par e-mail séparé.</p>
+        </div>
+
+        <p>Bienvenue dans notre établissement !</p>
+    </div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
+</div>
+</body>
+</html>

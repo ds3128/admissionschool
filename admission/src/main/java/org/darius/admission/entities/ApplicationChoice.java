@@ -50,12 +50,12 @@ public class ApplicationChoice {
     @Column(columnDefinition = "TEXT")
     private String decisionReason;
 
-    @OneToOne(mappedBy = "choice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "choice", cascade = CascadeType.ALL)
     private WaitlistEntry waitlistEntry;
 
-    @OneToOne(mappedBy = "choice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "choice", cascade = CascadeType.ALL)
     private Interview interview;
 
-    @OneToOne(mappedBy = "choice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "choice", cascade = CascadeType.ALL)
     private ThesisDirectorApproval thesisDirectorApproval;
 }

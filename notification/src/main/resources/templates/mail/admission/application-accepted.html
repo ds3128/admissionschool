@@ -1,48 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"/><title>Bienvenue !</title>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Félicitations — Inscription confirmée</title>
     <style>
-        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
-        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
-        .header{background:linear-gradient(135deg,#065f46,#10b981);padding:35px 40px;text-align:center;}
-        .header h1{color:white;font-size:26px;margin:0;}
-        .header p{color:#a7f3d0;font-size:13px;margin-top:5px;}
-        .body{padding:40px;color:#374151;line-height:1.7;}
-        .success{background:#f0fdf4;border-left:4px solid #22c55e;padding:16px 20px;border-radius:4px;margin:20px 0;}
-        .info-table{width:100%;border-collapse:collapse;margin:20px 0;}
-        .info-table td{padding:10px 14px;border-bottom:1px solid #e5e7eb;}
-        .info-table td:first-child{color:#6b7280;font-size:13px;width:40%;}
-        .info-table td:last-child{font-weight:600;color:#111827;}
-        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+        body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); padding: 40px; text-align: center; }
+        .header h1 { margin: 0 0 8px; color: #fff; font-size: 28px; font-weight: 800; }
+        .header p { margin: 0; color: #bbf7d0; font-size: 15px; }
+        .congrats { text-align: center; padding: 32px 40px 0; }
+        .congrats .emoji { font-size: 48px; }
+        .body { padding: 24px 40px 40px; }
+        .body p { line-height: 1.7; font-size: 15px; margin: 0 0 16px; }
+        .credentials-box { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .credentials-box h3 { margin: 0 0 16px; color: #15803d; font-size: 16px; }
+        .cred-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #dcfce7; font-size: 14px; }
+        .cred-row:last-child { border-bottom: none; }
+        .cred-label { color: #6b7280; }
+        .cred-value { font-weight: 700; color: #15803d; font-family: 'Courier New', monospace; background: #dcfce7; padding: 2px 8px; border-radius: 4px; }
+        .info-box { background: #fff7ed; border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 4px; margin: 20px 0; font-size: 14px; color: #78350f; }
+        .details-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .details-table td { padding: 10px 14px; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
+        .details-table td:first-child { color: #6b7280; width: 45%; }
+        .details-table td:last-child { font-weight: 600; }
+        .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
     </style>
 </head>
 <body>
 <div class="wrapper">
     <div class="header">
-        <h1>🎓 Bienvenue à l'université !</h1>
-        <p>Votre inscription est confirmée</p>
+        <h1>AdmissionSchool</h1>
+        <p>Inscription universitaire confirmée</p>
+    </div>
+    <div class="congrats">
+        <div class="emoji">🎓</div>
     </div>
     <div class="body">
-        <p>Félicitations <strong th:text="${firstName + ' ' + lastName}">Étudiant</strong> !</p>
-        <p>Votre inscription à l'université est <strong>officiellement confirmée</strong>.
-            Vous faites désormais partie de notre communauté académique.</p>
-        <div class="success">
-            <strong>🎉 Inscription confirmée avec succès !</strong>
+        <p>Félicitations <strong th:text="${firstName}">étudiant</strong> <strong th:text="${lastName}"></strong> !</p>
+        <p>Votre inscription à <strong th:text="${filiereName}">la filière</strong> est officiellement confirmée. Vous trouverez ci-dessous vos identifiants de connexion à la plateforme universitaire.</p>
+
+        <div class="credentials-box">
+            <h3>🔑 Vos identifiants universitaires</h3>
+            <div class="cred-row">
+                <span class="cred-label">Numéro étudiant</span>
+                <span class="cred-value" th:text="${studentNumber}">ETU-2026-XXXX</span>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">Email institutionnel</span>
+                <span class="cred-value" th:text="${institutionalEmail}">prenom.nom@universite.edu</span>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">Mot de passe temporaire</span>
+                <span class="cred-value" th:text="${temporaryPassword}">••••••••</span>
+            </div>
         </div>
-        <table class="info-table">
-            <tr><td>Numéro matricule</td><td th:text="${studentNumber}">-</td></tr>
-            <tr><td>Filière</td><td th:text="${filiereName}">-</td></tr>
-            <tr><td>Année académique</td><td th:text="${academicYear}">-</td></tr>
+
+        <div class="info-box">
+            ⚠️ Votre mot de passe temporaire doit être changé lors de votre première connexion. Connectez-vous avec votre <strong>email institutionnel</strong> sur la plateforme universitaire.
+        </div>
+
+        <table class="details-table">
+            <tr>
+                <td>Formation</td>
+                <td th:text="${filiereName}">Licence Informatique</td>
+            </tr>
+            <tr>
+                <td>Année académique</td>
+                <td th:text="${academicYear}">2025-2026</td>
+            </tr>
+            <tr>
+                <td>Date de confirmation</td>
+                <td th:text="${confirmedAt}">01/06/2026</td>
+            </tr>
         </table>
-        <p>Prochaines étapes :</p>
-        <ol style="margin-left:20px;line-height:2;">
-            <li>Connectez-vous à votre espace étudiant</li>
-            <li>Réglez vos frais de scolarité</li>
-            <li>Consultez votre emploi du temps</li>
-        </ol>
-        <p>Cordialement,<br/><strong>L'équipe Admissions</strong></p>
+
+        <p>Bienvenue dans notre établissement ! Nous vous souhaitons une excellente année universitaire.</p>
     </div>
-    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+        <p>Conservez précieusement cet e-mail contenant vos identifiants.</p>
+    </div>
 </div>
 </body>
 </html>

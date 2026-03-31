@@ -1,35 +1,76 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"/><title>Séance annulée</title>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Séance annulée</title>
     <style>
-        body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;}
-        .wrapper{max-width:600px;margin:40px auto;background:white;border-radius:10px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.07);}
-        .header{background:linear-gradient(135deg,#374151,#6b7280);padding:35px 40px;text-align:center;}
-        .header h1{color:white;font-size:26px;margin:0;}
-        .header p{color:#d1d5db;font-size:13px;margin-top:5px;}
-        .body{padding:40px;color:#374151;line-height:1.7;}
-        .highlight{background:#f3f4f6;border-left:4px solid #6b7280;padding:16px 20px;border-radius:4px;margin:20px 0;}
-        .footer{background:#f9fafb;padding:25px;text-align:center;color:#9ca3af;font-size:12px;border-top:1px solid #e5e7eb;}
+        body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); padding: 36px 40px; text-align: center; }
+        .header h1 { margin: 0; color: #fff; font-size: 26px; font-weight: 700; }
+        .header p { margin: 8px 0 0; color: #fecaca; font-size: 14px; }
+        .body { padding: 40px; }
+        .body p { line-height: 1.7; font-size: 15px; margin: 0 0 16px; }
+        .alert-box { background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 20px 24px; margin: 20px 0; }
+        .alert-box p { margin: 0; font-size: 15px; font-weight: 600; color: #7f1d1d; }
+        .details-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .details-table td { padding: 10px 14px; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
+        .details-table td:first-child { color: #6b7280; width: 45%; }
+        .details-table td:last-child { font-weight: 600; }
+        .info-box { background: #f0f9ff; border-left: 4px solid #0891b2; padding: 14px 18px; border-radius: 4px; margin: 20px 0; font-size: 14px; color: #0e4f6b; }
+        .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
     </style>
 </head>
 <body>
 <div class="wrapper">
     <div class="header">
-        <h1>❌ Séance annulée</h1>
-        <p>Information importante concernant votre emploi du temps</p>
+        <h1>AdmissionSchool</h1>
+        <p>Annulation de séance</p>
     </div>
     <div class="body">
-        <p>Bonjour <strong th:text="${firstName}">Étudiant</strong>,</p>
-        <p>Nous vous informons que la séance suivante a été annulée :</p>
-        <div class="highlight">
-            <strong>Matière :</strong> <span th:text="${matiereName}">-</span><br/>
-            <strong>Date :</strong> <span th:text="${date}">-</span><br/>
-            <strong>Heure :</strong> <span th:text="${startTime}">-</span><br/>
-            <strong>Motif :</strong> <span th:text="${reason}">-</span>
+        <p>Bonjour <strong th:text="${firstName}">étudiant</strong>,</p>
+
+        <div class="alert-box">
+            <p>⚠️ La séance de <strong th:text="${matiereName}">Mathématiques</strong> prévue a été <strong>annulée</strong>.</p>
         </div>
-        <p>Cordialement,<br/><strong>L'équipe pédagogique</strong></p>
+
+        <table class="details-table">
+            <tr>
+                <td>Matière</td>
+                <td th:text="${matiereName}">Mathématiques</td>
+            </tr>
+            <tr>
+                <td>Date prévue</td>
+                <td th:text="${sessionDate}">15/04/2026</td>
+            </tr>
+            <tr>
+                <td>Heure</td>
+                <td th:text="${sessionTime}">09h00 - 11h00</td>
+            </tr>
+            <tr th:if="${teacherName != null}">
+                <td>Enseignant</td>
+                <td th:text="${teacherName}"></td>
+            </tr>
+            <tr th:if="${reason != null}">
+                <td>Motif de l'annulation</td>
+                <td th:text="${reason}"></td>
+            </tr>
+        </table>
+
+        <div th:if="${rescheduledDate != null}" class="info-box">
+            <strong>Rattrappage prévu :</strong> Cette séance sera rattrapée le <strong th:text="${rescheduledDate}"></strong>.
+        </div>
+
+        <div th:unless="${rescheduledDate != null}" class="info-box">
+            Un message complémentaire vous sera communiqué concernant la reprogrammation éventuelle de cette séance.
+        </div>
     </div>
-    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
 </div>
 </body>
 </html>

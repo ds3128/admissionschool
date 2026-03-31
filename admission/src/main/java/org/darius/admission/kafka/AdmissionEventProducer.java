@@ -63,6 +63,11 @@ public class AdmissionEventProducer {
         send(KafkaConfig.TOPIC_CHOICE_AUTO_CONFIRMED, event.getApplicationId(), event);
     }
 
+    public void publishApplicationExpired(ApplicationExpiredEvent event) {
+        send(KafkaConfig.TOPIC_APPLICATION_EXPIRED, event.getApplicationId(), event);
+    }
+
+
     // ── Helper ────────────────────────────────────────────────────────────────
 
     private void send(String topic, String key, Object payload) {

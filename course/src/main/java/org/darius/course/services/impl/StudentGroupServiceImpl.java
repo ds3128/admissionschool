@@ -8,7 +8,9 @@ import org.darius.course.dtos.responses.StudentGroupResponse;
 import org.darius.course.entities.Semester;
 import org.darius.course.entities.StudentGroup;
 import org.darius.course.enums.GroupType;
+import org.darius.course.events.published.StudentEnrolledEvent;
 import org.darius.course.exceptions.*;
+import org.darius.course.kafka.CourseEventProducer;
 import org.darius.course.mapper.CourseMapper;
 import org.darius.course.repositories.SemesterRepository;
 import org.darius.course.repositories.StudentGroupRepository;
@@ -27,6 +29,7 @@ public class StudentGroupServiceImpl implements StudentGroupService {
     private final StudentGroupRepository studentGroupRepository;
     private final SemesterRepository     semesterRepository;
     private final CourseMapper           mapper;
+    private final CourseEventProducer eventProducer;
 
     @Override
     @Transactional

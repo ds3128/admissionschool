@@ -1,9 +1,9 @@
 package org.darius.admission.services.impls;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.darius.admission.common.dtos.requests.AdminReviewRequest;
 import org.darius.admission.common.dtos.requests.RequestAdditionalDocsRequest;
+import org.darius.admission.common.dtos.responses.AdminStatsResponse;
 import org.darius.admission.common.dtos.responses.ApplicationResponse;
 import org.darius.admission.common.dtos.responses.ApplicationSummaryResponse;
 import org.darius.admission.common.dtos.responses.PageResponse;
@@ -28,19 +28,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class AdminApplicationServiceImpl implements AdminApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final ApplicationChoiceRepository choiceRepository;
+    private final AdmissionOfferRepository offerRepository;
     private final DossierRepository dossierRepository;
     private final ApplicationStatusHistoryRepository historyRepository;
     private final CandidateProfileRepository profileRepository;
     private final AdmissionEventProducer eventProducer;
     private final AdmissionMapper mapper;
+
+    public AdminApplicationServiceImpl(ApplicationRepository applicationRepository, ApplicationChoiceRepository choiceRepository, AdmissionOfferRepository offerRepository, DossierRepository dossierRepository, ApplicationStatusHistoryRepository historyRepository, CandidateProfileRepository profileRepository, AdmissionEventProducer eventProducer, AdmissionMapper mapper) {
+        this.applicationRepository = applicationRepository;
+        this.choiceRepository = choiceRepository;
+        this.offerRepository = offerRepository;
+        this.dossierRepository = dossierRepository;
+        this.historyRepository = historyRepository;
+        this.profileRepository = profileRepository;
+        this.eventProducer = eventProducer;
+        this.mapper = mapper;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -192,6 +204,88 @@ public class AdminApplicationServiceImpl implements AdminApplicationService {
         app = applicationRepository.save(app);
         return mapper.toApplicationResponse(app);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdminStatsResponse getStats(Long campaignId) {
+        List<Application> apps = (campaignId != null)
+                ? applicationRepository.findByCampaign_Id(campaignId)
+                : applicationRepository.findAll();
+
+        long total     = apps.size();
+        long submitted = apps.stream().filter(a -> a.getStatus() != ApplicationStatus.DRAFT).count();
+        long confirmed = apps.stream().filter(a -> a.getStatus() == ApplicationStatus.CONFIRMED).count();
+
+        List<AdminStatsResponse.OfferStatLine> byOffer = offerRepository.findAll().stream()
+                .map(offer -> {
+                    long conf = choiceRepository.countByOffer_IdAndStatus(
+                            offer.getId(), ChoiceStatus.CONFIRMED);
+                    long wait = choiceRepository.countByOffer_IdAndStatus(
+                            offer.getId(), ChoiceStatus.WAITLISTED);
+                    return AdminStatsResponse.OfferStatLine.builder()
+                            .offerId(offer.getId())
+                            .filiereName(offer.getFiliereName())
+                            .level(offer.getLevel().name())
+                            .maxCapacity(offer.getMaxCapacity())
+                            .confirmed(conf)
+                            .waitlisted(wait)
+                            .fillRate(offer.getMaxCapacity() > 0
+                                    ? (double) conf / offer.getMaxCapacity() * 100 : 0)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return AdminStatsResponse.builder()
+                .totalApplications(total)
+                .draft(apps.stream().filter(a -> a.getStatus() == ApplicationStatus.DRAFT).count())
+                .submitted(submitted)
+                .pendingAdminReview(apps.stream()
+                        .filter(a -> a.getStatus() == ApplicationStatus.PENDING_ADMIN).count())
+                .pendingCommission(apps.stream()
+                        .filter(a -> a.getStatus() == ApplicationStatus.PENDING_COMMISSION).count())
+                .awaitingConfirmation(apps.stream()
+                        .filter(a -> a.getStatus() == ApplicationStatus.AWAITING_CONFIRMATION).count())
+                .confirmed(confirmed)
+                .rejected(apps.stream()
+                        .filter(a -> a.getStatus() == ApplicationStatus.REJECTED).count())
+                .expired(apps.stream()
+                        .filter(a -> a.getStatus() == ApplicationStatus.CONFIRMATION_EXPIRED).count())
+                .acceptanceRate(submitted > 0 ? (double) confirmed / submitted * 100 : 0)
+                .byOffer(byOffer)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] exportToCsv(Long campaignId, String status) {
+        List<Application> apps = (campaignId != null)
+                ? applicationRepository.findByCampaign_Id(campaignId)
+                : applicationRepository.findAll();
+
+        if (status != null && !status.isBlank()) {
+            ApplicationStatus st = ApplicationStatus.valueOf(status.toUpperCase());
+            apps = apps.stream()
+                    .filter(a -> a.getStatus() == st)
+                    .toList();
+        }
+
+        StringBuilder csv = new StringBuilder();
+        csv.append("ID,Statut,Campagne,FiliereName,Niveau,DateSoumission\n");
+
+        for (Application app : apps) {
+            csv.append(app.getId()).append(",")
+                    .append(app.getStatus()).append(",")
+                    .append(app.getCampaign().getAcademicYear()).append(",")
+                    .append(app.getChoices().isEmpty() ? "" :
+                            app.getChoices().getFirst().getOffer().getFiliereName()).append(",")
+                    .append(app.getChoices().isEmpty() ? "" :
+                            app.getChoices().getFirst().getOffer().getLevel()).append(",")
+                    .append(app.getSubmittedAt() != null ? app.getSubmittedAt() : "").append("\n");
+        }
+
+        return csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    }
+
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

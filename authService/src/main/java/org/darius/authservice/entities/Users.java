@@ -30,8 +30,16 @@ public class Users implements UserDetails {
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
+    @Column(unique = true)
+    private String institutionalEmail;
+
     @Column(nullable = false)
     private String password;
+
+    @Column(name = "institutional_password")
+    private String institutionalPassword;
+
+    private boolean temporaryPasswordChanged =  false;
 
     @Column(nullable = false)
     private boolean status = false;

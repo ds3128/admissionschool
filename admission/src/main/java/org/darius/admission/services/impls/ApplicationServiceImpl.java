@@ -7,7 +7,9 @@ import org.darius.admission.common.dtos.responses.*;
 import org.darius.admission.common.enums.*;
 import org.darius.admission.entities.*;
 import org.darius.admission.evens.published.ApplicationAcceptedEvent;
+import org.darius.admission.evens.published.ApplicationExpiredEvent;
 import org.darius.admission.evens.published.ApplicationSubmittedEvent;
+import org.darius.admission.evens.published.WaitlistPromotedEvent;
 import org.darius.admission.exceptions.DuplicateResourceException;
 import org.darius.admission.exceptions.ForbiddenException;
 import org.darius.admission.exceptions.InvalidOperationException;
@@ -15,7 +17,6 @@ import org.darius.admission.exceptions.ResourceNotFoundException;
 import org.darius.admission.kafka.AdmissionEventProducer;
 import org.darius.admission.mappers.AdmissionMapper;
 import org.darius.admission.repositories.*;
-import org.darius.admission.services.ApplicationEvaluationService;
 import org.darius.admission.services.ApplicationService;
 import org.darius.admission.services.StudentNumberService;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ConfirmationRequestRepository  confirmationRepository;
     private final ApplicationStatusHistoryRepository historyRepository;
     private final StudentNumberService studentNumberService;
-    private final ApplicationEvaluationService evaluationService;
+    private final WaitlistEntryRepository  waitlistEntryRepository;
     private final AdmissionEventProducer eventProducer;
     private final AdmissionMapper mapper;
 
@@ -563,6 +564,137 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return mapper.toConfirmationResponse(confirmation);
     }
+
+    @Override
+    @Transactional
+    public int autoExpireConfirmations() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // La deadline est dans ConfirmationRequest.expiresAt, PAS dans Application
+        List<ConfirmationRequest> expiredRequests =
+                confirmationRepository.findExpiredPending(now);
+
+        int count = 0;
+        for (ConfirmationRequest cr : expiredRequests) {
+            try {
+                Application app = cr.getApplication();
+
+                // Expirer la demande de confirmation
+                cr.setStatus(ConfirmationStatus.EXPIRED);
+                confirmationRepository.save(cr);
+
+                // Mettre à jour le statut de la candidature → WITHDRAWN (pas de CONFIRMATION_EXPIRED dans l'enum)
+                app.setStatus(ApplicationStatus.WITHDRAWN);
+                app.setLastStatusChange(now);
+                applicationRepository.save(app);
+
+                // Libérer les choix ACCEPTED → WITHDRAWN
+                app.getChoices().stream()
+                        .filter(c -> c.getStatus() == ChoiceStatus.ACCEPTED)
+                        .forEach(c -> {
+                            c.setStatus(ChoiceStatus.WITHDRAWN);
+                            choiceRepository.save(c);
+                        });
+
+                // Construire et publier l'événement
+                CandidateProfile profile = app.getCandidateProfile();
+                ApplicationExpiredEvent event = ApplicationExpiredEvent.builder()
+                        .applicationId(app.getId())
+                        .userId(app.getUserId())
+                        .personalEmail(profile != null ? profile.getPersonalEmail() : null)
+                        .candidateFirstName(profile != null ? profile.getFirstName() : null)
+                        .candidateLastName(profile != null ? profile.getLastName() : null)
+                        .academicYear(app.getAcademicYear())
+                        .build();
+                eventProducer.publishApplicationExpired(event);
+
+                count++;
+                log.info("Candidature expirée auto : applicationId={}", app.getId());
+            } catch (Exception ex) {
+                log.error("Erreur expiration candidature={} : {}",
+                        cr.getApplication().getId(), ex.getMessage());
+            }
+        }
+        return count;
+    }
+
+
+    @Override
+    @Transactional
+    public int promoteFromWaitlist() {
+        LocalDateTime now = LocalDateTime.now();
+        List<AdmissionOffer> offers = offerRepository.findAll();
+        int totalPromoted = 0;
+
+        for (AdmissionOffer offer : offers) {
+            // Utiliser acceptedCount déjà dénormalisé dans AdmissionOffer
+            int available = offer.getMaxCapacity() - offer.getAcceptedCount();
+            if (available <= 0) continue;
+
+            // Utiliser WaitlistEntryRepository, PAS choiceRepository
+            List<WaitlistEntry> waitlisted = waitlistEntryRepository
+                    .findByOfferIdAndStatusOrderByRank(offer.getId(), WaitlistStatus.WAITING);
+
+            for (int i = 0; i < Math.min(available, waitlisted.size()); i++) {
+                WaitlistEntry entry = waitlisted.get(i);
+                ApplicationChoice choice = entry.getChoice();
+                Application app = choice.getApplication();
+
+                try {
+                    LocalDateTime expiresAt = now.plusDays(
+                            app.getCampaign().getConfirmationDeadlineDays());
+
+                    // Promouvoir l'entrée en liste d'attente
+                    entry.setStatus(WaitlistStatus.PROMOTED);
+                    entry.setPromotedAt(now);
+                    entry.setExpiresAt(expiresAt);
+                    waitlistEntryRepository.save(entry);
+
+                    // Mettre à jour le choix
+                    choice.setStatus(ChoiceStatus.ACCEPTED);
+                    choice.setDecidedAt(now);
+                    choiceRepository.save(choice);
+
+                    // Mettre à jour la candidature
+                    app.setStatus(ApplicationStatus.AWAITING_CONFIRMATION);
+                    app.setLastStatusChange(now);
+                    applicationRepository.save(app);
+
+                    // Créer la ConfirmationRequest (deadline via campaign)
+                    ConfirmationRequest cr = ConfirmationRequest.builder()
+                            .application(app)
+                            .acceptedChoiceIds(List.of(choice.getId()))
+                            .expiresAt(expiresAt)
+                            .status(ConfirmationStatus.PENDING)
+                            .build();
+                    confirmationRepository.save(cr);
+
+                    // Construire et publier l'événement avec la bonne signature
+                    WaitlistPromotedEvent event = WaitlistPromotedEvent.builder()
+                            .applicationId(app.getId())
+                            .userId(app.getUserId())
+                            .personalEmail(app.getCandidateProfile() != null
+                                    ? app.getCandidateProfile().getPersonalEmail() : null)
+                            .offerId(offer.getId())
+                            .filiereName(choice.getFiliereName())
+                            .rank(entry.getRank())
+                            .expiresAt(expiresAt)
+                            .build();
+                    eventProducer.publishWaitlistPromoted(event);
+
+                    totalPromoted++;
+                    log.info("Candidat promu depuis liste d'attente : applicationId={}, offerId={}",
+                            app.getId(), offer.getId());
+                } catch (Exception ex) {
+                    log.error("Erreur promotion liste d'attente : applicationId={} : {}",
+                            app.getId(), ex.getMessage());
+                }
+            }
+        }
+        return totalPromoted;
+    }
+
+
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

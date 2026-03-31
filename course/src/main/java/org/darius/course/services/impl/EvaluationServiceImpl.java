@@ -29,16 +29,34 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override @Transactional
     public EvaluationResponse create(String teacherId, CreateEvaluationRequest req) {
-        Matiere  m   = matiereRepository.findById(req.getMatiereId()).orElseThrow(() -> new ResourceNotFoundException("Matière introuvable"));
-        Semester sem = semesterRepository.findById(req.getSemesterId()).orElseThrow(() -> new ResourceNotFoundException("Semestre introuvable"));
+        Matiere  m   = matiereRepository.findById(req.getMatiereId())
+                .orElseThrow(() -> new ResourceNotFoundException("Matière introuvable"));
+
+        Semester sem = semesterRepository.findById(req.getSemesterId())
+                .orElseThrow(() -> new ResourceNotFoundException("Semestre introuvable"));
+
         if (!assignmentService.isTeacherAssigned(teacherId, req.getMatiereId(), req.getSemesterId()))
             throw new ForbiddenException("Vous n'êtes pas affecté à cette matière");
+
         double remaining = getRemainingCoefficient(req.getMatiereId(), req.getSemesterId());
+
         if (req.getCoefficient() > remaining + 0.001)
             throw new InvalidOperationException("Coefficient trop élevé — solde : " + String.format("%.2f", remaining));
-        return mapper.toEvaluationResponse(evaluationRepository.save(Evaluation.builder()
-                .title(req.getTitle()).type(req.getType()).matiere(m).semester(sem).date(req.getDate())
-                .coefficient(req.getCoefficient()).maxScore(req.getMaxScore()).isPublished(false).build()));
+
+        return mapper.toEvaluationResponse(
+                evaluationRepository.save(
+                        Evaluation.builder()
+                            .title(req.getTitle())
+                            .type(req.getType())
+                            .matiere(m)
+                            .semester(sem)
+                            .date(req.getDate())
+                            .coefficient(req.getCoefficient())
+                            .maxScore(req.getMaxScore())
+                            .isPublished(false)
+                            .build()
+                )
+        );
     }
 
     @Override @Transactional
@@ -73,16 +91,31 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override @Transactional
     public EvaluationResponse publish(Long id, String teacherId) {
+
         Evaluation ev = findOrThrow(id);
+
         if (!assignmentService.isTeacherAssigned(teacherId, ev.getMatiere().getId(), ev.getSemester().getId()))
             throw new ForbiddenException("Vous n'êtes pas affecté à cette matière");
-        ev.setPublished(true); evaluationRepository.save(ev);
+
+        ev.setPublished(true);
+
+        evaluationRepository.save(ev);
+
         List<String> studentIds = enrollmentRepository.findByMatiere_IdAndSemester_IdAndStatus(
-                ev.getMatiere().getId(), ev.getSemester().getId(), EnrollStatus.ACTIVE).stream().map(Enrollment::getStudentId).toList();
-        eventProducer.publishGradesPublished(GradesPublishedEvent.builder()
-                .evaluationId(ev.getId()).evaluationTitle(ev.getTitle())
-                .matiereId(ev.getMatiere().getId()).matiereName(ev.getMatiere().getName())
-                .semesterId(ev.getSemester().getId()).studentIds(studentIds).build());
+                ev.getMatiere().getId(),
+                ev.getSemester().getId(),
+                EnrollStatus.ACTIVE).stream().map(Enrollment::getStudentId).toList();
+
+        eventProducer.publishGradesPublished(
+            GradesPublishedEvent.builder()
+                .evaluationId(ev.getId())
+                .evaluationTitle(ev.getTitle())
+                .matiereId(ev.getMatiere().getId())
+                .matiereName(ev.getMatiere().getName())
+                .semesterId(ev.getSemester().getId())
+                .studentIds(studentIds)
+                .build()
+        );
         return mapper.toEvaluationResponse(ev);
     }
 
@@ -94,7 +127,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         // ✅ Récupérer le premier élément de la liste
         List<Object[]> rawList = gradeRepository.computeStatsForEvaluation(evaluationId);
 
-        if (rawList == null || rawList.isEmpty() || rawList.get(0)[0] == null) {
+        if (rawList == null || rawList.isEmpty() || rawList.getFirst()[0] == null) {
             return ClassStatsResponse.builder()
                     .evaluationId(evaluationId)
                     .evaluationTitle(eval.getTitle())
@@ -106,7 +139,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                     .build();
         }
 
-        Object[] raw = rawList.get(0);
+        Object[] raw = rawList.getFirst();
 
         double min   = ((Number) raw[0]).doubleValue();
         double max   = ((Number) raw[1]).doubleValue();
@@ -145,6 +178,7 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     private Evaluation findOrThrow(Long id) {
-        return evaluationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Évaluation introuvable : id=" + id));
+        return evaluationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Évaluation introuvable : id=" + id));
     }
 }

@@ -31,6 +31,7 @@ public class KafkaConfig {
 
     // Publiés
     public static final String TOPIC_STUDENT_PROFILE_CREATED    = "student.profile.created";
+    public static final String TOPIC_STUDENT_STATUS_CHANGED = "student.status.changed";
     public static final String TOPIC_STUDENT_PAYMENT_BLOCKED = "student.payment.blocked";
     public static final String TOPIC_TEACHER_PROFILE_CREATED    = "teacher.profile.created";
     public static final String TOPIC_STAFF_PROFILE_CREATED      = "staff.profile.created";

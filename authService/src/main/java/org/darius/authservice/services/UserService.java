@@ -2,6 +2,7 @@ package org.darius.authservice.services;
 
 import org.darius.authservice.common.dtos.*;
 import org.darius.authservice.entities.Users;
+import org.darius.authservice.events.ApplicationAcceptedEvent;
 import org.darius.authservice.exceptions.*;
 
 public interface UserService {
@@ -18,4 +19,5 @@ public interface UserService {
     AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) throws UserNotFoundException;
     void resendActivationEmail(String email) throws UserNotFoundException;
     void revokeAllSessions(String email) throws UserNotFoundException;
+    void createInstitutionalAccount(ApplicationAcceptedEvent event);
 }

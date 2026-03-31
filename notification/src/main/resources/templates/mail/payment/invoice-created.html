@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Nouvelle facture</title>
+    <style>
+        body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); padding: 36px 40px; text-align: center; }
+        .header h1 { margin: 0; color: #fff; font-size: 26px; font-weight: 700; }
+        .header p { margin: 8px 0 0; color: #a5f3fc; font-size: 14px; }
+        .body { padding: 40px; }
+        .body p { line-height: 1.7; font-size: 15px; margin: 0 0 16px; }
+        .invoice-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 20px 0; }
+        .invoice-header { background: #0891b2; color: #fff; padding: 14px 20px; font-size: 14px; font-weight: 600; }
+        .invoice-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        .invoice-row:last-child { border-bottom: none; }
+        .invoice-row.total { font-weight: 700; font-size: 16px; background: #f0fdf4; }
+        .invoice-row .label { color: #6b7280; }
+        .invoice-row .amount { font-weight: 600; }
+        .due-box { background: #fef9c3; border-left: 4px solid #eab308; padding: 14px 18px; border-radius: 4px; margin: 20px 0; font-size: 14px; color: #713f12; }
+        .btn-wrap { text-align: center; margin: 32px 0; }
+        .btn { display: inline-block; background: #0891b2; color: #fff !important; text-decoration: none; padding: 14px 36px; border-radius: 6px; font-size: 16px; font-weight: 600; }
+        .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Nouvelle facture disponible</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">étudiant</strong>,</p>
+        <p>Une nouvelle facture a été générée pour votre compte. Veuillez en prendre connaissance et procéder au règlement avant la date d'échéance.</p>
+
+        <div class="invoice-box">
+            <div class="invoice-header">Facture n° <span th:text="${invoiceNumber}">INV-2026-XXXX</span></div>
+            <div class="invoice-row">
+                <span class="label">Description</span>
+                <span th:text="${description}">Frais de scolarité — S1 2025-2026</span>
+            </div>
+            <div class="invoice-row">
+                <span class="label">Date de création</span>
+                <span th:text="${createdAt}">01/09/2025</span>
+            </div>
+            <div class="invoice-row">
+                <span class="label">Échéance</span>
+                <span class="amount" th:text="${dueDate}">30/09/2025</span>
+            </div>
+            <div class="invoice-row total">
+                <span>Montant total</span>
+                <span class="amount" style="color:#0891b2;"><span th:text="${amount}">1 200</span> <span th:text="${currency != null ? currency : 'XAF'}">XAF</span></span>
+            </div>
+        </div>
+
+        <div class="due-box">
+            📅 Cette facture est à régler avant le <strong th:text="${dueDate}">30/09/2025</strong>. Passé ce délai, des pénalités de retard pourraient s'appliquer.
+        </div>
+
+        <div class="btn-wrap">
+            <a th:href="${paymentLink}" class="btn">Payer maintenant</a>
+        </div>
+    </div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
+</div>
+</body>
+</html>

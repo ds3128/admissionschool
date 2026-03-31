@@ -1,4 +1,4 @@
-package org.darius.course.controller;
+package org.darius.course.controller.advices;
 
 import lombok.extern.slf4j.Slf4j;
 import org.darius.course.exceptions.*;

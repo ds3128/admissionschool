@@ -196,8 +196,11 @@ public class ApplicationEvaluationServiceImpl implements ApplicationEvaluationSe
         });
     }
 
-    private void changeStatus(Application app, ApplicationStatus newStatus,
-                              String changedBy, String comment
+    private void changeStatus(
+            Application app,
+            ApplicationStatus newStatus,
+            String changedBy,
+            String comment
     ) {
         ApplicationStatusHistory history = ApplicationStatusHistory.builder()
                 .application(app)

@@ -56,7 +56,6 @@ public class StudyLevel {
     @Column(name = "level_order", nullable = false)
     private int order;
 
-    // Relation JPA — même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filiere_id", nullable = false)
     private Filiere filiere;

@@ -38,20 +38,21 @@ public class CourseEventProducer {
                 String.valueOf(event.getSemesterId()), event);
     }
 
+
     private void send(String topic, String key, Object payload) {
         try {
             String json = objectMapper.writeValueAsString(payload);
             kafkaTemplate.send(topic, key, json)
                     .whenComplete((result, ex) -> {
                         if (ex != null) {
-                            log.error("Échec envoi Kafka — topic={}, key={} : {}",
+                            log.error("Échec envoi Kafka - topic={}, key={} : {}",
                                     topic, key, ex.getMessage());
                         } else {
-                            log.debug("Event publié — topic={}, key={}", topic, key);
+                            log.debug("Event publié - topic={}, key={}", topic, key);
                         }
                     });
         } catch (Exception ex) {
-            log.error("Erreur sérialisation Kafka — topic={} : {}", topic, ex.getMessage());
+            log.error("Erreur sérialisation Kafka - topic={} : {}", topic, ex.getMessage());
         }
     }
 }

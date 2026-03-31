@@ -33,6 +33,7 @@ public class KafkaConfig {
     public static final String TOPIC_APPLICATION_ACCEPTED              = "application.accepted";
     public static final String TOPIC_APPLICATION_REJECTED              = "application.rejected";
     public static final String TOPIC_WAITLIST_PROMOTED                 = "waitlist.promoted";
+    public static final String TOPIC_APPLICATION_EXPIRED = "application.expired";
     public static final String TOPIC_CHOICE_AUTO_CONFIRMED             = "choice.auto.confirmed";
 
     // ── Group ID ─────────────────────────────────────────────────────────────

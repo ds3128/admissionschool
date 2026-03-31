@@ -38,26 +38,26 @@ public class SemesterController {
     }
 
     @PostMapping
-    @Operation(summary = "Créer un semestre — ADMIN_SCHOLAR")
+    @Operation(summary = "Créer un semestre - ADMIN_SCHOLAR")
     public ResponseEntity<SemesterResponse> create(@Valid @RequestBody CreateSemesterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(semesterService.create(request));
     }
 
     @PutMapping("/{id}/close")
-    @Operation(summary = "Clôturer un semestre — ADMIN_SCHOLAR")
+    @Operation(summary = "Clôturer un semestre - ADMIN_SCHOLAR")
     public ResponseEntity<SemesterResponse> close(@PathVariable Long id) {
         return ResponseEntity.ok(semesterService.close(id));
     }
 
     @PostMapping("/{id}/compute-progress")
-    @Operation(summary = "Calculer les progressions — ADMIN_SCHOLAR")
+    @Operation(summary = "Calculer les progressions - ADMIN_SCHOLAR")
     public ResponseEntity<Void> computeProgress(@PathVariable Long id) {
         semesterService.computeProgress(id);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}/validate")
-    @Operation(summary = "Valider le semestre — SUPER_ADMIN")
+    @Operation(summary = "Valider le semestre - SUPER_ADMIN")
     public ResponseEntity<SemesterResponse> validate(@PathVariable Long id) {
         return ResponseEntity.ok(semesterService.validate(id));
     }

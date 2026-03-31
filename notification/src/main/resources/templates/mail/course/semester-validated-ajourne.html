@@ -23,7 +23,7 @@
     <div class="body">
         <p>Bonjour <strong th:text="${firstName}">Étudiant</strong>,</p>
         <div class="alert">
-            <strong>⚠️ Semestre ajourné</strong> — Des épreuves de rattrapage sont prévues.
+            <strong>⚠️ Semestre ajourné</strong> - Des épreuves de rattrapage sont prévues.
         </div>
         <div class="result-card">
             <div class="avg" th:text="${average} + '/20'">8.50/20</div>
@@ -37,7 +37,11 @@
             pour un suivi personnalisé.</p>
         <p>Cordialement,<br/><strong>La Direction Académique</strong></p>
     </div>
-    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
 </div>
 </body>
 </html>

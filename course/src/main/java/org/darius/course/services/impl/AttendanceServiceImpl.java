@@ -26,7 +26,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override @Transactional(readOnly = true)
     public AttendanceResponse getById(Long id) {
-        return mapper.toAttendanceResponse(attendanceRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Présence introuvable")));
+        return mapper.toAttendanceResponse(attendanceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Présence introuvable")));
     }
 
     @Override @Transactional(readOnly = true)
@@ -37,37 +38,68 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override @Transactional(readOnly = true)
     public List<AttendanceStatsResponse> getStatsByStudentAndSemester(String studentId, Long semesterId) {
         return enrollmentRepository.findByStudentIdAndSemester_IdAndStatus(studentId, semesterId, EnrollStatus.ACTIVE).stream()
-                .map(e -> buildStats(studentId, e.getMatiere().getId(), e.getMatiere().getName(), semesterId, e.getMatiere().getAttendanceThreshold())).toList();
+                .map(e -> buildStats(
+                        studentId,
+                        e.getMatiere().getId(),
+                        e.getMatiere().getName(),
+                        semesterId,
+                        e.getMatiere().getAttendanceThreshold())
+                )
+                .toList();
     }
 
     @Override @Transactional(readOnly = true)
     public AttendanceStatsResponse getStatsByStudentAndMatiereAndSemester(String studentId, Long matiereId, Long semesterId) {
-        Matiere m = matiereRepository.findById(matiereId).orElseThrow(() -> new ResourceNotFoundException("Matière introuvable"));
+
+        Matiere m = matiereRepository.findById(matiereId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matière introuvable"));
+
         return buildStats(studentId, matiereId, m.getName(), semesterId, m.getAttendanceThreshold());
     }
 
     @Override @Transactional
     public AttendanceResponse justify(Long id, JustifyAbsenceRequest req) {
-        Attendance att = attendanceRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Présence introuvable"));
-        if (att.isPresent()) throw new InvalidOperationException("L'étudiant était présent — justification inutile");
-        att.setJustification(req.getJustification()); att.setJustifiedAt(LocalDateTime.now());
-        return mapper.toAttendanceResponse(attendanceRepository.save(att));
+
+        Attendance att = attendanceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Présence introuvable"));
+
+        if (att.isPresent()) throw new InvalidOperationException("L'étudiant était présent - justification inutile");
+
+        att.setJustification(req.getJustification());
+        att.setJustifiedAt(LocalDateTime.now());
+
+        Attendance attendance = attendanceRepository.save(att);
+
+        return mapper.toAttendanceResponse(attendance);
     }
 
     @Override @Transactional
     public void checkThreshold(String studentId, Long matiereId, Long semesterId) {
+
         Matiere m = matiereRepository.findById(matiereId).orElse(null);
+
         if (m == null) return;
+
         AttendanceStatsResponse stats = buildStats(studentId, matiereId, m.getName(), semesterId, m.getAttendanceThreshold());
+
         if (stats.getTotalSessions() == 0) return;
+
         if (stats.getAttendanceRate() < m.getAttendanceThreshold()) {
             enrollmentRepository.findByStudentIdAndMatiere_IdAndSemester_Id(studentId, matiereId, semesterId).ifPresent(e -> {
                 if (e.getStatus() != EnrollStatus.BLOCKED) {
                     e.setStatus(EnrollStatus.BLOCKED); enrollmentRepository.save(e);
-                    eventProducer.publishAttendanceThresholdExceeded(AttendanceThresholdExceededEvent.builder()
-                            .studentId(studentId).matiereId(matiereId).matiereName(m.getName()).semesterId(semesterId)
-                            .attendanceRate(stats.getAttendanceRate()).threshold(m.getAttendanceThreshold())
-                            .totalSessions(stats.getTotalSessions()).absenceCount(stats.getAbsenceCount()).build());
+                    eventProducer.publishAttendanceThresholdExceeded(
+                            AttendanceThresholdExceededEvent.builder()
+                            .studentId(studentId)
+                            .matiereId(matiereId)
+                            .matiereName(m.getName())
+                            .semesterId(semesterId)
+                            .attendanceRate(stats.getAttendanceRate())
+                            .threshold(m.getAttendanceThreshold())
+                            .totalSessions(stats.getTotalSessions())
+                            .absenceCount(stats.getAbsenceCount())
+                            .build()
+                    );
                     log.warn("Étudiant {} bloqué — absences dans {} : {}%", studentId, m.getName(), stats.getAttendanceRate());
                 }
             });
@@ -81,15 +113,35 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .forEach(e -> checkThreshold(e.getStudentId(), e.getMatiere().getId(), e.getSemester().getId()));
     }
 
-    private AttendanceStatsResponse buildStats(String studentId, Long matiereId, String name, Long semesterId, double threshold) {
+    private AttendanceStatsResponse buildStats(
+            String studentId,
+            Long matiereId,
+            String name,
+            Long semesterId,
+            double threshold) {
+
         long present  = attendanceRepository.countByStudentAndMatiereAndSemesterAndPresent(studentId, matiereId, semesterId, true);
+
         long absent   = attendanceRepository.countByStudentAndMatiereAndSemesterAndPresent(studentId, matiereId, semesterId, false);
+
         int  total    = (int)(present + absent);
+
         double rate   = total > 0 ? Math.round((present * 100.0 / total) * 10.0) / 10.0 : 0.0;
+
         long justified = attendanceRepository.findByStudentAndMatiereAndSemester(studentId, matiereId, semesterId)
                 .stream().filter(a -> !a.isPresent() && a.getJustification() != null && !a.getJustification().isBlank()).count();
-        return AttendanceStatsResponse.builder().studentId(studentId).matiereId(matiereId).matiereName(name)
-                .semesterId(semesterId).totalSessions(total).presentCount((int)present).absenceCount((int)absent)
-                .justifiedCount((int)justified).attendanceRate(rate).blocked(rate < threshold && total > 0).build();
+
+        return AttendanceStatsResponse.builder()
+                .studentId(studentId)
+                .matiereId(matiereId)
+                .matiereName(name)
+                .semesterId(semesterId)
+                .totalSessions(total)
+                .presentCount((int)present)
+                .absenceCount((int)absent)
+                .justifiedCount((int)justified)
+                .attendanceRate(rate)
+                .blocked(rate < threshold && total > 0)
+                .build();
     }
 }

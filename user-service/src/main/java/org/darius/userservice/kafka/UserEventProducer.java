@@ -77,6 +77,11 @@ public class UserEventProducer {
         send(KafkaConfig.TOPIC_STAFF_CREATION_REQUESTED, event.getRequestId(), event);
     }
 
+    public void publishStudentStatusChanged(StudentStatusChangedEvent event) {
+        send(KafkaConfig.TOPIC_STUDENT_STATUS_CHANGED, event.getStudentId(), event);
+    }
+
+
     // ── Helper ────────────────────────────────────────────────────────────────
 
     private void send(String topic, String key, Object payload) {
@@ -85,13 +90,13 @@ public class UserEventProducer {
             kafkaTemplate.send(topic, key, json)
                     .whenComplete((result, ex) -> {
                         if (ex != null) {
-                            log.error("Échec envoi Kafka — topic={}, key={} : {}", topic, key, ex.getMessage());
+                            log.error("Échec envoi Kafka - topic={}, key={} : {}", topic, key, ex.getMessage());
                         } else {
-                            log.debug("Événement publié — topic={}, key={}", topic, key);
+                            log.debug("Événement publié - topic={}, key={}", topic, key);
                         }
                     });
         } catch (Exception ex) {
-            log.error("Erreur sérialisation Kafka — topic={} : {}", topic, ex.getMessage());
+            log.error("Erreur sérialisation Kafka - topic={} : {}", topic, ex.getMessage());
         }
     }
 }

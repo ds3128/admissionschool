@@ -13,7 +13,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/courses/ml")
 @RequiredArgsConstructor
-@Tag(name = "Pipeline ML — Données statistiques")
+@Tag(name = "Pipeline ML - Données statistiques")
 public class StatsController {
 
     private final StatsService statsService;

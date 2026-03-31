@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vos notes sont disponibles</title>
+    <style>
+        body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #1a56db 0%, #0e3a8c 100%); padding: 36px 40px; text-align: center; }
+        .header h1 { margin: 0; color: #fff; font-size: 26px; font-weight: 700; }
+        .header p { margin: 8px 0 0; color: #c7d9f8; font-size: 14px; }
+        .body { padding: 40px; }
+        .body p { line-height: 1.7; font-size: 15px; margin: 0 0 16px; }
+        .grade-card { background: #f0f4ff; border: 2px solid #1a56db; border-radius: 8px; padding: 24px; text-align: center; margin: 24px 0; }
+        .grade-card .subject { font-size: 18px; font-weight: 700; color: #1e3a5f; margin-bottom: 12px; }
+        .grade-display { font-size: 56px; font-weight: 900; color: #1a56db; line-height: 1; }
+        .grade-display .max { font-size: 22px; font-weight: 400; color: #6b7280; }
+        .grade-label { font-size: 14px; color: #6b7280; margin-top: 8px; }
+        .mention { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 12px; }
+        .mention-tb { background: #dcfce7; color: #15803d; }
+        .mention-b { background: #dbeafe; color: #1d4ed8; }
+        .mention-ab { background: #fef9c3; color: #854d0e; }
+        .mention-p { background: #fee2e2; color: #dc2626; }
+        .btn-wrap { text-align: center; margin: 32px 0; }
+        .btn { display: inline-block; background: #1a56db; color: #fff !important; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-size: 15px; font-weight: 600; }
+        .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Publication des notes</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">étudiant</strong>,</p>
+        <p>Les résultats pour la matière suivante viennent d'être publiés.</p>
+
+        <div class="grade-card">
+            <div class="subject" th:text="${matiereName}">Mathématiques</div>
+            <div class="grade-display">
+                <span th:text="${average}">14.5</span>
+                <span class="max"> / 20</span>
+            </div>
+            <div class="grade-label">Moyenne</div>
+            <div>
+        <span class="mention" th:classappend="${average >= 16 ? 'mention-tb' : (average >= 14 ? 'mention-b' : (average >= 12 ? 'mention-ab' : 'mention-p'))}"
+              th:text="${average >= 16 ? 'Très bien' : (average >= 14 ? 'Bien' : (average >= 12 ? 'Assez bien' : (average >= 10 ? 'Passable' : 'Ajourné')))}">Bien</span>
+            </div>
+        </div>
+
+        <div class="btn-wrap">
+            <a th:href="${gradesLink}" class="btn">Voir le détail de mes notes</a>
+        </div>
+
+        <p>Connectez-vous à votre espace étudiant pour consulter le détail des notes (partiel, TP, contrôle continu).</p>
+    </div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
+</div>
+</body>
+</html>

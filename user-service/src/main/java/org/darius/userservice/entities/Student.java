@@ -21,8 +21,6 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    // Cross-service : référence vers UserProfile.id (même service — relation JPA possible)
-    // On garde String car UUID et OneToOne sur profileId
     @Column(nullable = false, unique = true)
     private String profileId;
 
@@ -32,12 +30,10 @@ public class Student {
     @Column(nullable = false)
     private int enrollmentYear;
 
-    // Relation JPA — Filiere est dans la même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "filiere_id", nullable = false)
     private Filiere filiere;
 
-    // Relation JPA — StudyLevel est dans la même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_level_id", nullable = false)
     private StudyLevel currentLevel;
@@ -46,11 +42,9 @@ public class Student {
     @Column(nullable = false)
     private StudentStatus status = StudentStatus.ACTIVE;
 
-    // Cross-service : référence vers Application.id dans l'Admission Service
     @Column(length = 100)
     private String admissionApplicationId;
 
-    // Relation JPA — historique académique dans la même base
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<StudentAcademicHistory> academicHistory = new ArrayList<>();

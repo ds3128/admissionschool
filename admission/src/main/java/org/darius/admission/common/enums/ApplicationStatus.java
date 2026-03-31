@@ -14,5 +14,8 @@ public enum ApplicationStatus {
     AWAITING_CONFIRMATION,      // Au moins 1 choix accepté
     ACCEPTED,                   // Confirmation effectuée
     REJECTED,                   // Tous les choix refusés
-    WITHDRAWN                   // Retirée par le candidat
+    WITHDRAWN,                   // Retirée par le candidat
+    CONFIRMATION_EXPIRED,
+    CONFIRMED,
+    PENDING_ADMIN
 }

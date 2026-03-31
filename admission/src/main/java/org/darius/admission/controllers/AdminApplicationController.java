@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.darius.admission.common.dtos.requests.AdminReviewRequest;
 import org.darius.admission.common.dtos.requests.RequestAdditionalDocsRequest;
+import org.darius.admission.common.dtos.responses.AdminStatsResponse;
 import org.darius.admission.common.dtos.responses.ApplicationResponse;
 import org.darius.admission.common.dtos.responses.ApplicationSummaryResponse;
 import org.darius.admission.common.dtos.responses.PageResponse;
@@ -69,4 +70,26 @@ public class AdminApplicationController {
     ) {
         return ResponseEntity.ok(adminService.forwardToCommission(id, adminUserId));
     }
+
+    @Operation(summary = "Statistiques globales de la campagne")
+    @GetMapping("/stats")
+    public ResponseEntity<AdminStatsResponse> getStats(
+            @RequestParam(required = false) Long campaignId
+    ) {
+        return ResponseEntity.ok(adminService.getStats(campaignId));
+    }
+
+    @Operation(summary = "Export CSV des candidatures")
+    @GetMapping("/export")
+    public ResponseEntity<org.springframework.core.io.Resource> exportCsv(
+            @RequestParam(required = false) Long campaignId,
+            @RequestParam(required = false) String status
+    ) {
+        byte[] csv = adminService.exportToCsv(campaignId, status);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=candidatures.csv")
+                .contentType(org.springframework.http.MediaType.parseMediaType("text/csv"))
+                .body(new org.springframework.core.io.ByteArrayResource(csv));
+    }
+
 }

@@ -134,7 +134,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         // Applique uniquement les champs non-null (partial update via MapStruct)
         userMapper.updateProfileFromRequest(profile, request);
 
-        return userMapper.toUserProfileResponse(profileRepository.save(profile));
+        UserProfile userProfile = profileRepository.save(profile);
+
+        return userMapper.toUserProfileResponse(userProfile);
     }
 
     @Override

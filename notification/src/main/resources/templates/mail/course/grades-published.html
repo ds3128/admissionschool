@@ -28,7 +28,11 @@
         <p>Connectez-vous à votre espace étudiant pour consulter vos résultats.</p>
         <p>Cordialement,<br/><strong>L'équipe pédagogique</strong></p>
     </div>
-    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
 </div>
 </body>
 </html>

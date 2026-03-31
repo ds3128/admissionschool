@@ -25,7 +25,7 @@
     <div class="body">
         <p>Félicitations <strong th:text="${firstName}">Étudiant</strong> !</p>
         <div class="success">
-            <strong>✅ Semestre validé — ADMIS(E)</strong>
+            <strong>✅ Semestre validé - ADMIS(E)</strong>
         </div>
         <div class="result-card">
             <div class="avg" th:text="${average} + '/20'">14.50/20</div>
@@ -36,7 +36,11 @@
         <p>Votre bulletin de notes est disponible dans votre espace étudiant.</p>
         <p>Cordialement,<br/><strong>La Direction Académique</strong></p>
     </div>
-    <div class="footer"><p>© 2026 AdmissionSchool</p></div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
 </div>
 </body>
 </html>

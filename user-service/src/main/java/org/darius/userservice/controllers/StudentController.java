@@ -4,12 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.darius.userservice.common.dtos.requests.BulkPromoteRequest;
+import org.darius.userservice.common.dtos.requests.SuspendStudentRequest;
 import org.darius.userservice.common.dtos.requests.TransferStudentRequest;
 import org.darius.userservice.common.dtos.requests.UpdateStudentStatusRequest;
-import org.darius.userservice.common.dtos.responses.PageResponse;
-import org.darius.userservice.common.dtos.responses.StudentAcademicHistoryResponse;
-import org.darius.userservice.common.dtos.responses.StudentResponse;
-import org.darius.userservice.common.dtos.responses.StudentSummaryResponse;
+import org.darius.userservice.common.dtos.responses.*;
 import org.darius.userservice.common.enums.StudentStatus;
 import org.darius.userservice.services.StudentService;
 import org.springframework.http.ResponseEntity;
@@ -96,4 +95,31 @@ public class StudentController {
     ) {
         return ResponseEntity.ok(studentService.getAcademicHistory(id));
     }
+
+    @Operation(summary = "Suspendre un étudiant")
+    @PutMapping("/{id}/suspend")
+    public ResponseEntity<StudentResponse> suspendStudent(
+            @PathVariable String id,
+            @Valid @RequestBody SuspendStudentRequest request
+    ) {
+        return ResponseEntity.ok(studentService.suspendStudent(id, request));
+    }
+
+    @Operation(summary = "Réintégrer un étudiant suspendu")
+    @PutMapping("/{id}/reinstate")
+    public ResponseEntity<StudentResponse> reinstateStudent(
+            @PathVariable String id,
+            @RequestParam(required = false) String reason
+    ) {
+        return ResponseEntity.ok(studentService.reinstateStudent(id, reason));
+    }
+
+    @Operation(summary = "Promouvoir tous les étudiants d'un niveau en masse")
+    @PostMapping("/bulk-promote")
+    public ResponseEntity<BulkPromoteResponse> bulkPromote(
+            @Valid @RequestBody BulkPromoteRequest request
+    ) {
+        return ResponseEntity.ok(studentService.bulkPromote(request));
+    }
+
 }

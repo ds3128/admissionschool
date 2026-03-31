@@ -1,11 +1,10 @@
 package org.darius.userservice.services;
 
+import org.darius.userservice.common.dtos.requests.BulkPromoteRequest;
+import org.darius.userservice.common.dtos.requests.SuspendStudentRequest;
 import org.darius.userservice.common.dtos.requests.TransferStudentRequest;
 import org.darius.userservice.common.dtos.requests.UpdateStudentStatusRequest;
-import org.darius.userservice.common.dtos.responses.PageResponse;
-import org.darius.userservice.common.dtos.responses.StudentAcademicHistoryResponse;
-import org.darius.userservice.common.dtos.responses.StudentResponse;
-import org.darius.userservice.common.dtos.responses.StudentSummaryResponse;
+import org.darius.userservice.common.dtos.responses.*;
 import org.darius.userservice.common.enums.StudentStatus;
 import org.darius.userservice.events.consumes.ApplicationAcceptedEvent;
 
@@ -74,4 +73,9 @@ public interface StudentService {
      * Retourne l'historique académique complet d'un étudiant.
      */
     List<StudentAcademicHistoryResponse> getAcademicHistory(String studentId);
+
+    StudentResponse suspendStudent(String studentId, SuspendStudentRequest request);
+    StudentResponse reinstateStudent(String studentId, String reason);
+    BulkPromoteResponse bulkPromote(BulkPromoteRequest request);
+
 }

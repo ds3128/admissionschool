@@ -5,6 +5,8 @@ import org.darius.userservice.common.dtos.responses.UserProfileResponse;
 import org.darius.userservice.entities.UserProfile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 public interface UserProfileService {
 
     /**
@@ -22,7 +24,7 @@ public interface UserProfileService {
             String firstName, String lastName,
             String phone, String nationality,
             String gender, String birthPlace,
-            java.time.LocalDate birthDate,
+            LocalDate birthDate,
             String photoUrl, String personalEmail
     );
 

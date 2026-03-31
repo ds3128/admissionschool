@@ -27,7 +27,6 @@ public class Filiere {
     @Column(nullable = false, unique = true, length = 20)
     private String code;
 
-    // Relation JPA — même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -42,7 +41,6 @@ public class Filiere {
     @Column(nullable = false)
     private FiliereStatus status = FiliereStatus.ACTIVE;
 
-    // Relation JPA — même base de données
     @OneToMany(mappedBy = "filiere", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<StudyLevel> studyLevels = new ArrayList<>();

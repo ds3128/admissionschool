@@ -207,7 +207,10 @@ public class CommissionServiceImpl implements CommissionService {
     @Override
     @Transactional
     public ChoiceResponse validateDecision(
-            Long commissionId, Long choiceId, String presidentId, ValidateDecisionRequest request
+            Long commissionId,
+            Long choiceId,
+            String presidentId,
+            ValidateDecisionRequest request
     ) {
         ReviewCommission commission = findCommissionOrThrow(commissionId);
 

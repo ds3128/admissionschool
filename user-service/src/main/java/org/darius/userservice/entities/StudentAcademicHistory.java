@@ -64,7 +64,6 @@ public class StudentAcademicHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relation JPA — Student est dans la même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;

@@ -95,4 +95,8 @@ public interface ApplicationService {
 
     /** Retourne le statut de confirmation (choix acceptés + délai restant). */
     ConfirmationResponse getConfirmationStatus(String applicationId, String userId);
+
+    int autoExpireConfirmations();
+    int promoteFromWaitlist();
+
 }

@@ -63,4 +63,8 @@ public interface ApplicationChoiceRepository extends JpaRepository<ApplicationCh
     Optional<ApplicationChoice> findFirstByApplication_IdAndStatusOrderByChoiceOrder(
             String applicationId, ChoiceStatus status
     );
+
+    long countByOffer_IdAndStatus(Long offerId, ChoiceStatus status);
+
+    List<ApplicationChoice> findByOffer_IdAndStatusOrderByWaitlistEntryAsc(Long offerId, ChoiceStatus status);
 }

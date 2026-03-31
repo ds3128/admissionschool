@@ -1,19 +1,19 @@
 package org.darius.userservice.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.darius.userservice.common.dtos.requests.BulkPromoteRequest;
+import org.darius.userservice.common.dtos.requests.SuspendStudentRequest;
+import org.darius.userservice.common.dtos.responses.*;
 import org.darius.userservice.common.enums.FiliereStatus;
 import org.darius.userservice.common.dtos.requests.TransferStudentRequest;
 import org.darius.userservice.common.dtos.requests.UpdateStudentStatusRequest;
-import org.darius.userservice.common.dtos.responses.PageResponse;
-import org.darius.userservice.common.dtos.responses.StudentAcademicHistoryResponse;
-import org.darius.userservice.common.dtos.responses.StudentResponse;
-import org.darius.userservice.common.dtos.responses.StudentSummaryResponse;
 import org.darius.userservice.entities.*;
 import org.darius.userservice.common.enums.HistoryChangeReason;
 import org.darius.userservice.common.enums.StudentStatus;
 import org.darius.userservice.events.consumes.ApplicationAcceptedEvent;
 import org.darius.userservice.events.produces.StudentGraduatedEvent;
 import org.darius.userservice.events.produces.StudentPromotedEvent;
+import org.darius.userservice.events.produces.StudentStatusChangedEvent;
 import org.darius.userservice.events.produces.StudentTransferredEvent;
 import org.darius.userservice.exceptions.InvalidOperationException;
 import org.darius.userservice.exceptions.UserNotFoundException;
@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -72,11 +73,15 @@ public class StudentServiceImpl implements StudentService {
         // 2. Créer le UserProfile complet depuis CandidateProfile
         userProfileService.createFullProfileFromAdmission(
                 event.getUserId(),
-                event.getFirstName(), event.getLastName(),
-                event.getPhone(), event.getNationality(),
-                event.getGender(), event.getBirthPlace(),
+                event.getFirstName(),
+                event.getLastName(),
+                event.getPhone(),
+                event.getNationality(),
+                event.getGender(),
+                event.getBirthPlace(),
                 event.getBirthDate(),
-                event.getPhotoUrl(), event.getPersonalEmail()
+                event.getPhotoUrl(),
+                event.getPersonalEmail()
         );
 
         // 3. Récupérer le profil créé
@@ -363,6 +368,160 @@ public class StudentServiceImpl implements StudentService {
                 historyRepository.findByStudent_IdOrderByStartDateDesc(studentId)
         );
     }
+
+    @Override
+    @Transactional
+    public StudentResponse suspendStudent(String studentId, SuspendStudentRequest request) {
+        Student student = findStudentOrThrow(studentId);
+        UserProfile profile = findProfileByProfileIdOrThrow(student.getProfileId());
+
+        if (student.getStatus() == StudentStatus.SUSPENDED) {
+            throw new InvalidOperationException("L'étudiant est déjà suspendu");
+        }
+        if (student.getStatus() == StudentStatus.GRADUATED) {
+            throw new InvalidOperationException("Impossible de suspendre un étudiant diplômé");
+        }
+
+        StudentStatus oldStatus = student.getStatus();
+        student.setStatus(StudentStatus.SUSPENDED);
+
+        studentRepository.save(student);
+
+        // Historique
+        createHistoryEntry(
+                student,
+                student.getFiliere().getId(),
+                student.getFiliere().getName(),
+                student.getCurrentLevel().getId(),
+                student.getCurrentLevel().getLabel(),
+                HistoryChangeReason.SUSPENSION
+        );
+
+        // Événement Kafka → notification
+        eventProducer.publishStudentStatusChanged(StudentStatusChangedEvent.builder()
+                .studentId(student.getId())
+                .userId(profile.getUserId())
+                .firstName(profile.getFirstName())
+                .lastName(profile.getLastName())
+                .personalEmail(profile.getPersonalEmail())
+                .oldStatus(oldStatus)
+                .newStatus(StudentStatus.SUSPENDED)
+                .reason(request.getReason())
+                .build());
+
+        log.info("Étudiant suspendu : studentId={}, raison={}", studentId, request.getReason());
+        return userMapper.toStudentResponse(student, profile);
+    }
+
+    @Override
+    @Transactional
+    public StudentResponse reinstateStudent(String studentId, String reason) {
+        Student student = findStudentOrThrow(studentId);
+        UserProfile profile = findProfileByProfileIdOrThrow(student.getProfileId());
+
+        if (student.getStatus() != StudentStatus.SUSPENDED) {
+            throw new InvalidOperationException("L'étudiant n'est pas suspendu");
+        }
+
+        student.setStatus(StudentStatus.ACTIVE);
+        studentRepository.save(student);
+
+        createHistoryEntry(student,
+                student.getFiliere().getId(), student.getFiliere().getName(),
+                student.getCurrentLevel().getId(), student.getCurrentLevel().getLabel(),
+                HistoryChangeReason.REINSTATEMENT);
+
+        eventProducer.publishStudentStatusChanged(StudentStatusChangedEvent.builder()
+                .studentId(student.getId())
+                .userId(profile.getUserId())
+                .firstName(profile.getFirstName())
+                .lastName(profile.getLastName())
+                .personalEmail(profile.getPersonalEmail())
+                .oldStatus(StudentStatus.SUSPENDED)
+                .newStatus(StudentStatus.ACTIVE)
+                .reason(reason)
+                .build());
+
+        log.info("Étudiant réintégré : studentId={}", studentId);
+        return userMapper.toStudentResponse(student, profile);
+    }
+
+    @Override
+    @Transactional
+    public BulkPromoteResponse bulkPromote(BulkPromoteRequest request) {
+        List<Student> students;
+
+        if (request.getStudentIds() != null && !request.getStudentIds().isEmpty()) {
+            students = studentRepository.findAllById(request.getStudentIds());
+        } else {
+            students = studentRepository.findByFiliere_IdAndCurrentLevel_IdAndStatus(
+                    request.getFiliereId(), request.getFromLevelId(), StudentStatus.ACTIVE);
+        }
+
+        int promoted = 0, skipped = 0, failed = 0;
+        List<String> errors = new ArrayList<>();
+
+        for (Student student : students) {
+            try {
+                StudyLevel nextLevel = studyLevelRepository
+                        .findByFiliere_IdAndOrder(
+                                student.getFiliere().getId(),
+                                student.getCurrentLevel().getOrder() + 1)
+                        .orElse(null);
+
+                if (nextLevel == null) {
+                    // Dernier niveau → diplômé
+                    student.setStatus(StudentStatus.GRADUATED);
+                    studentRepository.save(student);
+
+                    UserProfile profile = findProfileByProfileIdOrThrow(student.getProfileId());
+
+                    eventProducer.publishStudentGraduated(StudentGraduatedEvent.builder()
+                            .studentId(student.getId())
+                            .userId(profile.getUserId())
+                            .filiereId(student.getFiliere().getId())
+                            .academicYear(Year.now().getValue() + "-" + (Year.now().getValue() + 1))
+                            .build());
+                    skipped++;
+                } else {
+                    StudyLevel fromLevel = student.getCurrentLevel();
+                    student.setCurrentLevel(nextLevel);
+                    studentRepository.save(student);
+                    createHistoryEntry(student,
+                            student.getFiliere().getId(), student.getFiliere().getName(),
+                            nextLevel.getId(), nextLevel.getLabel(),
+                            HistoryChangeReason.PROMOTION);
+                    UserProfile profile = findProfileByProfileIdOrThrow(student.getProfileId());
+                    eventProducer.publishStudentPromoted(StudentPromotedEvent.builder()
+                            .studentId(student.getId())
+                            .userId(profile.getUserId())
+                            .filiereId(student.getFiliere().getId())
+                            .fromLevelId(fromLevel.getId())
+                            .fromLevelLabel(fromLevel.getLabel())
+                            .toLevelId(nextLevel.getId())
+                            .toLevelLabel(nextLevel.getLabel())
+                            .academicYear(Year.now().getValue() + "-" + (Year.now().getValue() + 1))
+                            .build());
+                    promoted++;
+                }
+            } catch (Exception ex) {
+                failed++;
+                errors.add("studentId=" + student.getId() + " : " + ex.getMessage());
+                log.error("Erreur promotion bulk — studentId={} : {}", student.getId(), ex.getMessage());
+            }
+        }
+
+        log.info("BulkPromote terminé : promoted={}, skipped={}, failed={}",
+                promoted, skipped, failed);
+        return BulkPromoteResponse.builder()
+                .totalRequested(students.size())
+                .promoted(promoted)
+                .skipped(skipped)
+                .failed(failed)
+                .errors(errors)
+                .build();
+    }
+
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 

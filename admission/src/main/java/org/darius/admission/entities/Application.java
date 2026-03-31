@@ -43,17 +43,20 @@ public class Application {
     @Builder.Default
     private List<ApplicationChoice> choices = new ArrayList<>();
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
     private Dossier dossier;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
     private CandidateProfile candidateProfile;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
     private AdmissionPayment payment;
 
-    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
     private ConfirmationRequest confirmationRequest;
+
+    @Column(updatable = true)
+    private LocalDateTime confirmationDeadline;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default

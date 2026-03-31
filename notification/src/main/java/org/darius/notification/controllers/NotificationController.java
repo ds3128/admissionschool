@@ -76,7 +76,7 @@ public class NotificationController {
     // ── Administration ────────────────────────────────────────────────────────
 
     @GetMapping("/admin")
-    @Operation(summary = "Toutes les notifications — ADMIN")
+    @Operation(summary = "Toutes les notifications - ADMIN")
     public ResponseEntity<PageResponse<NotificationResponse>> getAll(
             @RequestParam(defaultValue = "0")  int page,
             @RequestParam(defaultValue = "20") int size,
@@ -90,13 +90,13 @@ public class NotificationController {
     }
 
     @GetMapping("/admin/stats")
-    @Operation(summary = "Statistiques d'envoi — ADMIN")
+    @Operation(summary = "Statistiques d'envoi - ADMIN")
     public ResponseEntity<NotificationStatsResponse> getStats() {
         return ResponseEntity.ok(notificationService.getStats());
     }
 
     @PostMapping("/admin/{id}/resend")
-    @Operation(summary = "Forcer le renvoi d'une notification — ADMIN")
+    @Operation(summary = "Forcer le renvoi d'une notification - ADMIN")
     public ResponseEntity<NotificationResponse> forceResend(@PathVariable Long id) {
         return ResponseEntity.ok(notificationService.forceResend(id));
     }

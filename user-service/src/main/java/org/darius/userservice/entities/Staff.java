@@ -18,11 +18,9 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    // Référence vers UserProfile.id (même service)
     @Column(nullable = false, unique = true)
     private String profileId;
 
-    // Cross-service : référence vers Users.id dans l'Auth Service
     @Column(nullable = false, unique = true)
     private String userId;
 
@@ -32,7 +30,6 @@ public class Staff {
     @Column(length = 150)
     private String position;
 
-    // Relation JPA — Department est dans la même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -40,7 +37,6 @@ public class Staff {
     @Column(nullable = false)
     private boolean active = true;
 
-    // Cross-service : référence vers l'admin ayant créé ce profil
     @Column(nullable = false)
     private String createdBy;
 

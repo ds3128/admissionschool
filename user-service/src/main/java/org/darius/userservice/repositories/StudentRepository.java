@@ -35,6 +35,8 @@ public interface StudentRepository extends JpaRepository<Student, String> {
             Pageable pageable
     );
 
+    List<Student> findByFiliere_IdAndCurrentLevel_IdAndStatus(Long filiereId, Long currentLevelId, StudentStatus status);
+
     // Tous les étudiants actifs d'une filière
     List<Student> findByFiliere_IdAndStatus(Long filiereId, StudentStatus status);
 

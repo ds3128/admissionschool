@@ -19,7 +19,7 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    // Cross-service : référence vers UserProfile.id (même service)
+    // Cross-service : référence vers UserProfile.id
     @Column(nullable = false, unique = true)
     private String profileId;
 
@@ -36,7 +36,6 @@ public class Teacher {
     @Enumerated(EnumType.STRING)
     private AcademicGrade grade;
 
-    // Relation JPA — Department est dans la même base de données
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -50,7 +49,6 @@ public class Teacher {
     @Column(nullable = false)
     private boolean active = true;
 
-    // Cross-service : référence vers l'admin ayant créé ce profil
     @Column(nullable = false)
     private String createdBy;
 

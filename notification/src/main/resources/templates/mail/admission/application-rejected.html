@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Résultat de votre candidature</title>
+    <style>
+        body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+        .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #64748b 0%, #475569 100%); padding: 36px 40px; text-align: center; }
+        .header h1 { margin: 0; color: #fff; font-size: 26px; font-weight: 700; }
+        .header p { margin: 8px 0 0; color: #cbd5e1; font-size: 14px; }
+        .body { padding: 40px; }
+        .body p { line-height: 1.7; font-size: 15px; margin: 0 0 16px; }
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px 24px; margin: 20px 0; }
+        .info-box p { margin: 0; font-size: 14px; }
+        .reason-box { background: #fff7ed; border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 4px; margin: 20px 0; font-size: 14px; color: #78350f; }
+        .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p>Résultat de votre candidature</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">candidat</strong>,</p>
+        <p>Nous avons le regret de vous informer que votre candidature pour <strong th:text="${filiereName}">la formation</strong> (réf. <strong th:text="${applicationId}">APP-XXXX</strong>) n'a pas été retenue par la commission pédagogique pour l'année académique <span th:text="${academicYear}">2025-2026</span>.</p>
+
+        <div th:if="${decisionReason != null}" class="reason-box">
+            <strong>Motif de la décision :</strong> <span th:text="${decisionReason}"></span>
+        </div>
+
+        <div class="info-box">
+            <p>Cette décision ne remet pas en question vos capacités. Nous vous encourageons à :</p>
+            <ul style="margin: 12px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+                <li>Consulter les formations alternatives disponibles sur la plateforme.</li>
+                <li>Soumettre une nouvelle candidature lors de la prochaine campagne d'admission.</li>
+                <li>Contacter le service de scolarité pour obtenir des conseils personnalisés.</li>
+            </ul>
+        </div>
+
+        <p>Nous vous remercions pour l'intérêt que vous portez à notre établissement et vous souhaitons bonne continuation dans votre parcours.</p>
+    </div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
+</div>
+</body>
+</html>

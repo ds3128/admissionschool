@@ -52,7 +52,9 @@
         <!-- Contenu injecté par chaque template enfant -->
     </div>
     <div class="footer">
-        <p>© 2026 AdmissionSchool — Tous droits réservés</p>
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
         <p style="margin-top:8px;">
             <a href="#">Se désabonner</a> · <a href="#">Politique de confidentialité</a>
         </p>

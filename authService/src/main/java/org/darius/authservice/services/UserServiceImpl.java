@@ -7,10 +7,13 @@ import org.darius.authservice.common.enums.RoleType;
 import org.darius.authservice.config.RateLimitService;
 import org.darius.authservice.entities.Role;
 import org.darius.authservice.entities.Users;
+import org.darius.authservice.events.ApplicationAcceptedEvent;
+import org.darius.authservice.events.StudentAccountCreatedEvent;
 import org.darius.authservice.events.UserActivatedEvent;
 import org.darius.authservice.exceptions.*;
 import org.darius.authservice.kafka.KafkaEventProducer;
 import org.darius.authservice.mapper.UserMapper;
+import org.darius.authservice.repositories.RoleRepository;
 import org.darius.authservice.repositories.UserRepository;
 import org.darius.authservice.security.JwtService;
 import org.springframework.security.core.Authentication;
@@ -18,10 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -35,8 +35,9 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final RateLimitService  rateLimitService;
     private final KafkaEventProducer kafkaEventProducer;
+    private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, UserMapper userMapper, EmailService emailService, RateLimitService rateLimitService, KafkaEventProducer kafkaEventProducer) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, UserMapper userMapper, EmailService emailService, RateLimitService rateLimitService, KafkaEventProducer kafkaEventProducer, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtService = jwtService;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
         this.emailService = emailService;
         this.rateLimitService = rateLimitService;
         this.kafkaEventProducer = kafkaEventProducer;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -266,9 +268,68 @@ public class UserServiceImpl implements UserService {
         jwtService.revokeAllSessions(email);
     }
 
+    @Override
+    @Transactional
+    public void createInstitutionalAccount(ApplicationAcceptedEvent event) {
+        // Idempotence — compte déjà créé
+        if (userRepository.existsByInstitutionalEmail(event.getInstitutionalEmail())) {
+            log.warn("Compte institutionnel déjà existant : {}", event.getInstitutionalEmail());
+            return;
+        }
+
+        // Générer un mot de passe temporaire sécurisé
+        String tempPassword = generateTempPassword();
+
+        // Récupérer le rôle STUDENT
+        Role studentRole = roleRepository.findByRoleType(RoleType.STUDENT)
+                .orElseThrow(() -> new UserNotFoundException("Student role not found !"));
+
+        // Créer le compte
+        Users user = new Users();
+        user.setEmail(event.getInstitutionalEmail());
+        user.setInstitutionalPassword(bCryptPasswordEncoder.encode(tempPassword));
+        user.setStatus(true);   // directement actif, pas besoin de vérification email
+        user.setRole(studentRole);
+        // Conserver le même userId que le compte personnel si possible
+        // sinon laisser UUID généré automatiquement
+
+        userRepository.save(user);
+        log.info("Compte institutionnel créé : {}", event.getInstitutionalEmail());
+
+        // Publier l'événement avec les credentials pour la notification
+        StudentAccountCreatedEvent createdEvent = StudentAccountCreatedEvent.builder()
+                .userId(user.getId())
+                .institutionalEmail(event.getInstitutionalEmail())
+                .tempPassword(tempPassword)
+                .firstName(event.getFirstName())
+                .lastName(event.getLastName())
+                .studentNumber(event.getStudentNumber())
+                .build();
+
+        kafkaEventProducer.publishStudentAccountCreated(createdEvent);
+    }
+
     private void validatePasswordMatch(String password, String confirm) throws PasswordMismatchException {
         if (!Objects.equals(password, confirm)) {
             throw new PasswordMismatchException("Passwords didn't match");
         }
+    }
+
+
+    //    _______________________________ Helper _____________________________________
+    private String generateTempPassword() {
+        // Génère un mot de passe type : Tmp@2026!Ab3
+        String upper   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lower   = "abcdefghijklmnopqrstuvwxyz";
+        String digits  = "0123456789";
+        String special = "@#$!|=+-_)(*&^%`~";
+        Random rnd = new Random();
+        return "Tmp@" +
+                upper.charAt(rnd.nextInt(upper.length())) +
+                lower.charAt(rnd.nextInt(lower.length())) +
+                digits.charAt(rnd.nextInt(digits.length())) +
+                digits.charAt(rnd.nextInt(digits.length())) +
+                special.charAt(rnd.nextInt(special.length())) +
+                upper.charAt(rnd.nextInt(upper.length()));
     }
 }

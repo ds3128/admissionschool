@@ -68,11 +68,15 @@ public class FiliereServiceImpl implements FiliereService {
                 .students(new ArrayList<>())
                 .build();
 
-        filiere = filiereRepository.save(filiere);
-
         // Génération automatique des StudyLevel (N = durationYears)
         List<StudyLevel> levels = generateStudyLevels(filiere);
+
+        for (StudyLevel level : levels) {
+            level.setFiliere(filiere);
+        }
         filiere.setStudyLevels(levels);
+
+        filiere = this.filiereRepository.save(filiere);
 
         log.info("Filière créée : id={}, code={}, {} niveaux générés",
                 filiere.getId(), filiere.getCode(), levels.size());

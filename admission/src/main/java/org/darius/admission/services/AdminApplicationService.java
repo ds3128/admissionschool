@@ -2,6 +2,7 @@ package org.darius.admission.services;
 
 import org.darius.admission.common.dtos.requests.AdminReviewRequest;
 import org.darius.admission.common.dtos.requests.RequestAdditionalDocsRequest;
+import org.darius.admission.common.dtos.responses.AdminStatsResponse;
 import org.darius.admission.common.dtos.responses.ApplicationResponse;
 import org.darius.admission.common.dtos.responses.ApplicationSummaryResponse;
 import org.darius.admission.common.dtos.responses.PageResponse;
@@ -46,4 +47,8 @@ public interface AdminApplicationService {
      * Utilisé si la transmission automatique a échoué.
      */
     ApplicationResponse forwardToCommission(String applicationId, String adminUserId);
+
+    AdminStatsResponse getStats(Long campaignId);
+    byte[] exportToCsv(Long campaignId, String status);
+
 }

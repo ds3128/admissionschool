@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,4 +57,8 @@ public interface ApplicationRepository extends JpaRepository<Application, String
 
     // Toutes les candidatures d'une campagne avec un statut donné
     List<Application> findByCampaign_IdAndStatus(Long campaignId, ApplicationStatus status);
+
+    List<Application> findByStatusAndConfirmationDeadlineBefore(ApplicationStatus status, LocalDateTime deadline);
+
+    List<Application> findByCampaign_Id(Long campaignId);
 }

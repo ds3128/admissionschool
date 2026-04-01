@@ -38,13 +38,13 @@ public class AdmissionConsumer {
                     event.getUserId(),
                     event.getPersonalEmail(),
                     NotificationType.APPLICATION_SUBMITTED,
-                    "Dossier reçu — confirmation de candidature",
-                    "admission/application-submitted",
+                    "Dossier reçu - confirmation de candidature",
+                    "mail/admission/application-submitted",
                     Map.of(
-                            "firstName",     event.getFirstName(),
-                            "applicationId", event.getApplicationId(),
-                            "academicYear",  event.getAcademicYear(),
-                            "submittedAt",   event.getSubmittedAt()
+                            "firstName",     event.getFirstName()     != null ? event.getFirstName()     : "",
+                            "applicationId", event.getApplicationId() != null ? event.getApplicationId() : "",
+                            "academicYear",  event.getAcademicYear()  != null ? event.getAcademicYear()  : "",
+                            "submittedAt",   event.getSubmittedAt()   != null ? event.getSubmittedAt()   : ""
                     ),
                     event.getApplicationId(), "APPLICATION"
             );
@@ -70,7 +70,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.APPLICATION_ADMIN_REVIEW,
                     "Mise à jour de votre dossier de candidature",
-                    "admission/application-admin-review",
+                    "mail/admission/application-under-review",
                     Map.of(
                             "firstName", event.getFirstName(),
                             "status",    event.getStatus(),
@@ -100,7 +100,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.APPLICATION_PENDING_COMMISSION,
                     "Votre dossier a été transmis à la commission",
-                    "admission/application-pending-commission",
+                    "mail/admission/application-pending-commission",
                     Map.of(
                             "firstName",    event.getFirstName(),
                             "academicYear", event.getAcademicYear()
@@ -129,7 +129,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.INTERVIEW_SCHEDULED,
                     "Entretien planifié — informations importantes",
-                    "admission/interview-scheduled",
+                    "mail/admission/interview-scheduled",
                     Map.of(
                             "firstName",   event.getFirstName(),
                             "scheduledAt", event.getScheduledAt(),
@@ -169,7 +169,7 @@ public class AdmissionConsumer {
                     directorEmail,
                     NotificationType.THESIS_APPROVAL_REQUESTED,
                     "Demande d'encadrement de thèse",
-                    "admission/thesis-approval-requested",
+                    "mail/admission/thesis-approval-requested",
                     Map.of(
                             "studentName",     event.getStudentName(),
                             "researchProject", event.getResearchProject(),
@@ -199,7 +199,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.APPLICATION_AWAITING_CONFIRMATION,
                     "Félicitations — Confirmez votre inscription",
-                    "admission/application-awaiting-confirmation",
+                    "mail/admission/application-awaiting-confirmation",
                     Map.of(
                             "firstName",       event.getFirstName(),
                             "acceptedChoices", event.getAcceptedChoices(),
@@ -230,7 +230,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.APPLICATION_ACCEPTED,
                     "Bienvenue à l'université ! Votre inscription est confirmée",
-                    "admission/application-accepted",
+                    "mail/admission/application-accepted",
                     Map.of(
                             "firstName",     event.getFirstName(),
                             "lastName",      event.getLastName(),
@@ -262,7 +262,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.APPLICATION_REJECTED,
                     "Résultat de votre candidature",
-                    "admission/application-rejected",
+                    "mail/admission/application-rejected",
                     Map.of(
                             "firstName",    event.getFirstName(),
                             "academicYear", event.getAcademicYear()
@@ -291,7 +291,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.WAITLIST_PROMOTED,
                     "Bonne nouvelle — Une place est disponible pour vous !",
-                    "admission/waitlist-promoted",
+                    "mail/admission/waitlist-promoted",
                     Map.of(
                             "firstName",   event.getFirstName(),
                             "filiereName", event.getFiliereName(),
@@ -321,7 +321,7 @@ public class AdmissionConsumer {
                     event.getPersonalEmail(),
                     NotificationType.CHOICE_AUTO_CONFIRMED,
                     "Confirmation automatique de votre inscription",
-                    "admission/choice-auto-confirmed",
+                    "mail/admission/choice-auto-confirmed",
                     Map.of(
                             "firstName",   event.getFirstName(),
                             "filiereName", event.getFiliereName()

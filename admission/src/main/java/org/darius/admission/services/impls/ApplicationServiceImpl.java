@@ -207,6 +207,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         offer.setCurrentCount(offer.getCurrentCount() + 1);
         offerRepository.save(offer);
 
+        // Recalculer la complétude du dossier suite au nouveau choix
+        Dossier dossier = dossierRepository.findByApplication_Id(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Dossier introuvable"));
+        recalculateDossierCompletion(dossier, app);
+
         return mapper.toChoiceResponse(choice);
     }
 
@@ -364,11 +369,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         Dossier dossier = dossierRepository.findByApplication_Id(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Dossier introuvable"));
 
-        if (!dossier.isComplete()) {
-            throw new InvalidOperationException(
-                    "Le dossier est incomplet — tous les documents obligatoires sont requis"
-            );
-        }
+//        if (!dossier.isComplete()) {
+//            throw new InvalidOperationException(
+//                    "Le dossier est incomplet — tous les documents obligatoires sont requis"
+//            );
+//        }
 
         // Re-vérifier les deadlines des choix actifs
         List<ApplicationChoice> activeChoices = choiceRepository.findActiveChoices(applicationId);

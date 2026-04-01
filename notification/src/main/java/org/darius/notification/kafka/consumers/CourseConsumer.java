@@ -47,7 +47,7 @@ public class CourseConsumer {
                     email,
                     NotificationType.STUDENT_ENROLLED,
                     "Inscriptions aux cours confirmées",
-                    "course/student-enrolled",
+                    "mail/course/student-enrolled",
                     Map.of(
                             "firstName",     firstName != null ? firstName : "Étudiant",
                             "semesterLabel", event.getSemesterLabel(),
@@ -87,7 +87,7 @@ public class CourseConsumer {
                     email,
                     NotificationType.ATTENDANCE_THRESHOLD_EXCEEDED,
                     "⚠️ Seuil d'absences dépassé — " + event.getMatiereName(),
-                    "course/attendance-threshold-exceeded",
+                    "mail/course/attendance-warning",
                     Map.of(
                             "firstName",      firstName != null ? firstName : "Étudiant",
                             "matiereName",    event.getMatiereName(),
@@ -133,7 +133,7 @@ public class CourseConsumer {
                         email,
                         NotificationType.GRADES_PUBLISHED,
                         "Vos notes sont disponibles — " + event.getMatiereName(),
-                        "course/grades-published",
+                        "mail/course/grades-published",
                         Map.of(
                                 "firstName",       firstName != null ? firstName : "Étudiant",
                                 "evaluationTitle", event.getEvaluationTitle(),
@@ -179,7 +179,7 @@ public class CourseConsumer {
                         email,
                         NotificationType.SESSION_CANCELLED,
                         "Séance annulée — " + event.getMatiereName() + " le " + event.getDate(),
-                        "course/session-cancelled",
+                        "mail/course/session-cancelled",
                         Map.of(
                                 "firstName",   firstName != null ? firstName : "Étudiant",
                                 "matiereName", event.getMatiereName(),
@@ -224,12 +224,12 @@ public class CourseConsumer {
 
                 // Template différent selon statut ADMIS ou AJOURNE
                 String template = result.isAdmis()
-                        ? "course/semester-validated-admis"
-                        : "course/semester-validated-ajourne";
+                        ? "mail/course/semester-validated-admis"
+                        : "mail/course/semester-validated-ajourne";
 
                 String subject = result.isAdmis()
-                        ? "Résultats du semestre — Félicitations !"
-                        : "Résultats du semestre — " + event.getSemesterLabel();
+                        ? "Résultats du semestre - Félicitations !"
+                        : "Résultats du semestre - " + event.getSemesterLabel();
 
                 Map<String, Object> templateData = result.isAdmis()
                         ? Map.of(

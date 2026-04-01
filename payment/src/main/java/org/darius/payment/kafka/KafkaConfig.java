@@ -2,6 +2,7 @@ package org.darius.payment.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -80,8 +81,13 @@ public class KafkaConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
+
         ObjectMapper mapper = new ObjectMapper();
+
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        mapper.registerModule(new JavaTimeModule());
+
         return mapper;
     }
 }

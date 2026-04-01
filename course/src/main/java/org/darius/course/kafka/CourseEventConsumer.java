@@ -1,5 +1,6 @@
 package org.darius.course.kafka;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,10 @@ import org.darius.course.events.consumed.*;
 import org.darius.course.repositories.SemesterRepository;
 import org.darius.course.services.EnrollmentService;
 import org.darius.course.services.StudentGroupService;
+import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +71,7 @@ public class CourseEventConsumer {
                 });
 
             }, () -> log.warn(
-                    "Aucun semestre actif — enrollment différé pour studentId={}",
+                    "Aucun semestre actif - enrollment différé pour studentId={}",
                     event.getStudentId()
             ));
 
@@ -169,6 +173,12 @@ public class CourseEventConsumer {
             groupId          = KafkaConfig.GROUP_COURSE_SERVICE,
             containerFactory = "kafkaListenerContainerFactory"
     )
+//    @RetryableTopic(
+//            attempts = "5",
+//            dltStrategy = DltStrategy.FAIL_ON_ERROR,
+//            backOff =  @BackOff(delay = 5000, multiplier = 2.0),
+//            include = {RuntimeException.class, JsonProcessingException.class}
+//    )
     public void onTeacherDeactivated(String message, Acknowledgment ack) {
         log.info("TeacherDeactivated reçu : {}", message);
         try {
@@ -177,7 +187,7 @@ public class CourseEventConsumer {
             );
             // TODO : implémenter la logique de désactivation des affectations futures
             // Pour l'instant : log d'information
-            log.warn("Enseignant {} désactivé — affectations futures à vérifier (raison: {})",
+            log.warn("Enseignant {} désactivé - affectations futures à vérifier (raison: {})",
                     event.getTeacherId(), event.getReason());
             ack.acknowledge();
         } catch (Exception ex) {

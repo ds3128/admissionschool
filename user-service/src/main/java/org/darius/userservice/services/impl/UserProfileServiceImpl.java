@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -212,4 +213,11 @@ public class UserProfileServiceImpl implements UserProfileService {
             log.info("Étudiant débloqué : userId={}", userId);
         });
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserProfile> findByUserId(String userId) {
+        return profileRepository.findByUserId(userId);
+    }
+
 }

@@ -52,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
     ) {
         // Vérifier les préférences si userId disponible
         if (userId != null && !isAllowed(userId, type)) {
-            log.debug("Notification {} ignorée — préférences userId={}", type, userId);
+            log.debug("Notification {} ignorée - préférences userId={}", type, userId);
             return;
         }
         doSend(userId, recipientEmail, type, subject,

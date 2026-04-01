@@ -8,6 +8,7 @@ import org.darius.notification.events.payment.*;
 import org.darius.notification.kafka.KafkaConfig;
 import org.darius.notification.mail.UserResolverService;
 import org.darius.notification.services.NotificationService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,44 @@ public class PaymentConsumer {
     private final ObjectMapper        objectMapper;
 
     // ── payment.completed ─────────────────────────────────────────────────────
+//    @KafkaListener(
+//            topics           = KafkaConfig.TOPIC_PAYMENT_COMPLETED,
+//            groupId          = KafkaConfig.GROUP_NOTIFICATION_SERVICE,
+//            containerFactory = "kafkaListenerContainerFactory"
+//    )
+//    public void onPaymentCompleted(String message, Acknowledgment ack) {
+//        log.info("payment.completed reçu");
+//        try {
+//            var event = objectMapper.readValue(message, PaymentCompletedEvent.class);
+//
+//            // Résolution email si absent
+//            String email = userResolver.resolveEmail(event.getUserId());
+//            if (email == null) {
+//                log.warn("Email introuvable pour userId={}", event.getUserId());
+//                ack.acknowledge();
+//                return;
+//            }
+//
+//            notificationService.send(
+//                    event.getUserId(),
+//                    email,
+//                    NotificationType.PAYMENT_COMPLETED,
+//                    "Paiement confirmé — Reçu de paiement",
+//                    "mail/payment/payment-completed",
+//                    Map.of(
+//                            "paymentReference", event.getPaymentReference(),
+//                            "amount",           event.getAmount(),
+//                            "currency",         event.getCurrency(),
+//                            "type",             event.getType(),
+//                            "paidAt",           event.getPaidAt()
+//                    ),
+//                    event.getPaymentReference(), "PAYMENT"
+//            );
+//            ack.acknowledge();
+//        } catch (Exception ex) {
+//            log.error("Erreur payment.completed : {}", ex.getMessage(), ex);
+//        }
+//    }
     @KafkaListener(
             topics           = KafkaConfig.TOPIC_PAYMENT_COMPLETED,
             groupId          = KafkaConfig.GROUP_NOTIFICATION_SERVICE,
@@ -34,27 +73,22 @@ public class PaymentConsumer {
         try {
             var event = objectMapper.readValue(message, PaymentCompletedEvent.class);
 
-            // Résolution email si absent
-            String email = userResolver.resolveEmail(event.getUserId());
-            if (email == null) {
+            UserResolverService.UserInfo userInfo = userResolver.resolve(event.getUserId());
+            if (userInfo == null || userInfo.email() == null) {
                 log.warn("Email introuvable pour userId={}", event.getUserId());
                 ack.acknowledge();
                 return;
             }
 
+            Map<String, Object> vars = getStringObjectMap(event, userInfo);
+
             notificationService.send(
                     event.getUserId(),
-                    email,
+                    userInfo.email(),
                     NotificationType.PAYMENT_COMPLETED,
-                    "Paiement confirmé — Reçu de paiement",
-                    "payment/payment-completed",
-                    Map.of(
-                            "paymentReference", event.getPaymentReference(),
-                            "amount",           event.getAmount(),
-                            "currency",         event.getCurrency(),
-                            "type",             event.getType(),
-                            "paidAt",           event.getPaidAt()
-                    ),
+                    "Paiement confirmé - Reçu de paiement",
+                    "mail/payment/payment-completed",
+                    vars,
                     event.getPaymentReference(), "PAYMENT"
             );
             ack.acknowledge();
@@ -62,6 +96,25 @@ public class PaymentConsumer {
             log.error("Erreur payment.completed : {}", ex.getMessage(), ex);
         }
     }
+
+    private static @NonNull Map<String, Object> getStringObjectMap(PaymentCompletedEvent event, UserResolverService.UserInfo userInfo) {
+        String description = "FRAIS_DOSSIER".equals(event.getType())   ? "Frais de dossier"  :
+                "FRAIS_SCOLARITE".equals(event.getType())  ? "Frais de scolarité" :
+                "BOURSE".equals(event.getType())           ? "Bourse"             :
+                event.getType() != null ? event.getType() : "";
+
+        Map<String, Object> vars = new java.util.HashMap<>();
+        vars.put("firstName",     userInfo.firstName()            != null ? userInfo.firstName()            : "");
+        vars.put("transactionId", event.getPaymentReference()     != null ? event.getPaymentReference()     : "");
+        vars.put("invoiceNumber", event.getInvoiceId()            != null ? event.getInvoiceId()            : "");
+        vars.put("description",   description);
+        vars.put("paymentMethod", event.getType()                 != null ? event.getType()                 : "");
+        vars.put("paidAt",        event.getPaidAt()               != null ? event.getPaidAt()               : "");
+        vars.put("amount",        event.getAmount());
+        vars.put("currency",      event.getCurrency()             != null ? event.getCurrency()             : "XAF");
+        return vars;
+    }
+
 
     // ── payment.failed ────────────────────────────────────────────────────────
     @KafkaListener(
@@ -85,7 +138,7 @@ public class PaymentConsumer {
                     email,
                     NotificationType.PAYMENT_FAILED,
                     "Échec du paiement — Action requise",
-                    "payment/payment-failed",
+                    "mail/payment/payment-failed",
                     Map.of(
                             "paymentReference", event.getPaymentReference(),
                             "amount",           event.getAmount(),
@@ -123,7 +176,7 @@ public class PaymentConsumer {
                     email,
                     NotificationType.PAYMENT_REFUNDED,
                     "Remboursement effectué",
-                    "payment/payment-refunded",
+                    "mail/payment/payment-refunded",
                     Map.of(
                             "originalReference", event.getOriginalPaymentReference(),
                             "refundReference",   event.getRefundPaymentReference(),
@@ -160,7 +213,7 @@ public class PaymentConsumer {
                     email,
                     NotificationType.INVOICE_GENERATED,
                     "Nouvelle facture disponible",
-                    "payment/invoice-generated",
+                    "mail/payment/invoice-created",
                     Map.of(
                             "academicYear",         event.getAcademicYear(),
                             "semester",             event.getSemester(),
@@ -198,7 +251,7 @@ public class PaymentConsumer {
                     email,
                     NotificationType.INVOICE_PAID,
                     "Facture réglée — Merci",
-                    "payment/invoice-paid",
+                    "mail/payment/invoice-paid",
                     Map.of(
                             "academicYear", event.getAcademicYear(),
                             "amount",       event.getAmount()
@@ -233,8 +286,8 @@ public class PaymentConsumer {
                     event.getStudentId(),
                     email,
                     NotificationType.INVOICE_OVERDUE,
-                    "⚠️ Facture en retard — Régularisez votre situation",
-                    "payment/invoice-overdue",
+                    "⚠️ Facture en retard - Régularisez votre situation",
+                    "mail/payment/invoice-overdue",
                     Map.of(
                             "remainingAmount", event.getRemainingAmount(),
                             "dueDate",         event.getDueDate(),
@@ -273,8 +326,8 @@ public class PaymentConsumer {
                     resolveId,
                     email,
                     NotificationType.STUDENT_PAYMENT_BLOCKED,
-                    "🔒 Accès restreint — Impayé critique",
-                    "payment/student-payment-blocked",
+                    "🔒 Accès restreint - Impayé critique",
+                    "mail/payment/student-payment-blocked",
                     Map.of(
                             "amount",      event.getAmount(),
                             "overdueDays", event.getOverdueDays(),
@@ -310,7 +363,7 @@ public class PaymentConsumer {
                     email,
                     NotificationType.SCHOLARSHIP_DISBURSED,
                     "Versement de bourse effectué",
-                    "payment/scholarship-disbursed",
+                    "mail/payment/scholarship-disbursement",
                     Map.of(
                             "amount",           event.getAmount(),
                             "period",           event.getPeriod(),

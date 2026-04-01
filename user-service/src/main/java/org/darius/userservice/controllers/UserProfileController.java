@@ -26,15 +26,17 @@ public class UserProfileController {
 
     @GetMapping("/internal/{userId}")
     public ResponseEntity<Map<String, String>> getInternalUser(@PathVariable String userId) {
-        UserProfile user = userProfileService.findById(userId);
-        if (user == null) return ResponseEntity.notFound().build();
-
-        Map<String, String> result = new HashMap<>();
-        result.put("email",     user.getPersonalEmail() != null ? user.getPersonalEmail() : "");
-        result.put("firstName", user.getFirstName()     != null ? user.getFirstName()     : "");
-        result.put("lastName",  user.getLastName()      != null ? user.getLastName()      : "");
-        return ResponseEntity.ok(result);
+        return userProfileService.findByUserId(userId)
+                .map(user -> {
+                    Map<String, String> result = new HashMap<>();
+                    result.put("email",     user.getPersonalEmail() != null ? user.getPersonalEmail() : "");
+                    result.put("firstName", user.getFirstName()     != null ? user.getFirstName()     : "");
+                    result.put("lastName",  user.getLastName()      != null ? user.getLastName()      : "");
+                    return ResponseEntity.ok(result);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/me")
     @Operation(summary = "Mon profil")

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: #7c3aed; color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .body { padding: 32px; color: #374151; line-height: 1.6; }
+        .info-box { background: #f5f3ff; border-left: 4px solid #7c3aed; padding: 16px; border-radius: 4px; margin: 20px 0; }
+        .footer { background: #f9fafb; padding: 20px; text-align: center; color: #9ca3af; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>AdmissionSchool</h1>
+        <p style="margin:8px 0 0; opacity:0.9;">Dossier transmis à la commission</p>
+    </div>
+    <div class="body">
+        <p>Bonjour <strong th:text="${firstName}">Candidat</strong>,</p>
+        <p>Votre dossier de candidature a été examiné par notre équipe administrative et vient d'être transmis à la commission d'admission pour évaluation.</p>
+        <div class="info-box">
+            <strong>Année académique :</strong> <span th:text="${academicYear}">2025-2026</span><br/>
+            <strong>Prochaine étape :</strong> Évaluation par la commission
+        </div>
+        <p>La commission se réunit régulièrement pour étudier les dossiers. Vous serez notifié(e) dès qu'une décision sera rendue.</p>
+        <p>Cordialement,<br/><strong>L'équipe AdmissionSchool</strong></p>
+    </div>
+    <div class="footer">
+        <p th:with="currentYear=${#dates.year(#dates.createNow())}">
+            © <span th:text="${currentYear}">2026</span> AdmissionSchool - Tous droits réservés
+        </p>
+    </div>
+</div>
+</body>
+</html>

@@ -6,6 +6,7 @@ import org.darius.userservice.entities.UserProfile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface UserProfileService {
 
@@ -59,4 +60,7 @@ public interface UserProfileService {
 
     void blockStudent(String userId, String reason);
     void unblockStudent(String userId);
+
+    Optional<UserProfile> findByUserId(String userId);
+
 }

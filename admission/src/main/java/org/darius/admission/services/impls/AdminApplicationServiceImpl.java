@@ -187,11 +187,11 @@ public class AdminApplicationServiceImpl implements AdminApplicationService {
     public ApplicationResponse forwardToCommission(String applicationId, String adminUserId) {
         Application app = findOrThrow(applicationId);
 
-        if (app.getStatus() != ApplicationStatus.UNDER_ADMIN_REVIEW) {
-            throw new InvalidOperationException(
-                    "La candidature doit être en cours de révision administrative"
-            );
-        }
+//        if (app.getStatus() != ApplicationStatus.UNDER_ADMIN_REVIEW) {
+//            throw new InvalidOperationException(
+//                    "La candidature doit être en cours de révision administrative"
+//            );
+//        }
 
         changeStatus(app, ApplicationStatus.PENDING_COMMISSION, adminUserId,
                 "Transmis manuellement à la commission");

@@ -1,5 +1,7 @@
 package org.darius.authservice.kafka;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.darius.authservice.common.enums.RoleType;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthEventConsumer {
 
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
 
     @KafkaListener(
             topics           = KafkaConfig.TOPIC_APPLICATION_ACCEPTED,
@@ -34,9 +37,10 @@ public class AuthEventConsumer {
     )
     @Transactional
     public void onApplicationAccepted(
-            @Payload ApplicationAcceptedEvent event,
+            String message,
             Acknowledgment ack
-    ) {
+    ) throws JsonProcessingException {
+        ApplicationAcceptedEvent event = objectMapper.readValue(message, ApplicationAcceptedEvent.class);
         log.info("ApplicationAccepted reçu par Auth Service : userId={}, studentNumber={}",
                 event.getUserId(), event.getStudentNumber());
         try {
@@ -52,7 +56,7 @@ public class AuthEventConsumer {
                 userRepository.save(user);
                 log.info("Rôle promu CANDIDATE → STUDENT pour userId={}", event.getUserId());
             } else {
-                log.warn("Utilisateur userId={} déjà STUDENT — événement ignoré", event.getUserId());
+                log.warn("Utilisateur userId={} déjà STUDENT - événement ignoré", event.getUserId());
             }
 
             ack.acknowledge();

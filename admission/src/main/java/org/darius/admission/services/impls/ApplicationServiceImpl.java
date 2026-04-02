@@ -710,7 +710,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private void checkOwnership(Application app, String userId) {
-        log.info("App userId : {} and userId : {}", app.getUserId(), userId);
         if (!app.getUserId().equals(userId)) {
             throw new ForbiddenException("Vous n'avez pas accès à cette candidature");
         }

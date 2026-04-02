@@ -18,7 +18,11 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_progress_semester", columnList = "semester_id"),
                 @Index(name = "idx_progress_status",   columnList = "status")
         })
-@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentProgress {
 
     @Id

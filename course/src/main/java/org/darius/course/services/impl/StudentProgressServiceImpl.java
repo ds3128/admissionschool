@@ -95,8 +95,12 @@ public class StudentProgressServiceImpl implements StudentProgressService {
         // Calcul des rangs
         results.sort(Comparator.comparingDouble(StudentProgressResponse::getSemesterAverage).reversed());
         for (int i = 0; i < results.size(); i++) {
-            final int rank = i + 1; final String sid = results.get(i).getStudentId();
-            progressRepository.findByStudentIdAndSemester_Id(sid, semesterId).ifPresent(p -> { p.setRank(rank); progressRepository.save(p); });
+            final int rank = i + 1;
+            final String sid = results.get(i).getStudentId();
+            progressRepository.findByStudentIdAndSemester_Id(sid, semesterId).ifPresent(p -> {
+                p.setRank(rank);
+                progressRepository.save(p);
+            });
         }
         log.info("Progressions calculées - semestre {} : {} étudiants", semesterId, results.size());
         return results;

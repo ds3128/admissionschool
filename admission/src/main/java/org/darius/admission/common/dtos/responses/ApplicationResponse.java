@@ -16,8 +16,8 @@ ApplicationResponse {
     private String id;
     private String userId;
     private Long campaignId;
-    private String academicYear;
     private ApplicationStatus status;
+    private String academicYear;
     private LocalDateTime submittedAt;
     private LocalDateTime paidAt;
     private LocalDateTime lastStatusChange;

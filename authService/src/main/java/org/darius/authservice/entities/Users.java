@@ -36,6 +36,12 @@ public class Users implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(length = 100)
+    private String  firstName;
+
+    @Column(nullable = false,  length = 100)
+    private String lastName;
+
     @Column(name = "institutional_password")
     private String institutionalPassword;
 

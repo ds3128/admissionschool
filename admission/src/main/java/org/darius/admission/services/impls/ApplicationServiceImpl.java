@@ -371,7 +371,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 //        if (!dossier.isComplete()) {
 //            throw new InvalidOperationException(
-//                    "Le dossier est incomplet — tous les documents obligatoires sont requis"
+//                    "Le dossier est incomplet - tous les documents obligatoires sont requis"
 //            );
 //        }
 
@@ -420,6 +420,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .candidateLastName(profile.getLastName())
                         .personalEmail(profile.getPersonalEmail())
                         .choiceCount((int) validChoices)
+                        .submittedAt(LocalDate.from(app.getSubmittedAt()))
                         .build()
         );
 

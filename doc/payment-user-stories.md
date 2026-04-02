@@ -1,4 +1,4 @@
-# Payment Service — User Stories complètes
+# Payment Service - User Stories complètes
 
 **Projet :** AdmissionSchool  
 **Service :** Payment Service  
@@ -11,20 +11,20 @@
 
 | Acteur | Rôle système | Description |
 |---|---|---|
-| **Candidat** | `CANDIDATE` | Utilisateur non encore inscrit — paie ses frais de dossier |
-| **Étudiant** | `STUDENT` | Utilisateur inscrit — paie ses frais de scolarité |
-| **Admin Finance** | `ADMIN_FINANCE` | Gestionnaire financier — gère factures et bourses |
+| **Candidat** | `CANDIDATE` | Utilisateur non encore inscrit - paie ses frais de dossier |
+| **Étudiant** | `STUDENT` | Utilisateur inscrit - paie ses frais de scolarité |
+| **Admin Finance** | `ADMIN_FINANCE` | Gestionnaire financier - gère factures et bourses |
 | **Super Admin** | `SUPER_ADMIN` | Accès total aux statistiques |
-| **Système** | `system` | Jobs schedulés — actions automatiques |
+| **Système** | `system` | Jobs schedulés - actions automatiques |
 | **Passerelle** | externe | Confirmation des paiements via webhook |
 
 ---
 
-## EPIC 1 — Paiement des frais de dossier
+## EPIC 1 - Paiement des frais de dossier
 
 ---
 
-### US-PAY-001 — Initier le paiement de mes frais de dossier
+### US-PAY-001 - Initier le paiement de mes frais de dossier
 
 **En tant que** Candidat  
 **Je veux** payer mes frais de dossier d'admission  
@@ -40,11 +40,11 @@
 - [ ] Je reçois en réponse : `{ paymentId, reference, status, amount }`
 
 **Endpoint :** `POST /payments/admission-fees`  
-**Intégration :** Admission Service — `AdmissionPayment` doit exister
+**Intégration :** Admission Service - `AdmissionPayment` doit exister
 
 ---
 
-### US-PAY-002 — Confirmation automatique après paiement
+### US-PAY-002 - Confirmation automatique après paiement
 
 **En tant que** Système (passerelle externe)  
 **Je veux** confirmer un paiement via webhook  
@@ -64,7 +64,7 @@
 
 ---
 
-### US-PAY-003 — Simuler une confirmation (développement)
+### US-PAY-003 - Simuler une confirmation (développement)
 
 **En tant que** Admin Finance (environnement dev)  
 **Je veux** simuler manuellement la confirmation d'un paiement  
@@ -79,7 +79,7 @@
 
 ---
 
-### US-PAY-004 — Relancer un paiement échoué
+### US-PAY-004 - Relancer un paiement échoué
 
 **En tant que** Candidat  
 **Je veux** pouvoir relancer un paiement après un échec  
@@ -93,7 +93,7 @@
 
 ---
 
-### US-PAY-005 — Consulter l'historique de mes paiements
+### US-PAY-005 - Consulter l'historique de mes paiements
 
 **En tant que** Candidat ou Étudiant  
 **Je veux** consulter l'historique de mes paiements  
@@ -109,11 +109,11 @@
 
 ---
 
-## EPIC 2 — Facturation des frais de scolarité
+## EPIC 2 - Facturation des frais de scolarité
 
 ---
 
-### US-PAY-006 — Générer les factures de scolarité pour une cohorte
+### US-PAY-006 - Générer les factures de scolarité pour une cohorte
 
 **En tant que** Admin Finance  
 **Je veux** générer les factures de scolarité pour tous les étudiants actifs  
@@ -136,7 +136,7 @@
 
 ---
 
-### US-PAY-007 — Consulter mes factures
+### US-PAY-007 - Consulter mes factures
 
 **En tant que** Étudiant  
 **Je veux** voir mes factures de scolarité  
@@ -152,7 +152,7 @@
 
 ---
 
-### US-PAY-008 — Payer ma facture de scolarité
+### US-PAY-008 - Payer ma facture de scolarité
 
 **En tant que** Étudiant  
 **Je veux** payer tout ou partie de ma facture de scolarité  
@@ -173,7 +173,7 @@
 
 ---
 
-### US-PAY-009 — Créer un échéancier de paiement pour un étudiant
+### US-PAY-009 - Créer un échéancier de paiement pour un étudiant
 
 **En tant que** Admin Finance  
 **Je veux** créer un échéancier de paiement pour fractionner une facture  
@@ -191,7 +191,7 @@
 
 ---
 
-### US-PAY-010 — Consulter l'échéancier d'une facture
+### US-PAY-010 - Consulter l'échéancier d'une facture
 
 **En tant que** Étudiant ou Admin Finance  
 **Je veux** voir les détails de l'échéancier de ma facture  
@@ -206,7 +206,7 @@
 
 ---
 
-### US-PAY-011 — Annuler une facture
+### US-PAY-011 - Annuler une facture
 
 **En tant que** Admin Finance  
 **Je veux** annuler une facture  
@@ -221,7 +221,7 @@
 
 ---
 
-### US-PAY-012 — Détection automatique des factures en retard
+### US-PAY-012 - Détection automatique des factures en retard
 
 **En tant que** Système  
 **Je veux** détecter automatiquement les factures dont la date limite est dépassée  
@@ -235,7 +235,7 @@
 
 ---
 
-### US-PAY-013 — Blocage automatique des étudiants avec impayé critique
+### US-PAY-013 - Blocage automatique des étudiants avec impayé critique
 
 **En tant que** Système  
 **Je veux** bloquer l'accès aux services d'un étudiant avec un impayé critique  
@@ -251,7 +251,7 @@
 
 ---
 
-### US-PAY-014 — Envoyer des rappels de paiement
+### US-PAY-014 - Envoyer des rappels de paiement
 
 **En tant que** Système  
 **Je veux** envoyer des rappels automatiques aux étudiants dont la facture arrive à échéance  
@@ -264,11 +264,11 @@
 
 ---
 
-## EPIC 3 — Bourses étudiantes
+## EPIC 3 - Bourses étudiantes
 
 ---
 
-### US-PAY-015 — Attribuer une bourse à un étudiant
+### US-PAY-015 - Attribuer une bourse à un étudiant
 
 **En tant que** Admin Finance  
 **Je veux** attribuer une bourse à un étudiant  
@@ -284,7 +284,7 @@
 
 ---
 
-### US-PAY-016 — Activer une bourse
+### US-PAY-016 - Activer une bourse
 
 **En tant que** Admin Finance  
 **Je veux** activer une bourse  
@@ -305,7 +305,7 @@
 
 ---
 
-### US-PAY-017 — Consulter ma bourse
+### US-PAY-017 - Consulter ma bourse
 
 **En tant que** Étudiant  
 **Je veux** consulter les détails de ma bourse  
@@ -320,7 +320,7 @@
 
 ---
 
-### US-PAY-018 — Versements automatiques des bourses
+### US-PAY-018 - Versements automatiques des bourses
 
 **En tant que** Système  
 **Je veux** effectuer automatiquement les versements de bourse à chaque période  
@@ -338,7 +338,7 @@
 
 ---
 
-### US-PAY-019 — Suspendre une bourse
+### US-PAY-019 - Suspendre une bourse
 
 **En tant que** Admin Finance  
 **Je veux** suspendre une bourse temporairement  
@@ -356,7 +356,7 @@
 
 ---
 
-### US-PAY-020 — Terminer définitivement une bourse
+### US-PAY-020 - Terminer définitivement une bourse
 
 **En tant que** Admin Finance  
 **Je veux** clôturer définitivement une bourse  
@@ -372,7 +372,7 @@
 
 ---
 
-### US-PAY-021 — Renouvellement automatique des bourses mérite
+### US-PAY-021 - Renouvellement automatique des bourses mérite
 
 **En tant que** Système  
 **Je veux** renouveler automatiquement les bourses mérite selon les résultats académiques  
@@ -390,7 +390,7 @@
 
 ---
 
-### US-PAY-022 — Traitement du renouvellement depuis Kafka
+### US-PAY-022 - Traitement du renouvellement depuis Kafka
 
 **En tant que** Système  
 **Je veux** déclencher la vérification des bourses mérite quand les notes sont validées  
@@ -405,11 +405,11 @@
 
 ---
 
-## EPIC 4 — Remboursements
+## EPIC 4 - Remboursements
 
 ---
 
-### US-PAY-023 — Rembourser un paiement
+### US-PAY-023 - Rembourser un paiement
 
 **En tant que** Admin Finance  
 **Je veux** rembourser un paiement  
@@ -428,11 +428,11 @@
 
 ---
 
-## EPIC 5 — Administration et reporting
+## EPIC 5 - Administration et reporting
 
 ---
 
-### US-PAY-024 — Consulter les statistiques financières
+### US-PAY-024 - Consulter les statistiques financières
 
 **En tant que** Admin Finance ou Super Admin  
 **Je veux** voir un tableau de bord financier  
@@ -449,7 +449,7 @@
 
 ---
 
-### US-PAY-025 — Consulter les factures en retard
+### US-PAY-025 - Consulter les factures en retard
 
 **En tant que** Admin Finance  
 **Je veux** voir la liste des factures en retard de paiement  
@@ -465,7 +465,7 @@
 
 ---
 
-### US-PAY-026 — Consulter les étudiants bloqués pour impayé
+### US-PAY-026 - Consulter les étudiants bloqués pour impayé
 
 **En tant que** Admin Finance  
 **Je veux** voir la liste des étudiants bloqués pour impayé critique  

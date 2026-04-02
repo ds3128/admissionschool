@@ -1,4 +1,4 @@
-# Notification Service — Documentation Technique v1
+# Notification Service - Documentation Technique v1
 
 **Projet :** AdmissionSchool  
 **Service :** Notification Service  
@@ -11,7 +11,7 @@
 ## Table des matières
 
 1. [Vue d'ensemble du service](#1-vue-densemble-du-service)
-2. [Modèle de domaine — Description des entités](#2-modèle-de-domaine--description-des-entités)
+2. [Modèle de domaine - Description des entités](#2-modèle-de-domaine--description-des-entités)
 3. [Énumérations](#3-énumérations)
 4. [Cas d'utilisation](#4-cas-dutilisation)
 5. [Règles métier transversales](#5-règles-métier-transversales)
@@ -22,7 +22,7 @@
 
 ## 1. Vue d'ensemble du service
 
-Le Notification Service est un service purement réactif — il ne produit aucun événement et ne contient aucune logique métier propre. Il consomme les événements publiés par tous les autres services et envoie les notifications aux utilisateurs via email, SMS ou push.
+Le Notification Service est un service purement réactif - il ne produit aucun événement et ne contient aucune logique métier propre. Il consomme les événements publiés par tous les autres services et envoie les notifications aux utilisateurs via email, SMS ou push.
 
 Il centralise la gestion des templates de notification, les préférences utilisateurs et l'historique des envois.
 
@@ -45,7 +45,7 @@ Il centralise la gestion des templates de notification, les préférences utilis
 
 ---
 
-## 2. Modèle de domaine — Description des entités
+## 2. Modèle de domaine - Description des entités
 
 ### 2.1 `Notification`
 
@@ -174,7 +174,7 @@ Représente un envoi en masse à un groupe d'utilisateurs.
 
 ## 4. Cas d'utilisation
 
-### UC-NOT-001 — Envoyer une notification sur événement Kafka
+### UC-NOT-001 - Envoyer une notification sur événement Kafka
 
 **Acteur :** Système (consommateur Kafka)  
 **Déclencheur :** Réception d'un événement Kafka
@@ -191,7 +191,7 @@ Représente un envoi en masse à un groupe d'utilisateurs.
 
 ---
 
-### UC-NOT-002 — Envoyer une notification en masse
+### UC-NOT-002 - Envoyer une notification en masse
 
 **Acteur :** Admin (`SUPER_ADMIN` ou `ADMIN_SCHOLAR`)  
 **Déclencheur :** Requête `POST /notifications/batch`
@@ -204,7 +204,7 @@ Représente un envoi en masse à un groupe d'utilisateurs.
 
 ---
 
-### UC-NOT-003 — Gérer ses préférences de notification
+### UC-NOT-003 - Gérer ses préférences de notification
 
 **Acteur :** Utilisateur connecté  
 **Déclencheur :** Requête `PUT /notifications/preferences`
@@ -269,7 +269,7 @@ Après 3 échecs → statut FAILED, alerte admin
 |---|---|---|
 | Tous les services | Consommateur Kafka | Consomme tous les événements du système |
 
-### Événements consommés (Kafka) — liste complète
+### Événements consommés (Kafka) - liste complète
 
 | Événement | Producteur |
 |---|---|

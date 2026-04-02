@@ -9,6 +9,7 @@ public class PaymentCompletedEvent {
     private String paymentReference;
     private String applicationId;    // null si pas FRAIS_DOSSIER
     private String invoiceId;        // null si pas FRAIS_SCOLARITE
+    private String paymentMethod;
     private String userId;
     private BigDecimal amount;
     private String currency;

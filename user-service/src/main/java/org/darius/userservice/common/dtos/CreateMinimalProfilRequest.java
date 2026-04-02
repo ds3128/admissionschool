@@ -1,13 +1,13 @@
-package org.darius.authservice.events;
+package org.darius.userservice.common.dtos;
 
 import lombok.*;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class UserActivatedEvent {
+public class CreateMinimalProfilRequest {
     private String userId;
     private String email;
     private String role;

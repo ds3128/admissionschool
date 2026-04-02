@@ -1,4 +1,4 @@
-# RH Service — Documentation Technique v1
+# RH Service - Documentation Technique v1
 
 **Projet :** AdmissionSchool  
 **Service :** RH Service  
@@ -11,7 +11,7 @@
 ## Table des matières
 
 1. [Vue d'ensemble du service](#1-vue-densemble-du-service)
-2. [Modèle de domaine — Description des entités](#2-modèle-de-domaine--description-des-entités)
+2. [Modèle de domaine - Description des entités](#2-modèle-de-domaine--description-des-entités)
 3. [Énumérations](#3-énumérations)
 4. [Cas d'utilisation](#4-cas-dutilisation)
 5. [Règles métier transversales](#5-règles-métier-transversales)
@@ -43,7 +43,7 @@ Le RH Service gère les ressources humaines de l'établissement : contrats des e
 
 ---
 
-## 2. Modèle de domaine — Description des entités
+## 2. Modèle de domaine - Description des entités
 
 ### 2.1 `Employee`
 
@@ -281,7 +281,7 @@ Représente le taux horaire d'un enseignant vacataire, utilisé pour le calcul d
 
 ## 4. Cas d'utilisation
 
-### UC-RH-001 — Créer un contrat
+### UC-RH-001 - Créer un contrat
 
 **Acteur :** Admin RH (`ADMIN_RH`)  
 **Déclencheur :** Requête `POST /rh/contracts`  
@@ -297,7 +297,7 @@ Représente le taux horaire d'un enseignant vacataire, utilisé pour le calcul d
 
 ---
 
-### UC-RH-002 — Demander un congé
+### UC-RH-002 - Demander un congé
 
 **Acteur :** Employé (tout rôle sauf `CANDIDATE`)  
 **Déclencheur :** Requête `POST /rh/leaves`
@@ -315,7 +315,7 @@ Représente le taux horaire d'un enseignant vacataire, utilisé pour le calcul d
 
 ---
 
-### UC-RH-003 — Approuver ou rejeter un congé
+### UC-RH-003 - Approuver ou rejeter un congé
 
 **Acteur :** Admin RH (`ADMIN_RH`) ou responsable hiérarchique  
 **Déclencheur :** Requête `PUT /rh/leaves/{id}/approve` ou `/reject`
@@ -333,7 +333,7 @@ Représente le taux horaire d'un enseignant vacataire, utilisé pour le calcul d
 
 ---
 
-### UC-RH-004 — Générer les fiches de paie mensuelles
+### UC-RH-004 - Générer les fiches de paie mensuelles
 
 **Acteur :** Admin RH (`ADMIN_RH`)  
 **Déclencheur :** Requête `POST /rh/payslips/generate?month=&year=`
@@ -352,7 +352,7 @@ Représente le taux horaire d'un enseignant vacataire, utilisé pour le calcul d
 
 ---
 
-### UC-RH-005 — Créer une évaluation annuelle
+### UC-RH-005 - Créer une évaluation annuelle
 
 **Acteur :** Responsable hiérarchique ou Admin RH  
 **Déclencheur :** Requête `POST /rh/evaluations`

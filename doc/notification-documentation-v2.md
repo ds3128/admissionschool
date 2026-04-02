@@ -1,4 +1,4 @@
-# Notification Service — Documentation Technique v2
+# Notification Service - Documentation Technique v2
 
 **Projet :** AdmissionSchool  
 **Service :** Notification Service  
@@ -23,11 +23,11 @@
 3. [Contexte d'intégration](#3-contexte-dintégration)
 4. [Canaux de notification](#4-canaux-de-notification)
 5. [Catalogue complet des notifications](#5-catalogue-complet-des-notifications)
-6. [Modèle de domaine — Entités](#6-modèle-de-domaine--entités)
+6. [Modèle de domaine - Entités](#6-modèle-de-domaine--entités)
 7. [Énumérations](#7-énumérations)
 8. [Cas d'utilisation](#8-cas-dutilisation)
 9. [Règles métier transversales](#9-règles-métier-transversales)
-10. [Templates email — Thymeleaf](#10-templates-email--thymeleaf)
+10. [Templates email - Thymeleaf](#10-templates-email--thymeleaf)
 11. [Sécurité des routes](#11-sécurité-des-routes)
 12. [Événements Kafka consommés](#12-événements-kafka-consommés)
 13. [Dépendances cross-services](#13-dépendances-cross-services)
@@ -40,7 +40,7 @@
 
 Le Notification Service est le service transversal responsable de toutes les communications sortantes vers les utilisateurs. Il consomme les events Kafka publiés par les autres services (Admission, Payment, Course) et déclenche les notifications appropriées par email.
 
-C'est un service **entièrement réactif** — il ne reçoit aucun appel HTTP des autres services. Tout passe par Kafka. Il expose uniquement une API REST pour la consultation de l'historique des notifications par les utilisateurs et l'administration.
+C'est un service **entièrement réactif** - il ne reçoit aucun appel HTTP des autres services. Tout passe par Kafka. Il expose uniquement une API REST pour la consultation de l'historique des notifications par les utilisateurs et l'administration.
 
 ### Responsabilités
 
@@ -48,7 +48,7 @@ C'est un service **entièrement réactif** — il ne reçoit aucun appel HTTP de
 - Envoyer des emails transactionnels via JavaMailSender + SMTP
 - Maintenir un historique de toutes les notifications envoyées
 - Gérer les préférences de notification par utilisateur
-- Gérer les tentatives de renvoi en cas d'échec (retry — 3 max)
+- Gérer les tentatives de renvoi en cas d'échec (retry - 3 max)
 - Exposer l'historique des notifications via REST
 
 ### Hors périmètre
@@ -165,13 +165,13 @@ Notification Service
   └── User Service :8082  (GET /users/{id} → résoudre email)
 ```
 
-Le Notification Service est **purement consommateur** — il ne publie aucun event Kafka.
+Le Notification Service est **purement consommateur** - il ne publie aucun event Kafka.
 
 ---
 
 ## 4. Canaux de notification
 
-### Email (principal — v1)
+### Email (principal - v1)
 
 Implémenté via **JavaMailSender** avec templates **Thymeleaf** (`.html`).
 
@@ -183,7 +183,7 @@ Implémenté via **JavaMailSender** avec templates **Thymeleaf** (`.html`).
 
 Toutes les notifications sont enregistrées en base (`Notification` entity) et accessibles via l'API REST. L'étudiant peut consulter son historique depuis l'interface Angular.
 
-### SMS (optionnel — v2)
+### SMS (optionnel - v2)
 
 Prévu pour v2 via Twilio ou Orange SMS API.
 
@@ -195,28 +195,28 @@ Prévu pour v2 via Twilio ou Orange SMS API.
 
 | Event Kafka | Destinataire | Sujet email |
 |---|---|---|
-| `application.submitted` | Candidat | Dossier reçu — confirmation de candidature |
+| `application.submitted` | Candidat | Dossier reçu - confirmation de candidature |
 | `application.admin.review` | Candidat | Mise à jour de votre dossier |
 | `application.pending.commission` | Candidat | Dossier transmis à la commission |
-| `interview.scheduled` | Candidat | Entretien planifié — informations importantes |
+| `interview.scheduled` | Candidat | Entretien planifié - informations importantes |
 | `thesis.approval.requested` | Enseignant directeur | Demande d'encadrement de thèse |
-| `application.awaiting.confirmation` | Candidat | Félicitations — Confirmez votre inscription |
+| `application.awaiting.confirmation` | Candidat | Félicitations - Confirmez votre inscription |
 | `application.accepted` | Étudiant | Bienvenue à l'université ! |
 | `application.rejected` | Candidat | Résultat de votre candidature |
-| `waitlist.promoted` | Candidat | Bonne nouvelle — Place disponible ! |
+| `waitlist.promoted` | Candidat | Bonne nouvelle - Place disponible ! |
 | `choice.auto.confirmed` | Étudiant | Confirmation automatique de votre inscription |
 
 ### 5.2 Notifications Payment (8 events)
 
 | Event Kafka | Destinataire | Sujet email |
 |---|---|---|
-| `payment.completed` | Candidat / Étudiant | Paiement confirmé — Reçu de paiement |
-| `payment.failed` | Candidat / Étudiant | Échec du paiement — Action requise |
+| `payment.completed` | Candidat / Étudiant | Paiement confirmé - Reçu de paiement |
+| `payment.failed` | Candidat / Étudiant | Échec du paiement - Action requise |
 | `payment.refunded` | Étudiant | Remboursement effectué |
 | `invoice.generated` | Étudiant | Nouvelle facture disponible |
-| `invoice.paid` | Étudiant | Facture réglée — Merci |
-| `invoice.overdue` | Étudiant | ⚠️ Facture en retard — Régularisez votre situation |
-| `student.payment.blocked` | Étudiant | 🔒 Accès restreint — Impayé critique |
+| `invoice.paid` | Étudiant | Facture réglée - Merci |
+| `invoice.overdue` | Étudiant | ⚠️ Facture en retard - Régularisez votre situation |
+| `student.payment.blocked` | Étudiant | 🔒 Accès restreint - Impayé critique |
 | `scholarship.disbursed` | Étudiant | Versement de bourse effectué |
 
 ### 5.3 Notifications Course (5 events)
@@ -233,7 +233,7 @@ Prévu pour v2 via Twilio ou Orange SMS API.
 
 ---
 
-## 6. Modèle de domaine — Entités
+## 6. Modèle de domaine - Entités
 
 ### `Notification`
 
@@ -242,7 +242,7 @@ Historique complet de toutes les notifications envoyées.
 | Champ | Type | Description |
 |---|---|---|
 | `id` | Long PK | Clé primaire |
-| `userId` | String | Destinataire — référence Auth Service |
+| `userId` | String | Destinataire - référence Auth Service |
 | `recipientEmail` | String | Email au moment de l'envoi |
 | `type` | NotificationType | Type de notification |
 | `channel` | NotificationChannel | EMAIL, SMS, IN_APP |
@@ -334,7 +334,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ## 8. Cas d'utilisation
 
-### UC-NOTIF-001 — Confirmer la soumission d'un dossier
+### UC-NOTIF-001 - Confirmer la soumission d'un dossier
 
 **Trigger :** Kafka `application.submitted`  
 **Destinataire :** Candidat (email inclus dans l'event)
@@ -346,7 +346,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-002 — Notifier l'acceptation et la demande de confirmation
+### UC-NOTIF-002 - Notifier l'acceptation et la demande de confirmation
 
 **Trigger :** Kafka `application.awaiting.confirmation`
 
@@ -355,7 +355,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-003 — Accueillir le nouvel étudiant
+### UC-NOTIF-003 - Accueillir le nouvel étudiant
 
 **Trigger :** Kafka `application.accepted`  
 **Notification non désactivable**
@@ -364,17 +364,17 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-004 — Notifier un directeur de thèse
+### UC-NOTIF-004 - Notifier un directeur de thèse
 
 **Trigger :** Kafka `thesis.approval.requested`  
-**Destinataire :** Enseignant — résolution email via User Service
+**Destinataire :** Enseignant - résolution email via User Service
 
 1. Reçoit `directorId` → appel HTTP `GET /users/{directorId}`
 2. Envoie email avec résumé du projet de recherche
 
 ---
 
-### UC-NOTIF-005 — Notifier un paiement confirmé
+### UC-NOTIF-005 - Notifier un paiement confirmé
 
 **Trigger :** Kafka `payment.completed`
 
@@ -383,7 +383,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-006 — Alerter d'une facture en retard
+### UC-NOTIF-006 - Alerter d'une facture en retard
 
 **Trigger :** Kafka `invoice.overdue`  
 **Notification non désactivable**
@@ -393,7 +393,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-007 — Notifier le blocage pour impayé
+### UC-NOTIF-007 - Notifier le blocage pour impayé
 
 **Trigger :** Kafka `student.payment.blocked`  
 **Notification non désactivable**
@@ -402,7 +402,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-008 — Notifier la publication des notes
+### UC-NOTIF-008 - Notifier la publication des notes
 
 **Trigger :** Kafka `grades.published`  
 **Destinataires multiples** : liste de `studentIds`
@@ -412,7 +412,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-009 — Notifier l'annulation d'une séance
+### UC-NOTIF-009 - Notifier l'annulation d'une séance
 
 **Trigger :** Kafka `session.cancelled`  
 **Destinataires multiples** : `affectedStudentIds`
@@ -421,7 +421,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-010 — Notifier les résultats du semestre
+### UC-NOTIF-010 - Notifier les résultats du semestre
 
 **Trigger :** Kafka `semester.validated`  
 **Destinataires multiples** : tous les étudiants dans `results`
@@ -431,7 +431,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-011 — Consulter son historique
+### UC-NOTIF-011 - Consulter son historique
 
 **Acteur :** Utilisateur authentifié  
 **Endpoint :** `GET /notifications/me`
@@ -441,7 +441,7 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-012 — Gérer ses préférences
+### UC-NOTIF-012 - Gérer ses préférences
 
 **Acteur :** Utilisateur authentifié  
 **Endpoint :** `PUT /notifications/preferences`
@@ -451,11 +451,11 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 
 ---
 
-### UC-NOTIF-013 — Retry automatique
+### UC-NOTIF-013 - Retry automatique
 
 **Acteur :** Scheduler (`@Scheduled`)
 
-1. Toutes les 5 minutes — récupère les `FAILED` avec `retryCount < 3`
+1. Toutes les 5 minutes - récupère les `FAILED` avec `retryCount < 3`
 2. Retente l'envoi → `SENT` ou `FAILED` définitif après 3 tentatives
 
 ---
@@ -465,16 +465,16 @@ public enum NotificationStatus { PENDING, SENT, FAILED, RETRYING }
 ### Résolution de l'email du destinataire
 
 ```
-Cas 1 — Email inclus dans l'event (ex: application.submitted)
+Cas 1 - Email inclus dans l'event (ex: application.submitted)
   → Utiliser directement
 
-Cas 2 — Seulement userId/studentId (ex: invoice.overdue)
+Cas 2 - Seulement userId/studentId (ex: invoice.overdue)
   → RestClient GET /users/{userId} → User Service :8082
   → Extraire email depuis la réponse
 
-Cas 3 — Liste de studentIds (ex: grades.published, session.cancelled)
+Cas 3 - Liste de studentIds (ex: grades.published, session.cancelled)
   → Appel HTTP individuel par userId
-  → sendBulk() — traitement par lots de 10
+  → sendBulk() - traitement par lots de 10
 ```
 
 ### Notifications non désactivables (critiques)
@@ -511,7 +511,7 @@ if (type est ATTENDANCE && !prefs.isAttendanceNotifications()) → skip
 
 ---
 
-## 10. Templates email — Thymeleaf
+## 10. Templates email - Thymeleaf
 
 Les templates sont des fichiers `.html` dans `src/main/resources/templates/mail/`.
 
@@ -587,7 +587,7 @@ Même pattern que tous les autres services Java du projet.
 
 ## 12. Événements Kafka consommés
 
-**23 topics** — 3 consumers, groupe `notification-service-group`
+**23 topics** - 3 consumers, groupe `notification-service-group`
 
 ### AdmissionConsumer (10 topics)
 
@@ -671,7 +671,7 @@ Même pattern que tous les autres services Java du projet.
 
 ## 15. Configuration
 
-### `pom.xml` — dépendances spécifiques
+### `pom.xml` - dépendances spécifiques
 
 ```xml
 <!-- Email -->
@@ -758,7 +758,7 @@ CREATE USER notification_service WITH PASSWORD 'notification_service#123@';
 GRANT ALL PRIVILEGES ON DATABASE notificationdb TO notification_service;
 ```
 
-### Gateway — route à ajouter
+### Gateway - route à ajouter
 
 ```java
 // ProxyController.java

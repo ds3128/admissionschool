@@ -1,4 +1,4 @@
-# Paiement Service — Documentation Technique v1
+# Paiement Service - Documentation Technique v1
 
 **Projet :** AdmissionSchool  
 **Service :** Paiement Service  
@@ -11,7 +11,7 @@
 ## Table des matières
 
 1. [Vue d'ensemble du service](#1-vue-densemble-du-service)
-2. [Modèle de domaine — Description des entités](#2-modèle-de-domaine--description-des-entités)
+2. [Modèle de domaine - Description des entités](#2-modèle-de-domaine--description-des-entités)
 3. [Énumérations](#3-énumérations)
 4. [Cas d'utilisation](#4-cas-dutilisation)
 5. [Règles métier transversales](#5-règles-métier-transversales)
@@ -43,7 +43,7 @@ Le Paiement Service gère tous les flux financiers liés aux étudiants et à l'
 
 ---
 
-## 2. Modèle de domaine — Description des entités
+## 2. Modèle de domaine - Description des entités
 
 ### 2.1 `Payment`
 
@@ -147,7 +147,7 @@ Représente une bourse accordée à un étudiant.
 
 **Règles métier :**
 - Une bourse `MERITE` requiert une moyenne >= 14/20 pour être renouvelée.
-- Une bourse `SOCIAL` est attribuée sur critères sociaux — revérifiée annuellement.
+- Une bourse `SOCIAL` est attribuée sur critères sociaux - revérifiée annuellement.
 - Une bourse `SUSPENDED` suspend les versements sans annuler la bourse.
 
 ---
@@ -230,7 +230,7 @@ Représente un versement de bourse mensuel ou trimestriel.
 
 ## 4. Cas d'utilisation
 
-### UC-PAY-001 — Traiter un paiement de frais de dossier
+### UC-PAY-001 - Traiter un paiement de frais de dossier
 
 **Acteur :** Admission Service (appel synchrone)  
 **Déclencheur :** Requête HTTP `POST /payments/process`
@@ -244,7 +244,7 @@ Représente un versement de bourse mensuel ou trimestriel.
 
 ---
 
-### UC-PAY-002 — Générer les factures de scolarité
+### UC-PAY-002 - Générer les factures de scolarité
 
 **Acteur :** Admin Finance (`ADMIN_FINANCE`)  
 **Déclencheur :** Requête `POST /payments/invoices/generate?year=&semester=`
@@ -258,7 +258,7 @@ Représente un versement de bourse mensuel ou trimestriel.
 
 ---
 
-### UC-PAY-003 — Payer une facture de scolarité
+### UC-PAY-003 - Payer une facture de scolarité
 
 **Acteur :** Étudiant  
 **Déclencheur :** Requête `POST /payments/invoices/{id}/pay`
@@ -273,7 +273,7 @@ Représente un versement de bourse mensuel ou trimestriel.
 
 ---
 
-### UC-PAY-004 — Attribuer une bourse
+### UC-PAY-004 - Attribuer une bourse
 
 **Acteur :** Admin Finance (`ADMIN_FINANCE`)  
 **Déclencheur :** Requête `POST /payments/scholarships`
@@ -287,7 +287,7 @@ Représente un versement de bourse mensuel ou trimestriel.
 
 ---
 
-### UC-PAY-005 — Créer un échéancier de paiement
+### UC-PAY-005 - Créer un échéancier de paiement
 
 **Acteur :** Admin Finance (`ADMIN_FINANCE`)  
 **Déclencheur :** Requête `POST /payments/invoices/{id}/schedule`

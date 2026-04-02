@@ -1,5 +1,6 @@
 package org.darius.userservice.services;
 
+import org.darius.userservice.common.dtos.CreateMinimalProfilRequest;
 import org.darius.userservice.common.dtos.requests.UpdateProfileRequest;
 import org.darius.userservice.common.dtos.responses.UserProfileResponse;
 import org.darius.userservice.entities.UserProfile;
@@ -14,7 +15,7 @@ public interface UserProfileService {
      * Crée un profil minimal à la réception de UserActivated (Kafka).
      * Idempotent — ignoré si userId déjà existant.
      */
-    void createMinimalProfile(String userId, String email);
+    void createMinimalProfile(CreateMinimalProfilRequest request);
 
     /**
      * Crée un profil complet depuis les données de ApplicationAccepted (Kafka).

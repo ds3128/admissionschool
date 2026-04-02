@@ -272,6 +272,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .currency(invoice.getCurrency())
                         .type(PaymentType.FRAIS_SCOLARITE.name())
                         .paidAt(payment.getPaidAt())
+                        .paymentMethod(payment.getMethod().name())
                         .build()
         );
 

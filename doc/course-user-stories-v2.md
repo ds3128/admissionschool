@@ -1,4 +1,4 @@
-# Course Service — User Stories complètes v2
+# Course Service - User Stories complètes v2
 
 **Projet :** AdmissionSchool  
 **Service :** Course Service  
@@ -6,9 +6,9 @@
 **Date :** Mars 2026
 
 **Changelog v2 :**
-- EPIC 8 ajouté — Supports de cours (CourseResource)
-- EPIC 9 ajouté — Pièces jointes évaluations (EvaluationAttachment)
-- EPIC 5 enrichi — Vue étudiant : tableau de bord, progression par cours, accès supports
+- EPIC 8 ajouté - Supports de cours (CourseResource)
+- EPIC 9 ajouté - Pièces jointes évaluations (EvaluationAttachment)
+- EPIC 5 enrichi - Vue étudiant : tableau de bord, progression par cours, accès supports
 - Total : 35 user stories (vs 27 en v1)
 
 ---
@@ -25,9 +25,9 @@
 
 ---
 
-## EPIC 1 — Structure académique
+## EPIC 1 - Structure académique
 
-### US-CRS-001 — Créer une unité d'enseignement
+### US-CRS-001 - Créer une unité d'enseignement
 
 **En tant que** Scolarité  
 **Je veux** créer une UE  
@@ -41,7 +41,7 @@
 
 ---
 
-### US-CRS-002 — Créer une matière
+### US-CRS-002 - Créer une matière
 
 **En tant que** Scolarité  
 **Je veux** créer une matière dans une UE  
@@ -57,7 +57,7 @@
 
 ---
 
-### US-CRS-003 — Créer et gérer un semestre
+### US-CRS-003 - Créer et gérer un semestre
 
 **En tant que** Scolarité  
 **Je veux** créer un semestre académique
@@ -72,7 +72,7 @@
 
 ---
 
-### US-CRS-004 — Gérer les salles
+### US-CRS-004 - Gérer les salles
 
 **En tant que** Scolarité  
 **Je veux** gérer les salles disponibles
@@ -87,9 +87,9 @@
 
 ---
 
-## EPIC 2 — Groupes et affectations
+## EPIC 2 - Groupes et affectations
 
-### US-CRS-005 — Initialisation automatique groupes et inscriptions
+### US-CRS-005 - Initialisation automatique groupes et inscriptions
 
 **En tant que** Système  
 **Je veux** créer automatiquement groupes et inscriptions quand un étudiant est confirmé
@@ -107,7 +107,7 @@
 
 ---
 
-### US-CRS-006 — Créer des groupes TD et TP
+### US-CRS-006 - Créer des groupes TD et TP
 
 **En tant que** Scolarité  
 **Je veux** créer des sous-groupes pour les séances pratiques
@@ -122,7 +122,7 @@
 
 ---
 
-### US-CRS-007 — Affecter un enseignant à une matière
+### US-CRS-007 - Affecter un enseignant à une matière
 
 **En tant que** Scolarité  
 **Je veux** affecter un enseignant à une matière pour un semestre
@@ -137,9 +137,9 @@
 
 ---
 
-## EPIC 3 — Emploi du temps
+## EPIC 3 - Emploi du temps
 
-### US-CRS-008 — Planifier un créneau
+### US-CRS-008 - Planifier un créneau
 
 **En tant que** Scolarité  
 **Je veux** créer un créneau dans l'emploi du temps
@@ -158,7 +158,7 @@
 
 ---
 
-### US-CRS-009 — Consulter l'emploi du temps
+### US-CRS-009 - Consulter l'emploi du temps
 
 **En tant que** Étudiant, Enseignant ou Administrateur  
 **Je veux** voir l'emploi du temps d'une semaine
@@ -174,7 +174,7 @@
 
 ---
 
-### US-CRS-010 — Annuler ou reporter une séance
+### US-CRS-010 - Annuler ou reporter une séance
 
 **En tant que** Enseignant ou Scolarité
 
@@ -187,9 +187,9 @@
 
 ---
 
-## EPIC 4 — Présences
+## EPIC 4 - Présences
 
-### US-CRS-011 — Marquer les présences
+### US-CRS-011 - Marquer les présences
 
 **En tant que** Enseignant  
 **Je veux** marquer les présences après une séance
@@ -206,7 +206,7 @@
 
 ---
 
-### US-CRS-012 — Justifier une absence
+### US-CRS-012 - Justifier une absence
 
 **En tant que** Étudiant ou Scolarité
 
@@ -217,7 +217,7 @@
 
 ---
 
-### US-CRS-013 — Consulter les statistiques de présence
+### US-CRS-013 - Consulter les statistiques de présence
 
 **En tant que** Étudiant, Enseignant ou Scolarité
 
@@ -231,7 +231,7 @@
 
 ---
 
-### US-CRS-014 — Blocage automatique pour impayé
+### US-CRS-014 - Blocage automatique pour impayé
 
 **En tant que** Système  
 **Trigger :** Kafka `student.payment.blocked`
@@ -242,9 +242,9 @@
 
 ---
 
-## EPIC 5 — Vue étudiant enrichie ← enrichi v3
+## EPIC 5 - Vue étudiant enrichie ← enrichi v3
 
-### US-CRS-015 — Consulter le tableau de bord de mes cours
+### US-CRS-015 - Consulter le tableau de bord de mes cours
 
 **En tant que** Étudiant  
 **Je veux** avoir une vue synthétique de tous mes cours du semestre  
@@ -267,7 +267,7 @@
 
 ---
 
-### US-CRS-016 — Consulter mes notes
+### US-CRS-016 - Consulter mes notes
 
 **En tant que** Étudiant  
 **Je veux** consulter mes notes par matière et par semestre
@@ -282,7 +282,7 @@
 
 ---
 
-### US-CRS-017 — Consulter ma progression semestrielle
+### US-CRS-017 - Consulter ma progression semestrielle
 
 **En tant que** Étudiant  
 **Je veux** consulter mon bilan semestriel officiel
@@ -295,7 +295,7 @@
 
 ---
 
-### US-CRS-018 — Consulter mon relevé de notes
+### US-CRS-018 - Consulter mon relevé de notes
 
 **En tant que** Étudiant  
 **Je veux** consulter mon relevé de notes complet
@@ -309,9 +309,9 @@
 
 ---
 
-## EPIC 6 — Évaluations et notes
+## EPIC 6 - Évaluations et notes
 
-### US-CRS-019 — Créer une évaluation
+### US-CRS-019 - Créer une évaluation
 
 **En tant que** Enseignant  
 **Je veux** créer une évaluation dans ma matière
@@ -326,7 +326,7 @@
 
 ---
 
-### US-CRS-020 — Saisir les notes
+### US-CRS-020 - Saisir les notes
 
 **En tant que** Enseignant  
 **Je veux** saisir les notes des étudiants
@@ -344,7 +344,7 @@
 
 ---
 
-### US-CRS-021 — Publier les notes
+### US-CRS-021 - Publier les notes
 
 **En tant que** Enseignant  
 **Je veux** rendre les notes visibles aux étudiants
@@ -358,7 +358,7 @@
 
 ---
 
-### US-CRS-022 — Consulter les statistiques d'une évaluation
+### US-CRS-022 - Consulter les statistiques d'une évaluation
 
 **En tant que** Enseignant ou Administrateur
 
@@ -370,9 +370,9 @@
 
 ---
 
-## EPIC 7 — Progression semestrielle
+## EPIC 7 - Progression semestrielle
 
-### US-CRS-023 — Calculer la progression semestrielle
+### US-CRS-023 - Calculer la progression semestrielle
 
 **En tant que** Scolarité  
 **Je veux** calculer la progression de tous les étudiants
@@ -393,7 +393,7 @@
 
 ---
 
-### US-CRS-024 — Valider un semestre
+### US-CRS-024 - Valider un semestre
 
 **En tant que** Super Admin  
 **Je veux** valider officiellement un semestre
@@ -411,7 +411,7 @@
 
 ---
 
-### US-CRS-025 — Mise à jour automatique après promotion
+### US-CRS-025 - Mise à jour automatique après promotion
 
 **En tant que** Système  
 **Trigger :** Kafka `student.promoted`
@@ -423,9 +423,9 @@
 
 ---
 
-## EPIC 8 — Supports de cours (CourseResource) ← nouveau v3
+## EPIC 8 - Supports de cours (CourseResource) ← nouveau v3
 
-### US-CRS-026 — Ajouter un support de cours
+### US-CRS-026 - Ajouter un support de cours
 
 **En tant que** Enseignant  
 **Je veux** ajouter des supports pédagogiques à ma matière  
@@ -433,10 +433,10 @@
 
 **Critères d'acceptation :**
 - [ ] Je dois être affecté à la matière (403 sinon)
-- [ ] Je peux uploader un fichier (PDF, DOCX, PPTX, XLSX, ZIP, MP4, MP3, PNG, JPEG) — max 50 Mo
+- [ ] Je peux uploader un fichier (PDF, DOCX, PPTX, XLSX, ZIP, MP4, MP3, PNG, JPEG) - max 50 Mo
 - [ ] Je peux aussi ajouter un lien externe (YouTube, documentation officielle, etc.)
 - [ ] Je choisis le type : COURS, TD, TP, PROJET, LIEN, AUTRE
-- [ ] Le support est créé en **DRAFT** (`isPublished = false`) — invisible pour les étudiants
+- [ ] Le support est créé en **DRAFT** (`isPublished = false`) - invisible pour les étudiants
 - [ ] Je peux ajouter un titre et une description
 - [ ] Un message d'erreur clair si le format ou la taille n'est pas respecté (422)
 
@@ -444,7 +444,7 @@
 
 ---
 
-### US-CRS-027 — Gérer mes supports de cours
+### US-CRS-027 - Gérer mes supports de cours
 
 **En tant que** Enseignant  
 **Je veux** consulter, modifier et supprimer mes supports  
@@ -455,14 +455,14 @@
 - [ ] Je peux modifier le titre, la description et le type d'un support
 - [ ] Je peux remplacer le fichier d'un support existant (nouvel upload)
 - [ ] Je ne peux modifier que mes propres supports (403 si autre auteur)
-- [ ] Je peux supprimer un support (soft delete — disparaît de la vue étudiant, conservé en base)
+- [ ] Je peux supprimer un support (soft delete - disparaît de la vue étudiant, conservé en base)
 - [ ] Je vois clairement le statut de chaque support (DRAFT / PUBLIÉ)
 
 **Endpoints :** `GET /courses/resources/my`, `PUT /courses/resources/{id}`, `DELETE /courses/resources/{id}`
 
 ---
 
-### US-CRS-028 — Publier ou dépublier un support
+### US-CRS-028 - Publier ou dépublier un support
 
 **En tant que** Enseignant  
 **Je veux** contrôler la visibilité de mes supports  
@@ -478,7 +478,7 @@
 
 ---
 
-### US-CRS-029 — Consulter les supports d'une matière (côté étudiant)
+### US-CRS-029 - Consulter les supports d'une matière (côté étudiant)
 
 **En tant que** Étudiant  
 **Je veux** accéder aux supports de cours de mes matières  
@@ -496,9 +496,9 @@
 
 ---
 
-## EPIC 9 — Pièces jointes aux évaluations (EvaluationAttachment) ← nouveau v3
+## EPIC 9 - Pièces jointes aux évaluations (EvaluationAttachment) ← nouveau v3
 
-### US-CRS-030 — Ajouter une pièce jointe à une évaluation
+### US-CRS-030 - Ajouter une pièce jointe à une évaluation
 
 **En tant que** Enseignant  
 **Je veux** ajouter des documents à une évaluation  
@@ -506,7 +506,7 @@
 
 **Critères d'acceptation :**
 - [ ] Je dois être affecté à la matière de cette évaluation (403 sinon)
-- [ ] Je peux uploader un fichier (PDF, DOCX, XLSX, ZIP, PNG, JPEG) — max 20 Mo
+- [ ] Je peux uploader un fichier (PDF, DOCX, XLSX, ZIP, PNG, JPEG) - max 20 Mo
 - [ ] La pièce jointe est **immédiatement visible** par les étudiants inscrits (pas de brouillon)
 - [ ] Je peux ajouter plusieurs pièces jointes à une même évaluation (ex : énoncé + barème)
 - [ ] Je peux ajouter un titre et une description optionnelle pour chaque pièce jointe
@@ -516,7 +516,7 @@
 
 ---
 
-### US-CRS-031 — Gérer les pièces jointes d'une évaluation
+### US-CRS-031 - Gérer les pièces jointes d'une évaluation
 
 **En tant que** Enseignant  
 **Je veux** consulter et supprimer les pièces jointes de mes évaluations
@@ -531,7 +531,7 @@
 
 ---
 
-### US-CRS-032 — Consulter les pièces jointes d'une évaluation (côté étudiant)
+### US-CRS-032 - Consulter les pièces jointes d'une évaluation (côté étudiant)
 
 **En tant que** Étudiant  
 **Je veux** accéder aux documents d'une évaluation  
@@ -539,7 +539,7 @@
 
 **Critères d'acceptation :**
 - [ ] Je dois être inscrit à la matière de l'évaluation (403 sinon)
-- [ ] Je vois toutes les pièces jointes disponibles (pas de brouillon — toujours visibles)
+- [ ] Je vois toutes les pièces jointes disponibles (pas de brouillon - toujours visibles)
 - [ ] Je vois : titre, description, nom du fichier, taille, date d'upload
 - [ ] Je peux télécharger le fichier
 - [ ] Les pièces jointes apparaissent aussi dans mon tableau de bord (US-CRS-015) pour les évaluations à venir
@@ -548,9 +548,9 @@
 
 ---
 
-## EPIC 10 — Données ML et statistiques
+## EPIC 10 - Données ML et statistiques
 
-### US-CRS-033 — Exposer les données de présence pour le pipeline ML
+### US-CRS-033 - Exposer les données de présence pour le pipeline ML
 
 **En tant que** Scolarité ou Système ML  
 **Je veux** accéder aux statistiques de présence agrégées
@@ -564,7 +564,7 @@
 
 ---
 
-### US-CRS-034 — Exposer les statistiques de notes pour le pipeline ML
+### US-CRS-034 - Exposer les statistiques de notes pour le pipeline ML
 
 **En tant que** Scolarité ou Système ML
 
@@ -577,7 +577,7 @@
 
 ---
 
-### US-CRS-035 — Exposer la synthèse de progression pour le pipeline ML
+### US-CRS-035 - Exposer la synthèse de progression pour le pipeline ML
 
 **En tant que** Scolarité ou Système ML
 

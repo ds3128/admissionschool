@@ -1,4 +1,4 @@
-# Course Service — Documentation Technique v3
+# Course Service - Documentation Technique v3
 
 **Projet :** AdmissionSchool  
 **Service :** Course Service  
@@ -8,8 +8,8 @@
 **Stack :** Spring Boot 4.0.3, Java 21, Spring Cloud 2025.1.0, PostgreSQL, Kafka, MapStruct 1.6.3, SpringDoc 2.8.6
 
 **Changelog v3 :**
-- Ajout de l'entité `CourseResource` — supports de cours (PDF, slides, vidéos, liens)
-- Ajout de l'entité `EvaluationAttachment` — pièces jointes liées aux évaluations (énoncés, fichiers TP)
+- Ajout de l'entité `CourseResource` - supports de cours (PDF, slides, vidéos, liens)
+- Ajout de l'entité `EvaluationAttachment` - pièces jointes liées aux évaluations (énoncés, fichiers TP)
 - Ajout de l'énumération `ResourceType`
 - Vue étudiant enrichie : liste de cours, progression par cours, supports accessibles
 - Vue enseignant enrichie : gestion complète des supports et pièces jointes
@@ -25,8 +25,8 @@
 4. [Parcours étudiant](#4-parcours-étudiant)
 5. [Parcours enseignant](#5-parcours-enseignant)
 6. [Flux de validation semestrielle](#6-flux-de-validation-semestrielle)
-7. [Modèle de domaine — Entités](#7-modèle-de-domaine--entités)
-8. [DTOs calculés — non persistés](#8-dtos-calculés--non-persistés)
+7. [Modèle de domaine - Entités](#7-modèle-de-domaine--entités)
+8. [DTOs calculés - non persistés](#8-dtos-calculés--non-persistés)
 9. [Énumérations](#9-énumérations)
 10. [Cas d'utilisation](#10-cas-dutilisation)
 11. [Règles métier transversales](#11-règles-métier-transversales)
@@ -44,7 +44,7 @@
 
 Le Course Service gère l'ensemble de la vie académique d'un étudiant une fois inscrit : unités d'enseignement, matières, inscriptions, emploi du temps, séances, présences, évaluations, notes, progression semestrielle et **ressources pédagogiques**. C'est également le point central de coordination pour les enseignants concernant leurs affectations, leur charge horaire et les contenus qu'ils partagent avec leurs étudiants.
 
-C'est le service le plus riche fonctionnellement du système. Il produit les données brutes qui alimenteront le **pipeline de détection d'anomalies ML** : taux de présence par étudiant, évolution des notes, progression par cohorte, statistiques par matière — données essentielles pour l'article de recherche.
+C'est le service le plus riche fonctionnellement du système. Il produit les données brutes qui alimenteront le **pipeline de détection d'anomalies ML** : taux de présence par étudiant, évolution des notes, progression par cohorte, statistiques par matière - données essentielles pour l'article de recherche.
 
 ### Responsabilités
 
@@ -289,19 +289,19 @@ Semestre → VALIDATED (immuable)
 
 ---
 
-## 7. Modèle de domaine — Entités
+## 7. Modèle de domaine - Entités
 
 ### `Semester`
 
 | Champ | Type | Description |
 |---|---|---|
 | `id` | Long PK | Clé primaire |
-| `label` | String | Libellé (ex : Semestre 1 — 2025/2026) |
+| `label` | String | Libellé (ex : Semestre 1 - 2025/2026) |
 | `academicYear` | String | Année académique |
 | `startDate` | LocalDate | Date de début |
 | `endDate` | LocalDate | Date de fin |
 | `isCurrent` | boolean | Semestre en cours |
-| `isLastOfYear` | boolean | Dernier semestre — déclenche renouvellement bourses |
+| `isLastOfYear` | boolean | Dernier semestre - déclenche renouvellement bourses |
 | `status` | SemesterStatus | UPCOMING, ACTIVE, CLOSED, VALIDATED |
 
 ---
@@ -390,7 +390,7 @@ Représente une pièce jointe liée à une évaluation spécifique. Typiquement 
 
 **Règles métier :**
 - Une évaluation peut avoir plusieurs pièces jointes (énoncé + barème par exemple)
-- Les pièces jointes d'une évaluation sont **toujours visibles** par les étudiants inscrits dès leur upload — pas de mécanisme de brouillon (contrairement aux `CourseResource`)
+- Les pièces jointes d'une évaluation sont **toujours visibles** par les étudiants inscrits dès leur upload - pas de mécanisme de brouillon (contrairement aux `CourseResource`)
 - Seul l'enseignant qui a uploadé peut supprimer une pièce jointe
 - La taille maximale par fichier est de **20 Mo**
 - Formats acceptés : PDF, DOCX, XLSX, ZIP, PNG, JPEG
@@ -423,7 +423,7 @@ Représente une pièce jointe liée à une évaluation spécifique. Typiquement 
 | `filiereId` | Long | Référence User Service |
 | `semester` | Semester FK | Semestre |
 | `maxSize` | int | Capacité maximale |
-| `studentIds` | List\<String\> | IDs étudiants — `@ElementCollection` |
+| `studentIds` | List\<String\> | IDs étudiants - `@ElementCollection` |
 
 ---
 
@@ -436,7 +436,7 @@ Représente une pièce jointe liée à une évaluation spécifique. Typiquement 
 | `building` | String | Bâtiment |
 | `capacity` | int | Capacité |
 | `type` | RoomType | AMPHI, TD, TP, LABO, VISIO |
-| `equipment` | List\<String\> | Équipements — `@ElementCollection` |
+| `equipment` | List\<String\> | Équipements - `@ElementCollection` |
 | `isAvailable` | boolean | Disponible pour planification |
 
 ---
@@ -457,7 +457,7 @@ Représente une pièce jointe liée à une évaluation spécifique. Typiquement 
 | `type` | SessionType | CM, TD, TP |
 | `recurrent` | boolean | Récurrent chaque semaine |
 
-**Règles — 3 conflits détectés :** salle, enseignant, groupe (chevauchement horaire)
+**Règles - 3 conflits détectés :** salle, enseignant, groupe (chevauchement horaire)
 
 ---
 
@@ -565,7 +565,7 @@ Représente une pièce jointe liée à une évaluation spécifique. Typiquement 
 
 ---
 
-## 8. DTOs calculés — non persistés
+## 8. DTOs calculés - non persistés
 
 ### `WeeklySchedule`
 
@@ -579,7 +579,7 @@ sessions: List<SessionResponse>
 
 ### `CourseDashboard` ← nouveau v3
 
-Vue synthétique d'une matière pour un étudiant — combine inscriptions, notes, présences et supports en une seule réponse.
+Vue synthétique d'une matière pour un étudiant - combine inscriptions, notes, présences et supports en une seule réponse.
 
 ```
 studentId, matiereId, matiereName, teachingUnitName
@@ -609,7 +609,7 @@ ues: List<UEResult>,
 generalAverage, totalCredits, mention
 ```
 
-### `ClassStats` — données ML
+### `ClassStats` - données ML
 
 ```
 evaluationId, matiereId, average, min, max,
@@ -623,7 +623,7 @@ teacherId, semester, totalHours, cmHours, tdHours, tpHours,
 matieres: List<MatiereResponse>
 ```
 
-### `AttendanceStats` — données ML
+### `AttendanceStats` - données ML
 
 ```
 studentId, matiereId, semester,
@@ -631,7 +631,7 @@ totalSessions, presentCount, absenceCount,
 justifiedCount, attendanceRate, blocked
 ```
 
-### `StudentProgressSummary` — données ML
+### `StudentProgressSummary` - données ML
 
 ```
 semesterId, groupId, filiereCode,
@@ -699,7 +699,7 @@ results: List<StudentProgress>
 
 ## 10. Cas d'utilisation
 
-### UC-CRS-001 — Initialiser groupes et inscriptions d'un étudiant
+### UC-CRS-001 - Initialiser groupes et inscriptions d'un étudiant
 
 **Acteur :** Système · **Trigger :** Kafka `student.profile.created`
 
@@ -712,17 +712,17 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-002 — Affecter un enseignant à une matière
+### UC-CRS-002 - Affecter un enseignant à une matière
 
 **Acteur :** ADMIN_SCHOLAR · **Endpoint :** `POST /courses/assignments`
 
 1. Vérifie absence de doublon (409)
-2. Appelle User Service HTTP — vérifie `maxHoursPerWeek` (422 si dépassement)
+2. Appelle User Service HTTP - vérifie `maxHoursPerWeek` (422 si dépassement)
 3. Crée le `TeacherAssignment`
 
 ---
 
-### UC-CRS-003 — Planifier un créneau
+### UC-CRS-003 - Planifier un créneau
 
 **Acteur :** ADMIN_SCHOLAR · **Endpoint :** `POST /courses/slots`
 
@@ -734,7 +734,7 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-004 — Marquer les présences
+### UC-CRS-004 - Marquer les présences
 
 **Acteur :** TEACHER · **Endpoint :** `PUT /courses/sessions/{id}/attendance`
 
@@ -746,13 +746,13 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-005 — Ajouter un support de cours ← nouveau v3
+### UC-CRS-005 - Ajouter un support de cours ← nouveau v3
 
 **Acteur :** TEACHER · **Endpoint :** `POST /courses/matieres/{id}/resources`
 
 1. Vérifie que l'enseignant est affecté à la matière (403 sinon)
 2. Valide le fichier (format + taille max 50 Mo)
-3. Stocke le fichier (TODO : S3/MinIO — pour l'instant URL simulée)
+3. Stocke le fichier (TODO : S3/MinIO - pour l'instant URL simulée)
 4. Crée le `CourseResource` en `isPublished = false` (DRAFT)
 5. L'enseignant peut modifier le titre, la description, le type
 6. L'enseignant publie le support (`PUT /courses/resources/{id}/publish`)
@@ -763,7 +763,7 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-006 — Gérer ses supports de cours ← nouveau v3
+### UC-CRS-006 - Gérer ses supports de cours ← nouveau v3
 
 **Acteur :** TEACHER · **Endpoints :** `GET /courses/resources/my`, `PUT /courses/resources/{id}`, `DELETE /courses/resources/{id}`
 
@@ -771,12 +771,12 @@ results: List<StudentProgress>
 2. Il peut modifier titre, description, type d'un support
 3. Il peut remplacer le fichier d'un support (nouvel upload)
 4. Il peut dépublier un support (`PUT /courses/resources/{id}/unpublish`)
-5. Il peut supprimer un support (soft delete — `isDeleted = true`)
+5. Il peut supprimer un support (soft delete - `isDeleted = true`)
 6. Un support supprimé disparaît de la vue étudiant
 
 ---
 
-### UC-CRS-007 — Consulter les supports d'une matière ← nouveau v3
+### UC-CRS-007 - Consulter les supports d'une matière ← nouveau v3
 
 **Acteur :** STUDENT, TEACHER, ADMIN_SCHOLAR · **Endpoint :** `GET /courses/matieres/{id}/resources`
 
@@ -792,7 +792,7 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-008 — Ajouter une pièce jointe à une évaluation ← nouveau v3
+### UC-CRS-008 - Ajouter une pièce jointe à une évaluation ← nouveau v3
 
 **Acteur :** TEACHER · **Endpoint :** `POST /courses/evaluations/{id}/attachments`
 
@@ -808,7 +808,7 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-009 — Gérer les pièces jointes d'une évaluation ← nouveau v3
+### UC-CRS-009 - Gérer les pièces jointes d'une évaluation ← nouveau v3
 
 **Acteur :** TEACHER · **Endpoints :** `GET /courses/evaluations/{id}/attachments`, `DELETE /courses/evaluations/{id}/attachments/{attachId}`
 
@@ -818,7 +818,7 @@ results: List<StudentProgress>
 
 ---
 
-### UC-CRS-010 — Consulter le tableau de bord d'un cours ← nouveau v3
+### UC-CRS-010 - Consulter le tableau de bord d'un cours ← nouveau v3
 
 **Acteur :** STUDENT · **Endpoint :** `GET /courses/students/{id}/dashboard?semesterId=`
 
@@ -832,7 +832,7 @@ Retourne la liste de tous les cours du semestre avec pour chacun :
 
 ---
 
-### UC-CRS-011 — Créer une évaluation
+### UC-CRS-011 - Créer une évaluation
 
 **Acteur :** TEACHER · **Endpoint :** `POST /courses/evaluations`
 
@@ -842,7 +842,7 @@ Retourne la liste de tous les cours du semestre avec pour chacun :
 
 ---
 
-### UC-CRS-012 — Saisir les notes
+### UC-CRS-012 - Saisir les notes
 
 **Acteur :** TEACHER · **Endpoint :** `POST /courses/evaluations/{id}/grades`
 
@@ -853,7 +853,7 @@ Retourne la liste de tous les cours du semestre avec pour chacun :
 
 ---
 
-### UC-CRS-013 — Calculer la progression semestrielle
+### UC-CRS-013 - Calculer la progression semestrielle
 
 **Acteur :** ADMIN_SCHOLAR · **Endpoint :** `POST /courses/semesters/{id}/compute-progress`
 
@@ -865,7 +865,7 @@ Retourne la liste de tous les cours du semestre avec pour chacun :
 
 ---
 
-### UC-CRS-014 — Valider un semestre
+### UC-CRS-014 - Valider un semestre
 
 **Acteur :** SUPER_ADMIN · **Endpoint :** `PUT /courses/semesters/{id}/validate`
 
@@ -875,7 +875,7 @@ Retourne la liste de tous les cours du semestre avec pour chacun :
 
 ---
 
-### UC-CRS-015 — Bloquer un étudiant pour impayé
+### UC-CRS-015 - Bloquer un étudiant pour impayé
 
 **Acteur :** Système · **Trigger :** Kafka `student.payment.blocked`
 
@@ -1116,7 +1116,7 @@ GET /courses/ml/progress-summary?semesterId=&groupId=
 | POST | `/courses/matieres` | Créer | ADMIN_SCHOLAR |
 | PUT | `/courses/matieres/{id}` | Modifier | ADMIN_SCHOLAR |
 
-### Supports de cours — CourseResource ← nouveau v3
+### Supports de cours - CourseResource ← nouveau v3
 
 | Méthode | Endpoint | Description | Rôle |
 |---|---|---|---|
@@ -1129,7 +1129,7 @@ GET /courses/ml/progress-summary?semesterId=&groupId=
 | PUT | `/courses/resources/{id}/unpublish` | Dépublier (retour DRAFT) | TEACHER (auteur) |
 | DELETE | `/courses/resources/{id}` | Supprimer (soft delete) | TEACHER (auteur) |
 
-### Pièces jointes évaluations — EvaluationAttachment ← nouveau v3
+### Pièces jointes évaluations - EvaluationAttachment ← nouveau v3
 
 | Méthode | Endpoint | Description | Rôle |
 |---|---|---|---|
@@ -1281,7 +1281,7 @@ CREATE USER course_service WITH PASSWORD 'course_service#123@';
 GRANT ALL PRIVILEGES ON DATABASE coursedb TO course_service;
 ```
 
-### Gateway — routes à ajouter
+### Gateway - routes à ajouter
 
 ```yaml
 - id: course-route

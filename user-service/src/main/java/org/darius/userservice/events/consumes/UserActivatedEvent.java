@@ -11,4 +11,6 @@ public class UserActivatedEvent {
     private String userId;
     private String email;
     private String role;        // CANDIDATE, STUDENT, TEACHER, STAFF...
+    private String firstName;
+    private String lastName;
 }

@@ -30,4 +30,9 @@ public class CreateUserDtoRequest {
 
     @NotBlank(message = "Password confirmation is required")
     private String confirmPassword;
+
+    @NotBlank(message = "Last name required")
+    private String lastName;
+
+    private String firstName;
 }

@@ -1,4 +1,4 @@
-# Notification Service — User Stories complètes v2
+# Notification Service - User Stories complètes v2
 
 **Projet :** AdmissionSchool  
 **Service :** Notification Service  
@@ -20,9 +20,9 @@
 
 ---
 
-## EPIC 1 — Notifications Admission
+## EPIC 1 - Notifications Admission
 
-### US-NOTIF-001 — Confirmer la soumission d'un dossier
+### US-NOTIF-001 - Confirmer la soumission d'un dossier
 
 **En tant que** Candidat  
 **Je veux** recevoir un email de confirmation quand je soumets mon dossier  
@@ -40,7 +40,7 @@
 
 ---
 
-### US-NOTIF-002 — Informer d'une mise à jour administrative
+### US-NOTIF-002 - Informer d'une mise à jour administrative
 
 **En tant que** Candidat  
 **Je veux** être notifié quand mon dossier est traité administrativement  
@@ -56,7 +56,7 @@
 
 ---
 
-### US-NOTIF-003 — Informer de la transmission à la commission
+### US-NOTIF-003 - Informer de la transmission à la commission
 
 **En tant que** Candidat  
 **Je veux** savoir que mon dossier a été transmis à la commission pédagogique
@@ -70,7 +70,7 @@
 
 ---
 
-### US-NOTIF-004 — Notifier un entretien planifié
+### US-NOTIF-004 - Notifier un entretien planifié
 
 **En tant que** Candidat  
 **Je veux** recevoir les informations de mon entretien par email
@@ -86,7 +86,7 @@
 
 ---
 
-### US-NOTIF-005 — Notifier un directeur de thèse
+### US-NOTIF-005 - Notifier un directeur de thèse
 
 **En tant que** Enseignant HDR  
 **Je veux** être notifié quand un candidat souhaite que je dirige sa thèse
@@ -101,7 +101,7 @@
 
 ---
 
-### US-NOTIF-006 — Notifier les choix acceptés et le délai de confirmation
+### US-NOTIF-006 - Notifier les choix acceptés et le délai de confirmation
 
 **En tant que** Candidat  
 **Je veux** être notifié quand au moins un de mes choix est accepté
@@ -116,14 +116,14 @@
 
 ---
 
-### US-NOTIF-007 — Accueillir le nouvel étudiant
+### US-NOTIF-007 - Accueillir le nouvel étudiant
 
 **En tant que** Nouvel étudiant  
 **Je veux** recevoir un email de bienvenue avec mon numéro matricule
 
 **Critères d'acceptation :**
 - [ ] Déclenché par `application.accepted`
-- [ ] **Notification non désactivable** — toujours envoyée
+- [ ] **Notification non désactivable** - toujours envoyée
 - [ ] Contient : numéro matricule, filière, prochaines étapes (paiement scolarité)
 
 **Topic :** `application.accepted`  
@@ -131,7 +131,7 @@
 
 ---
 
-### US-NOTIF-008 — Informer d'un refus de candidature
+### US-NOTIF-008 - Informer d'un refus de candidature
 
 **En tant que** Candidat  
 **Je veux** être notifié si tous mes choix ont été refusés
@@ -146,7 +146,7 @@
 
 ---
 
-### US-NOTIF-009 — Notifier une promotion depuis la liste d'attente
+### US-NOTIF-009 - Notifier une promotion depuis la liste d'attente
 
 **En tant que** Candidat en liste d'attente  
 **Je veux** être notifié immédiatement quand une place se libère
@@ -161,7 +161,7 @@
 
 ---
 
-### US-NOTIF-010 — Informer d'une confirmation automatique
+### US-NOTIF-010 - Informer d'une confirmation automatique
 
 **En tant que** Étudiant  
 **Je veux** être notifié que ma formation a été confirmée automatiquement après expiration du délai
@@ -176,9 +176,9 @@
 
 ---
 
-## EPIC 2 — Notifications Payment
+## EPIC 2 - Notifications Payment
 
-### US-NOTIF-011 — Confirmer un paiement
+### US-NOTIF-011 - Confirmer un paiement
 
 **En tant que** Candidat ou Étudiant  
 **Je veux** recevoir un reçu de paiement par email
@@ -194,7 +194,7 @@
 
 ---
 
-### US-NOTIF-012 — Alerter d'un paiement échoué
+### US-NOTIF-012 - Alerter d'un paiement échoué
 
 **En tant que** Candidat ou Étudiant  
 **Je veux** être alerté quand mon paiement échoue
@@ -208,7 +208,7 @@
 
 ---
 
-### US-NOTIF-013 — Confirmer un remboursement
+### US-NOTIF-013 - Confirmer un remboursement
 
 **En tant que** Étudiant  
 **Je veux** être notifié d'un remboursement effectué
@@ -222,7 +222,7 @@
 
 ---
 
-### US-NOTIF-014 — Notifier la génération d'une facture
+### US-NOTIF-014 - Notifier la génération d'une facture
 
 **En tant que** Étudiant  
 **Je veux** être notifié quand une nouvelle facture est créée
@@ -237,7 +237,7 @@
 
 ---
 
-### US-NOTIF-015 — Confirmer le règlement d'une facture
+### US-NOTIF-015 - Confirmer le règlement d'une facture
 
 **En tant que** Étudiant  
 **Je veux** être notifié quand ma facture est entièrement réglée
@@ -251,7 +251,7 @@
 
 ---
 
-### US-NOTIF-016 — Alerter d'une facture en retard
+### US-NOTIF-016 - Alerter d'une facture en retard
 
 **En tant que** Étudiant  
 **Je veux** être alerté quand ma facture est en retard
@@ -267,7 +267,7 @@
 
 ---
 
-### US-NOTIF-017 — Alerter d'un blocage pour impayé critique
+### US-NOTIF-017 - Alerter d'un blocage pour impayé critique
 
 **En tant que** Étudiant  
 **Je veux** être notifié de la restriction de mon accès
@@ -282,7 +282,7 @@
 
 ---
 
-### US-NOTIF-018 — Confirmer un versement de bourse
+### US-NOTIF-018 - Confirmer un versement de bourse
 
 **En tant que** Étudiant boursier  
 **Je veux** être notifié de chaque versement de bourse
@@ -296,9 +296,9 @@
 
 ---
 
-## EPIC 3 — Notifications Course
+## EPIC 3 - Notifications Course
 
-### US-NOTIF-019 — Confirmer les inscriptions aux cours
+### US-NOTIF-019 - Confirmer les inscriptions aux cours
 
 **En tant que** Étudiant  
 **Je veux** recevoir la confirmation de mes inscriptions aux matières
@@ -313,7 +313,7 @@
 
 ---
 
-### US-NOTIF-020 — Alerter d'un seuil d'absences dépassé
+### US-NOTIF-020 - Alerter d'un seuil d'absences dépassé
 
 **En tant que** Étudiant  
 **Je veux** être alerté quand mon taux de présence est trop bas
@@ -328,14 +328,14 @@
 
 ---
 
-### US-NOTIF-021 — Notifier la disponibilité des notes
+### US-NOTIF-021 - Notifier la disponibilité des notes
 
 **En tant que** Étudiant  
 **Je veux** être notifié quand mes notes sont publiées
 
 **Critères d'acceptation :**
 - [ ] Déclenché par `grades.published`
-- [ ] **Envoi bulk** — un email par étudiant dans `studentIds`
+- [ ] **Envoi bulk** - un email par étudiant dans `studentIds`
 - [ ] Contient le nom de l'évaluation et de la matière
 - [ ] Ne contient pas la note elle-même (confidentialité)
 
@@ -344,14 +344,14 @@
 
 ---
 
-### US-NOTIF-022 — Alerter d'une séance annulée
+### US-NOTIF-022 - Alerter d'une séance annulée
 
 **En tant que** Étudiant  
 **Je veux** être notifié rapidement quand une séance est annulée
 
 **Critères d'acceptation :**
 - [ ] Déclenché par `session.cancelled`
-- [ ] **Envoi bulk** — un email par étudiant dans `affectedStudentIds`
+- [ ] **Envoi bulk** - un email par étudiant dans `affectedStudentIds`
 - [ ] Contient : matière, date, heure, motif
 
 **Topic :** `session.cancelled`  
@@ -359,14 +359,14 @@
 
 ---
 
-### US-NOTIF-023 — Notifier les résultats du semestre
+### US-NOTIF-023 - Notifier les résultats du semestre
 
 **En tant que** Étudiant  
 **Je veux** recevoir mes résultats semestriels par email
 
 **Critères d'acceptation :**
 - [ ] Déclenché par `semester.validated`
-- [ ] **Envoi bulk** — un email personnalisé par étudiant dans `results`
+- [ ] **Envoi bulk** - un email personnalisé par étudiant dans `results`
 - [ ] ADMIS → template avec félicitations, moyenne, mention, rang
 - [ ] AJOURNE → template avec informations rattrapage
 
@@ -375,9 +375,9 @@
 
 ---
 
-## EPIC 4 — Historique et préférences
+## EPIC 4 - Historique et préférences
 
-### US-NOTIF-024 — Consulter mon historique
+### US-NOTIF-024 - Consulter mon historique
 
 **En tant que** Utilisateur authentifié  
 **Je veux** voir toutes les notifications que j'ai reçues
@@ -391,7 +391,7 @@
 
 ---
 
-### US-NOTIF-025 — Consulter mes notifications non lues
+### US-NOTIF-025 - Consulter mes notifications non lues
 
 **En tant que** Utilisateur authentifié  
 **Je veux** voir rapidement mes notifications non lues
@@ -404,7 +404,7 @@
 
 ---
 
-### US-NOTIF-026 — Marquer des notifications comme lues
+### US-NOTIF-026 - Marquer des notifications comme lues
 
 **En tant que** Utilisateur authentifié  
 **Je veux** marquer mes notifications comme lues
@@ -416,7 +416,7 @@
 
 ---
 
-### US-NOTIF-027 — Gérer mes préférences
+### US-NOTIF-027 - Gérer mes préférences
 
 **En tant que** Utilisateur authentifié  
 **Je veux** contrôler quelles notifications je reçois
@@ -430,22 +430,22 @@
 
 ---
 
-## EPIC 5 — Fiabilité et administration
+## EPIC 5 - Fiabilité et administration
 
-### US-NOTIF-028 — Retry automatique des notifications échouées
+### US-NOTIF-028 - Retry automatique des notifications échouées
 
 **En tant que** Système  
 **Je veux** retenter l'envoi des notifications échouées
 
 **Critères d'acceptation :**
-- [ ] Scheduler `@Scheduled(fixedDelay = 300000)` — toutes les 5 minutes
+- [ ] Scheduler `@Scheduled(fixedDelay = 300000)` - toutes les 5 minutes
 - [ ] Retente uniquement les `FAILED` avec `retryCount < 3`
 - [ ] Incrémente `retryCount` à chaque tentative
 - [ ] Après 3 échecs → `FAILED` définitif + log `WARN`
 
 ---
 
-### US-NOTIF-029 — Consulter les statistiques d'envoi
+### US-NOTIF-029 - Consulter les statistiques d'envoi
 
 **En tant que** Admin  
 **Je veux** voir les statistiques d'envoi des notifications
@@ -458,7 +458,7 @@
 
 ---
 
-### US-NOTIF-030 — Forcer le renvoi d'une notification
+### US-NOTIF-030 - Forcer le renvoi d'une notification
 
 **En tant que** Admin  
 **Je veux** forcer le renvoi d'une notification échouée
@@ -506,7 +506,7 @@
 | Fiabilité | US-029 | | | | ✅ | |
 | Fiabilité | US-030 | | | | ✅ | |
 
-**Total : 30 user stories — 5 epics**
+**Total : 30 user stories - 5 epics**
 
 ---
 

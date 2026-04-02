@@ -15,10 +15,10 @@
         .success-icon { text-align: center; font-size: 56px; padding: 16px 0 0; }
         .receipt-box { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 24px; margin: 24px 0; }
         .receipt-box h3 { margin: 0 0 16px; color: #15803d; font-size: 15px; }
-        .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dcfce7; font-size: 14px; }
+        .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dcfce7; font-size: 14px; margin-bottom: 8px }
         .receipt-row:last-child { border-bottom: none; }
-        .receipt-row .label { color: #6b7280; }
-        .receipt-row .value { font-weight: 600; color: #15803d; }
+        .receipt-row .label { color: #6b7280; min-width: 120px; }
+        .receipt-row .value { font-weight: 200; color: #15803d; }
         .receipt-row.total .value { font-size: 18px; }
         .footer { background: #f8faff; padding: 24px 40px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
     </style>
@@ -31,34 +31,34 @@
     </div>
     <div class="success-icon">✅</div>
     <div class="body">
-        <p>Bonjour <strong th:text="${firstName}">étudiant</strong>,</p>
+        <p>Bonjour<th:block th:if="${firstName != null and !#strings.isEmpty(firstName)}"> <strong th:text=" ${firstName}"></strong></th:block>,</p>
         <p>Votre paiement a été <strong>traité avec succès</strong>. Conservez ce reçu comme justificatif.</p>
 
         <div class="receipt-box">
             <h3>📄 Reçu de paiement</h3>
             <div class="receipt-row">
-                <span class="label">N° de transaction</span>
-                <span class="value" th:text="${transactionId}">TXN-XXXXXXXXXX</span>
+                <span class="label">N° de transaction :</span>
+                <span class="value" th:text=" ${transactionId}">TXN-XXXXXXXXXX</span>
+            </div>
+            <div class="receipt-row" th:if=" ${invoiceNumber != null and !#strings.isEmpty(invoiceNumber)}">
+                <span class="label">Facture :</span>
+                <span class="value" th:text=" ${invoiceNumber}">INV-2026-XXXX</span>
             </div>
             <div class="receipt-row">
-                <span class="label">Facture</span>
-                <span class="value" th:text="${invoiceNumber}">INV-2026-XXXX</span>
+                <span class="label">Description :</span>
+                <span class="value" th:text=" ${description}">Frais de scolarité</span>
             </div>
             <div class="receipt-row">
-                <span class="label">Description</span>
-                <span class="value" th:text="${description}">Frais de scolarité</span>
+                <span class="label">Mode de paiement :</span>
+                <span class="value" th:text=" ${paymentMethod}">Carte bancaire</span>
             </div>
             <div class="receipt-row">
-                <span class="label">Mode de paiement</span>
-                <span class="value" th:text="${paymentMethod}">Carte bancaire</span>
-            </div>
-            <div class="receipt-row">
-                <span class="label">Date</span>
-                <span class="value" th:text="${paidAt}">01/09/2025 14h30</span>
+                <span class="label">Date :</span>
+                <span class="value" th:text=" ${paidAt}">01/09/2025 14h30</span>
             </div>
             <div class="receipt-row total">
-                <span class="label" style="font-weight:700;">Montant payé</span>
-                <span class="value"><strong><span th:text="${amount}">1 200</span> <span th:text="${currency != null ? currency : 'XAF'}">XAF</span></strong></span>
+                <span class="label">Montant payé :</span>
+                <span class="value"><strong><span th:text=" ${amount}">1 200</span> <span th:text=" ${currency != null ? currency : 'XAF'}">XAF</span></strong></span>
             </div>
         </div>
 

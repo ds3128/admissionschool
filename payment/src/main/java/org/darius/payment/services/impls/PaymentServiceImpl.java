@@ -215,6 +215,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .currency(payment.getCurrency())
                         .type(payment.getType().name())
                         .paidAt(payment.getPaidAt())
+                        .paymentMethod(payment.getMethod().name())
                         .build()
         );
 

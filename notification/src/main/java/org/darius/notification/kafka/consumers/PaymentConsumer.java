@@ -13,6 +13,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Component
@@ -24,45 +26,9 @@ public class PaymentConsumer {
     private final UserResolverService userResolver;
     private final ObjectMapper        objectMapper;
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH'h'mm");
+
     // ── payment.completed ─────────────────────────────────────────────────────
-//    @KafkaListener(
-//            topics           = KafkaConfig.TOPIC_PAYMENT_COMPLETED,
-//            groupId          = KafkaConfig.GROUP_NOTIFICATION_SERVICE,
-//            containerFactory = "kafkaListenerContainerFactory"
-//    )
-//    public void onPaymentCompleted(String message, Acknowledgment ack) {
-//        log.info("payment.completed reçu");
-//        try {
-//            var event = objectMapper.readValue(message, PaymentCompletedEvent.class);
-//
-//            // Résolution email si absent
-//            String email = userResolver.resolveEmail(event.getUserId());
-//            if (email == null) {
-//                log.warn("Email introuvable pour userId={}", event.getUserId());
-//                ack.acknowledge();
-//                return;
-//            }
-//
-//            notificationService.send(
-//                    event.getUserId(),
-//                    email,
-//                    NotificationType.PAYMENT_COMPLETED,
-//                    "Paiement confirmé — Reçu de paiement",
-//                    "mail/payment/payment-completed",
-//                    Map.of(
-//                            "paymentReference", event.getPaymentReference(),
-//                            "amount",           event.getAmount(),
-//                            "currency",         event.getCurrency(),
-//                            "type",             event.getType(),
-//                            "paidAt",           event.getPaidAt()
-//                    ),
-//                    event.getPaymentReference(), "PAYMENT"
-//            );
-//            ack.acknowledge();
-//        } catch (Exception ex) {
-//            log.error("Erreur payment.completed : {}", ex.getMessage(), ex);
-//        }
-//    }
     @KafkaListener(
             topics           = KafkaConfig.TOPIC_PAYMENT_COMPLETED,
             groupId          = KafkaConfig.GROUP_NOTIFICATION_SERVICE,
@@ -104,14 +70,20 @@ public class PaymentConsumer {
                 event.getType() != null ? event.getType() : "";
 
         Map<String, Object> vars = new java.util.HashMap<>();
-        vars.put("firstName",     userInfo.firstName()            != null ? userInfo.firstName()            : "");
-        vars.put("transactionId", event.getPaymentReference()     != null ? event.getPaymentReference()     : "");
-        vars.put("invoiceNumber", event.getInvoiceId()            != null ? event.getInvoiceId()            : "");
+        vars.put("firstName",     userInfo.firstName()           != null ? userInfo.firstName()            : "");
+        vars.put("transactionId", event.getPaymentReference()    != null ? event.getPaymentReference()     : "");
+        vars.put("invoiceNumber", event.getInvoiceId()           != null ? event.getInvoiceId()            : "");
         vars.put("description",   description);
-        vars.put("paymentMethod", event.getType()                 != null ? event.getType()                 : "");
-        vars.put("paidAt",        event.getPaidAt()               != null ? event.getPaidAt()               : "");
+        vars.put("paymentMethod", event.getPaymentMethod()       != null ? event.getPaymentMethod()        : "");
+
+        String formattedDate = "";
+        if (event.getPaidAt() != null) {
+            formattedDate = (event.getPaidAt()).format(DATE_FORMATTER);
+        }
+
+        vars.put("paidAt", formattedDate);
         vars.put("amount",        event.getAmount());
-        vars.put("currency",      event.getCurrency()             != null ? event.getCurrency()             : "XAF");
+        vars.put("currency",      event.getCurrency()            != null ? event.getCurrency()             : "XAF");
         return vars;
     }
 

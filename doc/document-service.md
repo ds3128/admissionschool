@@ -1,4 +1,4 @@
-# Document Service — Documentation Technique v1
+# Document Service - Documentation Technique v1
 
 **Projet :** AdmissionSchool  
 **Service :** Document Service  
@@ -11,7 +11,7 @@
 ## Table des matières
 
 1. [Vue d'ensemble du service](#1-vue-densemble-du-service)
-2. [Modèle de domaine — Description des entités](#2-modèle-de-domaine--description-des-entités)
+2. [Modèle de domaine - Description des entités](#2-modèle-de-domaine--description-des-entités)
 3. [Énumérations](#3-énumérations)
 4. [Cas d'utilisation](#4-cas-dutilisation)
 5. [Règles métier transversales](#5-règles-métier-transversales)
@@ -43,7 +43,7 @@ Le Document Service est responsable de la génération, du stockage et de la mis
 
 ---
 
-## 2. Modèle de domaine — Description des entités
+## 2. Modèle de domaine - Description des entités
 
 ### 2.1 `GeneratedDocument`
 
@@ -197,9 +197,9 @@ Représente une attestation administrative générée à la demande.
 ### `BulletinStatus`
 | Valeur | Description |
 |---|---|
-| `DRAFT` | Brouillon — non visible par l'étudiant |
+| `DRAFT` | Brouillon - non visible par l'étudiant |
 | `VALIDATED` | Validé par l'administration |
-| `PUBLISHED` | Publié — accessible à l'étudiant |
+| `PUBLISHED` | Publié - accessible à l'étudiant |
 
 ### `AttestationType`
 | Valeur | Description |
@@ -221,7 +221,7 @@ Représente une attestation administrative générée à la demande.
 
 ## 4. Cas d'utilisation
 
-### UC-DOC-001 — Générer les bulletins de notes
+### UC-DOC-001 - Générer les bulletins de notes
 
 **Acteur :** Système (consommateur Kafka)  
 **Déclencheur :** Réception de l'événement `SemesterValidated`
@@ -241,7 +241,7 @@ Représente une attestation administrative générée à la demande.
 
 ---
 
-### UC-DOC-002 — Émettre un diplôme
+### UC-DOC-002 - Émettre un diplôme
 
 **Acteur :** Système (consommateur Kafka)  
 **Déclencheur :** Réception de l'événement `StudentGraduated`
@@ -257,7 +257,7 @@ Représente une attestation administrative générée à la demande.
 
 ---
 
-### UC-DOC-003 — Générer une attestation de scolarité
+### UC-DOC-003 - Générer une attestation de scolarité
 
 **Acteur :** Étudiant  
 **Déclencheur :** Requête `POST /documents/attestations`
@@ -271,7 +271,7 @@ Représente une attestation administrative générée à la demande.
 
 ---
 
-### UC-DOC-004 — Vérifier l'authenticité d'un document
+### UC-DOC-004 - Vérifier l'authenticité d'un document
 
 **Acteur :** Tout utilisateur (public)  
 **Déclencheur :** Requête `GET /documents/verify/{hash}` ou scan du QR code
@@ -284,7 +284,7 @@ Représente une attestation administrative générée à la demande.
 
 ---
 
-### UC-DOC-005 — Générer la lettre d'admission
+### UC-DOC-005 - Générer la lettre d'admission
 
 **Acteur :** Système (consommateur Kafka)  
 **Déclencheur :** Réception de l'événement `ApplicationAccepted`
@@ -298,7 +298,7 @@ Représente une attestation administrative générée à la demande.
 
 ---
 
-### UC-DOC-006 — Générer les fiches de paie
+### UC-DOC-006 - Générer les fiches de paie
 
 **Acteur :** Système (consommateur Kafka)  
 **Déclencheur :** Réception de l'événement `PayslipPaid`

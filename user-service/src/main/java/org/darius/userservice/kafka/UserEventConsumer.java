@@ -2,6 +2,7 @@ package org.darius.userservice.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.darius.userservice.common.dtos.CreateMinimalProfilRequest;
 import org.darius.userservice.events.consumes.ApplicationAcceptedEvent;
 import org.darius.userservice.events.consumes.SemesterValidatedEvent;
 import org.darius.userservice.events.consumes.StudentPaymentBlockedEvent;
@@ -31,7 +32,17 @@ public class UserEventConsumer {
         log.info("UserActivated reçu : {}", message);
         try {
             UserActivatedEvent event = objectMapper.readValue(message, UserActivatedEvent.class);
-            userProfileService.createMinimalProfile(event.getUserId(), event.getEmail());
+
+            // Creating minimal profile for user
+            CreateMinimalProfilRequest request = CreateMinimalProfilRequest.builder()
+                    .email(event.getEmail())
+                    .firstName(event.getFirstName())
+                    .lastName(event.getLastName())
+                    .userId(event.getUserId())
+                    .role(event.getRole())
+                    .build();
+
+            userProfileService.createMinimalProfile(request);
             ack.acknowledge();
         } catch (Exception ex) {
             log.error("Erreur traitement UserActivated : {}", ex.getMessage(), ex);

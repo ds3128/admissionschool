@@ -1,5 +1,6 @@
 package org.darius.userservice.services.impl;
 
+import org.darius.userservice.common.dtos.CreateMinimalProfilRequest;
 import org.darius.userservice.common.dtos.requests.UpdateProfileRequest;
 import org.darius.userservice.common.dtos.responses.UserProfileResponse;
 import org.darius.userservice.mappers.UserMapper;
@@ -41,19 +42,21 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void createMinimalProfile(String userId, String email) {
-        if (profileRepository.existsByUserId(userId)) {
-            log.info("Profil déjà existant pour userId={} — ignoré (idempotence)", userId);
+    public void createMinimalProfile(CreateMinimalProfilRequest request) {
+        if (profileRepository.existsByUserId(request.getUserId())) {
+            log.info("Profil déjà existant pour userId={} - ignoré (idempotence)", request.getUserId());
             return;
         }
 
         UserProfile profile = UserProfile.builder()
-                .userId(userId)
-                .personalEmail(email)
+                .userId(request.getUserId())
+                .personalEmail(request.getEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .build();
 
         profileRepository.save(profile);
-        log.info("Profil minimal créé pour userId={}", userId);
+        log.info("Profil minimal créé pour userId={}", request.getUserId());
     }
 
     @Override
@@ -217,7 +220,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional(readOnly = true)
     public Optional<UserProfile> findByUserId(String userId) {
-        return profileRepository.findByUserId(userId);
+
+        return this.profileRepository.findByUserId(userId);
     }
 
 }

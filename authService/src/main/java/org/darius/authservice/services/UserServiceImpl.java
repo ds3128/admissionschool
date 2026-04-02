@@ -70,6 +70,8 @@ public class UserServiceImpl implements UserService {
         user.setEmail(createUserDtoRequest.getEmail());
         user.setPassword(this.bCryptPasswordEncoder.encode(createUserDtoRequest.getPassword()));
         user.setLastLogin(null);
+        user.setFirstName(createUserDtoRequest.getFirstName());
+        user.setLastName(createUserDtoRequest.getLastName());
 
         userRole.setRoleType(RoleType.SUPER_ADMIN);
         user.setRole(userRole);
@@ -110,6 +112,8 @@ public class UserServiceImpl implements UserService {
                         .userId(user.getId())
                         .email(user.getEmail())
                         .role(user.getRole().getRoleType().name())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
                         .build()
         );
 

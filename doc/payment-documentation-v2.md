@@ -1,4 +1,4 @@
-# Payment Service — Documentation Technique v2
+# Payment Service - Documentation Technique v2
 
 **Projet :** AdmissionSchool  
 **Service :** Payment Service  
@@ -17,7 +17,7 @@
 4. [Flux de paiement des frais de dossier](#4-flux-de-paiement-des-frais-de-dossier)
 5. [Flux de facturation des frais de scolarité](#5-flux-de-facturation-des-frais-de-scolarité)
 6. [Flux des bourses étudiantes](#6-flux-des-bourses-étudiantes)
-7. [Modèle de domaine — Entités](#7-modèle-de-domaine--entités)
+7. [Modèle de domaine - Entités](#7-modèle-de-domaine--entités)
 8. [Énumérations](#8-énumérations)
 9. [Cas d'utilisation](#9-cas-dutilisation)
 10. [Règles métier transversales](#10-règles-métier-transversales)
@@ -32,7 +32,7 @@
 
 ## 1. Vue d'ensemble
 
-Le Payment Service gère tous les flux financiers liés à la vie universitaire : frais de dossier d'admission, frais de scolarité, bourses et remboursements. Il est le pivot financier du système — aucun étudiant ne peut s'inscrire sans paiement validé, aucune bourse ne peut être versée sans son orchestration.
+Le Payment Service gère tous les flux financiers liés à la vie universitaire : frais de dossier d'admission, frais de scolarité, bourses et remboursements. Il est le pivot financier du système - aucun étudiant ne peut s'inscrire sans paiement validé, aucune bourse ne peut être versée sans son orchestration.
 
 ### Responsabilités
 
@@ -152,7 +152,7 @@ L'Admission Service **attend impérativement** le topic `payment.completed` avec
 }
 ```
 
-Le champ `applicationId` est la clé de corrélation — l'Admission Service l'utilise pour retrouver l'`AdmissionPayment` et le passer en `COMPLETED`.
+Le champ `applicationId` est la clé de corrélation - l'Admission Service l'utilise pour retrouver l'`AdmissionPayment` et le passer en `COMPLETED`.
 
 ---
 
@@ -249,7 +249,7 @@ Dans la version actuelle (développement), la confirmation est simulée via un e
      → ScholarshipDisbursedEvent publié
      → Notification Service notifie l'étudiant
 
-[Fin d'année académique — Bourse mérite]
+[Fin d'année académique - Bourse mérite]
   5. Scheduler annuel vérifie le renouvellement
      → Interroge Course Service pour la moyenne annuelle
      → Si moyenne >= 14.0 → bourse renouvelée pour l'année suivante
@@ -258,7 +258,7 @@ Dans la version actuelle (développement), la confirmation est simulée via un e
 
 ---
 
-## 7. Modèle de domaine — Entités
+## 7. Modèle de domaine - Entités
 
 ### `Payment`
 
@@ -267,9 +267,9 @@ Transaction de paiement individuelle. Représente un mouvement financier unique.
 | Champ | Type | Description |
 |---|---|---|
 | `id` | UUID PK | Clé primaire |
-| `userId` | String | Payeur — référence Auth Service |
-| `applicationId` | String | Référence Admission Service (nullable — uniquement pour FRAIS_DOSSIER) |
-| `invoiceId` | UUID | Référence Invoice (nullable — pour FRAIS_SCOLARITE) |
+| `userId` | String | Payeur - référence Auth Service |
+| `applicationId` | String | Référence Admission Service (nullable - uniquement pour FRAIS_DOSSIER) |
+| `invoiceId` | UUID | Référence Invoice (nullable - pour FRAIS_SCOLARITE) |
 | `amount` | BigDecimal | Montant payé |
 | `currency` | String | Devise (EUR, XAF, USD) |
 | `type` | PaymentType | FRAIS_DOSSIER, FRAIS_SCOLARITE, INSCRIPTION, BOURSE, REMBOURSEMENT, AUTRE |
@@ -283,9 +283,9 @@ Transaction de paiement individuelle. Représente un mouvement financier unique.
 | `createdAt` | LocalDateTime | Date de création |
 
 **Règles métier :**
-- Un paiement `COMPLETED` est immuable — seul un remboursement crée un nouveau paiement `REMBOURSEMENT`
+- Un paiement `COMPLETED` est immuable - seul un remboursement crée un nouveau paiement `REMBOURSEMENT`
 - La `reference` est générée en interne au format `PAY-{year}-{séquence 5 chiffres}`
-- Un paiement `FAILED` peut être retesté — un nouveau `Payment` est créé
+- Un paiement `FAILED` peut être retesté - un nouveau `Payment` est créé
 - `applicationId` est renseigné uniquement pour les paiements de type `FRAIS_DOSSIER`
 
 ---
@@ -297,7 +297,7 @@ Facture émise à un étudiant pour les frais de scolarité ou d'inscription.
 | Champ | Type | Description |
 |---|---|---|
 | `id` | UUID PK | Clé primaire |
-| `studentId` | String | Étudiant — référence User Service |
+| `studentId` | String | Étudiant - référence User Service |
 | `academicYear` | String | Année académique (ex : 2026-2027) |
 | `semester` | String | Semestre (S1, S2, ANNUEL) |
 | `type` | InvoiceType | SCOLARITE, INSCRIPTION, AUTRE |
@@ -368,7 +368,7 @@ Bourse accordée à un étudiant pour une année académique.
 | Champ | Type | Description |
 |---|---|---|
 | `id` | Long PK | Clé primaire |
-| `studentId` | String | Bénéficiaire — référence User Service |
+| `studentId` | String | Bénéficiaire - référence User Service |
 | `academicYear` | String | Année académique |
 | `amount` | BigDecimal | Montant annuel de la bourse |
 | `monthlyAmount` | BigDecimal | Montant par versement |
@@ -387,7 +387,7 @@ Bourse accordée à un étudiant pour une année académique.
 - Une seule bourse active par étudiant par année académique et par type
 - `monthlyAmount = amount / 12` (MONTHLY), `amount / 4` (QUARTERLY), `amount / 2` (SEMESTER)
 - Bourse MERITE : `minimumGrade >= 14.0` requis au renouvellement
-- Bourse SOCIALE : critères sociaux — revérification annuelle manuelle
+- Bourse SOCIALE : critères sociaux - revérification annuelle manuelle
 - Une bourse SUSPENDED ne génère plus de versements mais reste associée à l'étudiant
 
 ---
@@ -428,7 +428,7 @@ Versement individuel d'une bourse.
 | Valeur | Description |
 |---|---|
 | `PENDING` | En attente de confirmation passerelle |
-| `COMPLETED` | Confirmé — irrévocable |
+| `COMPLETED` | Confirmé - irrévocable |
 | `FAILED` | Échec de la transaction |
 | `REFUNDED` | Remboursé |
 
@@ -471,19 +471,19 @@ Versement individuel d'une bourse.
 
 | Valeur | Description |
 |---|---|
-| `MERITE` | Bourse au mérite — moyenne >= 14.0 |
-| `SOCIALE` | Bourse sociale — critères socio-économiques |
-| `EXCELLENCE` | Bourse d'excellence — meilleurs étudiants de la promotion |
-| `SPORTIVE` | Bourse sportive — sportifs de haut niveau |
+| `MERITE` | Bourse au mérite - moyenne >= 14.0 |
+| `SOCIALE` | Bourse sociale - critères socio-économiques |
+| `EXCELLENCE` | Bourse d'excellence - meilleurs étudiants de la promotion |
+| `SPORTIVE` | Bourse sportive - sportifs de haut niveau |
 
 ### `ScholarshipStatus`
 
 | Valeur | Description |
 |---|---|
 | `PENDING` | En attente d'activation |
-| `ACTIVE` | En cours — versements actifs |
-| `SUSPENDED` | Suspendue — versements arrêtés temporairement |
-| `TERMINATED` | Terminée — définitivement clôturée |
+| `ACTIVE` | En cours - versements actifs |
+| `SUSPENDED` | Suspendue - versements arrêtés temporairement |
+| `TERMINATED` | Terminée - définitivement clôturée |
 
 ### `DisbursementFrequency`
 
@@ -497,7 +497,7 @@ Versement individuel d'une bourse.
 
 | Valeur | Description |
 |---|---|
-| `SCHEDULED` | Programmé — pas encore versé |
+| `SCHEDULED` | Programmé - pas encore versé |
 | `PAID` | Versé avec succès |
 | `FAILED` | Échec du versement |
 | `CANCELLED` | Annulé (bourse suspendue/terminée) |
@@ -506,7 +506,7 @@ Versement individuel d'une bourse.
 
 ## 9. Cas d'utilisation
 
-### UC-PAY-001 — Initier le paiement des frais de dossier
+### UC-PAY-001 - Initier le paiement des frais de dossier
 
 **Acteur :** Candidat  
 **Déclencheur :** `POST /payments/admission-fees`  
@@ -527,7 +527,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-002 — Confirmer un paiement via webhook
+### UC-PAY-002 - Confirmer un paiement via webhook
 
 **Acteur :** Passerelle externe (Stripe/PayDunya)  
 **Déclencheur :** `POST /payments/webhook`
@@ -541,7 +541,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-003 — Simuler une confirmation (développement)
+### UC-PAY-003 - Simuler une confirmation (développement)
 
 **Acteur :** Développeur / Admin  
 **Déclencheur :** `POST /payments/{id}/simulate-confirm`
@@ -553,7 +553,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-004 — Générer les factures de scolarité
+### UC-PAY-004 - Générer les factures de scolarité
 
 **Acteur :** Admin Finance  
 **Déclencheur :** `POST /payments/invoices/generate`  
@@ -575,7 +575,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-005 — Payer une facture de scolarité
+### UC-PAY-005 - Payer une facture de scolarité
 
 **Acteur :** Étudiant  
 **Déclencheur :** `POST /payments/invoices/{id}/pay`
@@ -592,7 +592,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-006 — Créer un échéancier de paiement
+### UC-PAY-006 - Créer un échéancier de paiement
 
 **Acteur :** Admin Finance  
 **Déclencheur :** `POST /payments/invoices/{id}/schedule`
@@ -607,7 +607,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-007 — Attribuer une bourse
+### UC-PAY-007 - Attribuer une bourse
 
 **Acteur :** Admin Finance  
 **Déclencheur :** `POST /payments/scholarships`
@@ -623,7 +623,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-008 — Versement automatique des bourses
+### UC-PAY-008 - Versement automatique des bourses
 
 **Acteur :** Système (scheduler)  
 **Déclencheur :** Scheduler mensuel (1er du mois à 08:00)
@@ -640,7 +640,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-009 — Renouvellement annuel des bourses mérite
+### UC-PAY-009 - Renouvellement annuel des bourses mérite
 
 **Acteur :** Système (scheduler annuel)  
 **Déclencheur :** Scheduler annuel (1er juillet à 06:00)
@@ -655,7 +655,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-010 — Détection des impayés
+### UC-PAY-010 - Détection des impayés
 
 **Acteur :** Système (scheduler quotidien)  
 **Déclencheur :** Scheduler quotidien (02:00)
@@ -672,7 +672,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-011 — Rembourser un paiement
+### UC-PAY-011 - Rembourser un paiement
 
 **Acteur :** Admin Finance  
 **Déclencheur :** `POST /payments/{id}/refund`
@@ -687,7 +687,7 @@ Versement individuel d'une bourse.
 
 ---
 
-### UC-PAY-012 — Suspension d'une bourse
+### UC-PAY-012 - Suspension d'une bourse
 
 **Acteur :** Admin Finance  
 **Déclencheur :** `PUT /payments/scholarships/{id}/suspend`
@@ -789,7 +789,7 @@ Avec échéancier :
 
 | Topic | Producteur | Action |
 |---|---|---|
-| `student.profile.created` | User Service | Optionnel — créer une facture d'inscription pour le nouveau semestre |
+| `student.profile.created` | User Service | Optionnel - créer une facture d'inscription pour le nouveau semestre |
 | `semester.validated` | Course Service | Déclenche vérification renouvellement bourses mérite |
 
 ### Publiés (8)
@@ -872,7 +872,7 @@ Avec échéancier :
 | POST | `/payments/{id}/simulate-confirm` | Simuler confirmation (dev) | ADMIN_FINANCE |
 | POST | `/payments/{id}/refund` | Rembourser un paiement | ADMIN_FINANCE |
 | GET | `/payments/{id}` | Détail d'un paiement | ADMIN_FINANCE, propriétaire |
-| GET | `/payments/history` | Historique — `?userId=&type=&from=&to=` | ADMIN_FINANCE, propriétaire |
+| GET | `/payments/history` | Historique - `?userId=&type=&from=&to=` | ADMIN_FINANCE, propriétaire |
 | GET | `/payments/me` | Mes paiements | Authentifié |
 
 ### Factures
@@ -882,7 +882,7 @@ Avec échéancier :
 | GET | `/payments/invoices/me` | Mes factures | STUDENT |
 | GET | `/payments/invoices/{id}` | Détail d'une facture | ADMIN_FINANCE, propriétaire |
 | POST | `/payments/invoices/{id}/pay` | Payer une facture | STUDENT |
-| POST | `/payments/invoices/generate` | Générer les factures — `?year=&semester=` | ADMIN_FINANCE |
+| POST | `/payments/invoices/generate` | Générer les factures - `?year=&semester=` | ADMIN_FINANCE |
 | POST | `/payments/invoices/{id}/schedule` | Créer un échéancier | ADMIN_FINANCE |
 | GET | `/payments/invoices/{id}/schedule` | Consulter l'échéancier | ADMIN_FINANCE, propriétaire |
 | PUT | `/payments/invoices/{id}/cancel` | Annuler une facture | ADMIN_FINANCE |
@@ -893,7 +893,7 @@ Avec échéancier :
 |---|---|---|---|
 | GET | `/payments/scholarships/me` | Ma bourse | STUDENT |
 | GET | `/payments/scholarships/{id}` | Détail d'une bourse | ADMIN_FINANCE |
-| GET | `/payments/scholarships` | Lister les bourses — `?studentId=&type=&status=` | ADMIN_FINANCE |
+| GET | `/payments/scholarships` | Lister les bourses - `?studentId=&type=&status=` | ADMIN_FINANCE |
 | POST | `/payments/scholarships` | Attribuer une bourse | ADMIN_FINANCE |
 | PUT | `/payments/scholarships/{id}/activate` | Activer | ADMIN_FINANCE |
 | PUT | `/payments/scholarships/{id}/suspend` | Suspendre | ADMIN_FINANCE |
@@ -905,7 +905,7 @@ Avec échéancier :
 | Méthode | Endpoint | Description | Rôle |
 |---|---|---|---|
 | GET | `/payments/admin/stats` | Statistiques financières globales | ADMIN_FINANCE, SUPER_ADMIN |
-| GET | `/payments/admin/overdue` | Factures en retard — paginées | ADMIN_FINANCE |
+| GET | `/payments/admin/overdue` | Factures en retard - paginées | ADMIN_FINANCE |
 | GET | `/payments/admin/blocked-students` | Étudiants bloqués pour impayé | ADMIN_FINANCE |
 
 ---
@@ -961,7 +961,7 @@ CREATE USER payment_service WITH PASSWORD 'payment_service#123@';
 GRANT ALL PRIVILEGES ON DATABASE paymentdb TO payment_service;
 ```
 
-### Gateway — routes à ajouter
+### Gateway - routes à ajouter
 
 ```yaml
 - id: payment-route
@@ -977,8 +977,8 @@ GRANT ALL PRIVILEGES ON DATABASE paymentdb TO payment_service;
     - StripPrefix=1
 ```
 
-### `shouldNotFilter` Gateway — routes publiques à ajouter
+### `shouldNotFilter` Gateway - routes publiques à ajouter
 
 ```java
-|| path.equals("/payments/webhook")  // webhook passerelle — sans JWT
+|| path.equals("/payments/webhook")  // webhook passerelle - sans JWT
 ```

@@ -2,6 +2,8 @@ package org.darius.admission.evens.published;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,4 +16,5 @@ public class ApplicationSubmittedEvent {
     private String candidateLastName;
     private String personalEmail;
     private int choiceCount;
+    private LocalDate submittedAt;
 }

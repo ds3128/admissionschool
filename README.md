@@ -7,7 +7,7 @@ This project focuses not only on coding but also on software architecture design
 
 ## 🏗️ System Architecture
 
-![Microservices Architecture](./course_management.gif)
+![Microservices Architecture](./doc/course_management.gif)
 
 # 📌 Project Objectives
 

@@ -69,12 +69,23 @@ public class PaymentConsumer {
                 "BOURSE".equals(event.getType())           ? "Bourse"             :
                 event.getType() != null ? event.getType() : "";
 
+        String rawMethod = event.getPaymentMethod();
+        String paymentMethodLabel = rawMethod != null ? switch (rawMethod) {
+            case "MOBILE_MONEY"   -> "Mobile Money";
+            case "CREDIT_CARD"    -> "Carte de crédit";
+            case "DEBIT_CARD"     -> "Carte de débit";
+            case "BANK_TRANSFER"  -> "Virement bancaire";
+            case "CASH"           -> "Espèces";
+            default               -> rawMethod;
+        } : description;
+
         Map<String, Object> vars = new java.util.HashMap<>();
         vars.put("firstName",     userInfo.firstName()           != null ? userInfo.firstName()            : "");
         vars.put("transactionId", event.getPaymentReference()    != null ? event.getPaymentReference()     : "");
         vars.put("invoiceNumber", event.getInvoiceId()           != null ? event.getInvoiceId()            : "");
         vars.put("description",   description);
-        vars.put("paymentMethod", event.getPaymentMethod()       != null ? event.getPaymentMethod()        : "");
+
+        vars.put("paymentMethod", paymentMethodLabel);
 
         String formattedDate = "";
         if (event.getPaidAt() != null) {

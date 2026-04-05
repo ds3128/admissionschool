@@ -59,6 +59,34 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.info("Profil minimal créé pour userId={}", request.getUserId());
     }
 
+//    @Override
+//    @Transactional
+//    public void createFullProfileFromAdmission(
+//            String userId,
+//            String firstName, String lastName,
+//            String phone, String nationality,
+//            String gender, String birthPlace,
+//            LocalDate birthDate,
+//            String photoUrl, String personalEmail
+//    ) {
+//        // Upsert : si le profil minimal existe déjà (créé par UserActivated), on le complète
+//        UserProfile profile = profileRepository.findByUserId(userId)
+//                .orElse(UserProfile.builder().userId(userId).build());
+//
+//        profile.setFirstName(firstName);
+//        profile.setLastName(lastName);
+//        profile.setPhone(phone);
+//        profile.setNationality(nationality);
+//        profile.setGender(parseGender(gender));
+//        profile.setBirthPlace(birthPlace);
+//        profile.setBirthDate(birthDate);
+//        profile.setAvatarUrl(photoUrl);
+//        profile.setPersonalEmail(personalEmail);
+//
+//        profileRepository.save(profile);
+//        log.info("Profil complet créé/mis à jour depuis admission pour userId={}", userId);
+//    }
+
     @Override
     @Transactional
     public void createFullProfileFromAdmission(
@@ -69,27 +97,26 @@ public class UserProfileServiceImpl implements UserProfileService {
             LocalDate birthDate,
             String photoUrl, String personalEmail
     ) {
-        if (profileRepository.existsByUserId(userId)) {
-            log.info("Profil déjà existant pour userId={} — ignoré (idempotence)", userId);
-            return;
-        }
+        // Upsert : si le profil minimal existe déjà (créé par UserActivated), on le complète
+        // On ne remplace que les champs non-null pour ne pas écraser les données existantes
+        UserProfile profile = profileRepository.findByUserId(userId)
+                .orElse(UserProfile.builder().userId(userId).build());
 
-        UserProfile profile = UserProfile.builder()
-                .userId(userId)
-                .firstName(firstName)
-                .lastName(lastName)
-                .phone(phone)
-                .nationality(nationality)
-                .gender(parseGender(gender))
-                .birthPlace(birthPlace)
-                .birthDate(birthDate)
-                .avatarUrl(photoUrl)
-                .personalEmail(personalEmail)
-                .build();
+        if (firstName    != null) profile.setFirstName(firstName);
+        if (lastName     != null) profile.setLastName(lastName);
+        if (phone        != null) profile.setPhone(phone);
+        if (nationality  != null) profile.setNationality(nationality);
+        if (gender       != null) profile.setGender(parseGender(gender));
+        if (birthPlace   != null) profile.setBirthPlace(birthPlace);
+        if (birthDate    != null) profile.setBirthDate(birthDate);
+        if (photoUrl     != null) profile.setAvatarUrl(photoUrl);
+        if (personalEmail != null) profile.setPersonalEmail(personalEmail);
 
         profileRepository.save(profile);
-        log.info("Profil complet créé depuis admission pour userId={}", userId);
+        log.info("Profil complet créé/mis à jour depuis admission pour userId={}", userId);
     }
+
+
 
     // ── Consultation ──────────────────────────────────────────────────────────
 

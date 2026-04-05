@@ -1,6 +1,5 @@
 package org.darius.course.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,12 +8,10 @@ import org.darius.course.events.consumed.*;
 import org.darius.course.repositories.SemesterRepository;
 import org.darius.course.services.EnrollmentService;
 import org.darius.course.services.StudentGroupService;
-import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.annotation.RetryableTopic;
-import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -59,7 +56,7 @@ public class CourseEventConsumer {
                     // Ajouter l'étudiant dans le groupe
                     try {
                         var req = new UpdateGroupStudentsRequest();
-                        req.setStudentIds(java.util.List.of(event.getStudentId()));
+                        req.setStudentIds(List.of(event.getStudentId()));
                         req.setAction("ADD");
                         groupService.updateStudents(group.getId(), req);
                     } catch (Exception e) {

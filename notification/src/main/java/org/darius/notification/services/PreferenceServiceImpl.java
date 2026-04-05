@@ -6,7 +6,7 @@ import org.darius.notification.dtos.requests.UpdatePreferenceRequest;
 import org.darius.notification.dtos.responses.PreferenceResponse;
 import org.darius.notification.entities.NotificationPreference;
 import org.darius.notification.repositories.NotificationPreferenceRepository;
-import org.darius.notification.services.PreferenceService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +50,16 @@ public class PreferenceServiceImpl implements PreferenceService {
                     NotificationPreference newPref = NotificationPreference.builder()
                             .userId(userId)
                             .build();
-                    return prefRepo.save(newPref);
+                    try {
+                        return prefRepo.save(newPref);
+                    } catch (DataIntegrityViolationException e) {
+                        // Race condition : plusieurs consommateurs Kafka ont appelé findOrCreate
+                        // simultanément — on relit ce qu'un autre thread a déjà inséré
+                        log.warn("Race condition détectée sur les préférences pour userId={} - relecture", userId);
+                        return prefRepo.findByUserId(userId)
+                                .orElseThrow(() -> new IllegalStateException(
+                                        "Préférence introuvable après violation de contrainte pour userId=" + userId));
+                    }
                 });
     }
 

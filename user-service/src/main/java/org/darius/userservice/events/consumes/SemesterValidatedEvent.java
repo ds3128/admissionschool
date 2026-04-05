@@ -1,22 +1,26 @@
 package org.darius.userservice.events.consumes;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SemesterValidatedEvent {
     private Long   semesterId;
     private String academicYear;
-    // Liste des étudiants validés avec leurs résultats
-    private java.util.List<StudentSemesterResult> results;
+    private List<StudentSemesterResult> results;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StudentSemesterResult {
         private String  studentId;
         private boolean admis;

@@ -501,31 +501,30 @@ public class ApplicationServiceImpl implements ApplicationService {
         CandidateProfile profile = profileRepository.findByApplication_Id(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profil candidat introuvable"));
 
+        ApplicationAcceptedEvent acceptedEvent = ApplicationAcceptedEvent.builder()
+                .applicationId(app.getId())
+                .userId(app.getUserId())
+                .studentNumber(studentNumber)
+                .filiereId(confirmedChoice.getFiliereId())
+                .personalEmail(profile.getPersonalEmail())
+                .firstName(profile.getFirstName())
+                .lastName(profile.getLastName())
+                .birthDate(profile.getBirthDate())
+                .birthPlace(profile.getBirthPlace())
+                .nationality(profile.getNationality())
+                .gender(profile.getGender())
+                .phone(profile.getPhone())
+                .address(profile.getAddress())
+                .photoUrl(profile.getPhotoUrl())
+                .currentInstitution(profile.getCurrentInstitution())
+                .currentDiploma(profile.getCurrentDiploma())
+                .graduationYear(profile.getGraduationYear() != null
+                        ? profile.getGraduationYear() : 0)
+                .autoConfirmed(false)
+                .academicYear(app.getAcademicYear())
+                .build();
         // Publier ApplicationAccepted
-        eventProducer.publishApplicationAccepted(
-                ApplicationAcceptedEvent.builder()
-                        .applicationId(app.getId())
-                        .userId(app.getUserId())
-                        .studentNumber(studentNumber)
-                        .filiereId(confirmedChoice.getFiliereId())
-                        .personalEmail(profile.getPersonalEmail())
-                        .firstName(profile.getFirstName())
-                        .lastName(profile.getLastName())
-                        .birthDate(profile.getBirthDate())
-                        .birthPlace(profile.getBirthPlace())
-                        .nationality(profile.getNationality())
-                        .gender(profile.getGender())
-                        .phone(profile.getPhone())
-                        .address(profile.getAddress())
-                        .photoUrl(profile.getPhotoUrl())
-                        .currentInstitution(profile.getCurrentInstitution())
-                        .currentDiploma(profile.getCurrentDiploma())
-                        .graduationYear(profile.getGraduationYear() != null
-                                ? profile.getGraduationYear() : 0)
-                        .autoConfirmed(false)
-                        .academicYear(app.getAcademicYear())
-                        .build()
-        );
+        eventProducer.publishApplicationAccepted(acceptedEvent);
 
         log.info("Candidature acceptée : applicationId={}, studentNumber={}",
                 applicationId, studentNumber);

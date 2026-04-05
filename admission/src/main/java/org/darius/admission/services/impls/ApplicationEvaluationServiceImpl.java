@@ -160,7 +160,7 @@ public class ApplicationEvaluationServiceImpl implements ApplicationEvaluationSe
 
                 // Changer le statut
                 changeStatus(app, ApplicationStatus.ACCEPTED,
-                        "system", "Confirmation automatique — délai expiré");
+                        "system", "Confirmation automatique - délai expiré");
                 applicationRepository.save(app);
 
                 // Générer le matricule et publier ApplicationAccepted

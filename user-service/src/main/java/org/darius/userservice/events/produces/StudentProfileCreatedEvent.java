@@ -1,5 +1,6 @@
 package org.darius.userservice.events.produces;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StudentProfileCreatedEvent {
     private String studentId;
     private String userId;
@@ -14,7 +16,6 @@ public class StudentProfileCreatedEvent {
     private Long   levelId;
     private String studentNumber;
     private String academicYear;
-    // Données utiles au Course Service pour créer le StudentGroup
     private String firstName;
     private String lastName;
 }

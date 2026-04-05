@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -64,11 +65,12 @@ public class StudentServiceImpl implements StudentService {
     public void createStudentFromAdmission(ApplicationAcceptedEvent event) {
         log.info("Création du profil étudiant depuis admission : userId={}", event.getUserId());
 
-        // 1. Idempotence — vérifie si le profil existe déjà
-        if (profileRepository.existsByUserId(event.getUserId())) {
-            log.warn("Profil déjà existant pour userId={} — ignoré", event.getUserId());
+        // 1. Idempotence - vérifie si l'étudiant existe déjà (le UserProfile peut déjà exister via UserActivated)
+        if (studentRepository.existsByStudentNumber(event.getStudentNumber())) {
+            log.warn("Étudiant déjà créé pour matricule={} - ignoré", event.getStudentNumber());
             return;
         }
+
 
         // 2. Créer le UserProfile complet depuis CandidateProfile
         userProfileService.createFullProfileFromAdmission(
